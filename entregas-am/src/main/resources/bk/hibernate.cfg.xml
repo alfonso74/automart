@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+ 
+<hibernate-configuration>
+ 
+    <session-factory>
+ 
+        <!-- Database connection settings -->
+        <!-- 
+        <property name="connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
+        <property name="connection.url">jdbc:oracle:thin:@127.0.0.1:1521:xe</property>
+        <property name="connection.username">idms</property>
+        <property name="connection.password">idms</property>
+         -->
+         
+        <property name="connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
+        <property name="connection.url">jdbc:sqlserver://192.168.222.128\SQLEXPRESS:1433;databaseName=DemoGolf</property>
+        <property name="connection.username">sa</property>
+        <property name="connection.password">lotusnotes</property>
+
+        <!-- SQL dialect -->
+        <!-- 
+        <property name="dialect">org.hibernate.dialect.OracleDialect</property>
+         -->
+        <property name="dialect">org.hibernate.dialect.SQLServerDialect</property>
+ 
+        <!-- JDBC connection pool (use the built-in) -->
+        <!-- 
+        <property name="connection.pool_size">1</property>
+         -->
+ 
+        <!-- Enable Hibernate's automatic session context management -->
+        <property name="current_session_context_class">thread</property>
+ 
+        <!-- Disable the second-level cache  -->
+        <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
+ 
+        <!-- Echo all executed SQL to stdout -->
+        <property name="show_sql">true</property>
+        
+        <!-- configuration pool via c3p0 -->
+		<property name="c3p0.acquire_increment">1</property>
+		<property name="c3p0.idle_test_period">100</property> <!-- seconds -->
+		<property name="c3p0.min_size">2</property>
+		<property name="c3p0.max_size">10</property>
+		<property name="c3p0.max_statements">50</property>
+		<property name="c3p0.timeout">100</property> <!-- seconds -->
+ 
+        <!-- Drop and re-create the database schema on startup -->
+        <property name="hbm2ddl.auto">validate</property>
+ 
+        <mapping class="com.orendel.seam.domain.counterpoint.Invoice"></mapping>
+        <mapping class="com.orendel.seam.domain.counterpoint.InvoiceLine"></mapping>
+        
+        <mapping class="com.orendel.seam.domain.counterpoint.Item"></mapping>
+        <mapping class="com.orendel.seam.domain.counterpoint.BarCodeType"></mapping>
+        <mapping class="com.orendel.seam.domain.counterpoint.BarCode"></mapping>
+        
+        <mapping class="com.orendel.seam.domain.delivery.Delivery"></mapping>
+        <mapping class="com.orendel.seam.domain.delivery.DeliveryLine"></mapping>
+        <mapping class="com.orendel.seam.domain.delivery.User"></mapping>
+  
+    </session-factory>
+ 
+</hibernate-configuration>
