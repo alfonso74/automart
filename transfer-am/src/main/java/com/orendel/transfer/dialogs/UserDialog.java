@@ -236,7 +236,6 @@ public class UserDialog extends Dialog {
 				if (validateFields()) {
 					doSave();
 					MessagesUtil.showInformation("Guardar registro", "El usuario ha sido guardado exitosamente.");
-					image.dispose();
 					shell.close();
 				};				
 			}
@@ -245,7 +244,6 @@ public class UserDialog extends Dialog {
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				image.dispose();
 				shell.close();
 			}
 		});
