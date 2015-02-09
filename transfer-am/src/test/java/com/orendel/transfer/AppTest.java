@@ -1,4 +1,4 @@
-package com.orendel.transfer_am;
+package com.orendel.transfer;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
