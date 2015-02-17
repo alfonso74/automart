@@ -1,8 +1,9 @@
 package com.orendel.seam.config;
 
 public enum Datasource {
-	
-	DEFAULT,
-	DELIVERY;
+	/** Counterpoint Database */
+	COUNTERPOINT,
+	/** SEAM Database */
+	SEAM;
 
 }

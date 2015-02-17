@@ -41,11 +41,13 @@ public class ImagesServiceTest {
 		ImagesService.INSTANCE.getImage(null, IImageKeys.UNKNOWN);
 		ImagesService.INSTANCE.getImage(null, IImageKeys.BAR_CHART_16);
 		ImagesService.INSTANCE.disposeImages();
+		Assert.assertEquals(0, ImagesService.INSTANCE.getImagesCount());
 	}	
 	
 	@Test
 	public void testDisposeImages_NoLoadedImages() {
 		logger.info("--------------  Running: testDisposeImages_NoLoadedImages()  -----------------");
 		ImagesService.INSTANCE.disposeImages();
+		Assert.assertEquals(0, ImagesService.INSTANCE.getImagesCount());
 	}
 }

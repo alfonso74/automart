@@ -200,5 +200,10 @@
 			<artifactId>sqljdbc4</artifactId>
 			<version>3.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.orendel</groupId>
+			<artifactId>am-counterpoint</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>

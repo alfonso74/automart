@@ -25,8 +25,8 @@ public enum ImagesService {
 		Image image = null;
 		// buscamos la imagen en el caché (HashMap)
 		image = imageStream.get(imageResourcePath);
-		// si no está en caché, tratamos de instanciar la imagen
-		if (image == null) {
+		// si no está en caché, o la encontramos pero en estado "DISPOSED", tratamos de instanciar la imagen
+		if (image == null || image.isDisposed()) {
 			image = loadImage(display, imageResourcePath);
 			// si no logramos instanciar la imagen, se asigna la imagen "no definida", en caso contrario,
 			// cargamos la imagen al caché y es retornada por el método
@@ -35,7 +35,7 @@ public enum ImagesService {
 			} else {
 				imageStream.put(imageResourcePath, image);
 			}	
-		}			
+		}
 		return image;
 	}
 	

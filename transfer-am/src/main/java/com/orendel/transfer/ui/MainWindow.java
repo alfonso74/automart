@@ -26,6 +26,7 @@ import com.orendel.transfer.dialogs.UpdatePasswordDialog;
 import com.orendel.transfer.dialogs.UserDialog;
 import com.orendel.transfer.domain.User;
 import com.orendel.transfer.editors.CreateDeliveryEditor;
+import com.orendel.transfer.editors.CreateTransferInEditor;
 import com.orendel.transfer.editors.ViewUsersEditor;
 import com.orendel.transfer.services.HibernateUtil;
 import com.orendel.transfer.services.HibernateUtilDelivery;
@@ -121,7 +122,7 @@ public class MainWindow {
 		shell = new Shell();
 //		shell.setSize(800, 600);
 		shell.setMaximized(true);
-		shell.setText("AutoMart - Control de Entregas");
+		shell.setText("AutoMart - Control de Transferencias");
 		shell.setLayout(new GridLayout(1, false));
 		
 		Menu menu = new Menu(shell, SWT.BAR);
@@ -164,15 +165,15 @@ public class MainWindow {
 		mntmAcciones.setMenu(menu_2);
 		
 		MenuItem mntmRealizarEntrega = new MenuItem(menu_2, SWT.NONE);
-		mntmRealizarEntrega.setText("Realizar entrega");
+		mntmRealizarEntrega.setText("Realizar transferencia");
 		
 		new MenuItem(menu_2, SWT.SEPARATOR);
 		
 		MenuItem mntmConsultarEntregas = new MenuItem(menu_2, SWT.NONE);
-		mntmConsultarEntregas.setText("Consultar entregas");
+		mntmConsultarEntregas.setText("Consultar transferencias");
 		
 		MenuItem mntmConsultarEntregasParciales = new MenuItem(menu_2, SWT.NONE);
-		mntmConsultarEntregasParciales.setText("Consultar entregas parciales");
+		mntmConsultarEntregasParciales.setText("Consultar transferencias en proceso");
 		
 		MenuItem mntmReporte01 = null;
 		if (LoggedUserService.INSTANCE.getUser().isAdmin()) {
@@ -247,7 +248,7 @@ public class MainWindow {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				disposeChildrenComposites(composite);
-				openCreateDeliveryEditor(composite);
+				openCreateTransferInEditor(composite);
 				composite.layout();
 			}
 		});
@@ -284,7 +285,8 @@ public class MainWindow {
 		
 		fillFooterInfo();
 		
-		openCreateDeliveryEditor(composite);
+//		openCreateDeliveryEditor(composite);
+		openCreateTransferInEditor(composite);
 	}
 	
 	
@@ -326,6 +328,13 @@ public class MainWindow {
 	
 	private CreateDeliveryEditor openCreateDeliveryEditor(Composite composite) {
 		CreateDeliveryEditor editor = new CreateDeliveryEditor(composite, SWT.NONE);
+		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		return editor;
+	}
+	
+	
+	private CreateTransferInEditor openCreateTransferInEditor(Composite composite) {
+		CreateTransferInEditor editor = new CreateTransferInEditor(composite, SWT.NONE);
 		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		return editor;
 	}

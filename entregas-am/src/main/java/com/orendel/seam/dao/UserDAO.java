@@ -12,7 +12,7 @@ public class UserDAO extends GenericDAOImpl<User, Long> {
 	
 	public UserDAO() {
 		super();
-		dataSource = Datasource.DELIVERY;
+		dataSource = Datasource.SEAM;
 	}
 	
 	public boolean verifyPasswordMD5(String userName, String encodedPassword) {

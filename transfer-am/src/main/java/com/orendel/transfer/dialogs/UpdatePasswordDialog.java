@@ -67,10 +67,6 @@ public class UpdatePasswordDialog extends Dialog {
 				display.sleep();
 			}
 		}
-		if (image != null) {
-			System.out.println("Dispose image called!");
-			image.dispose();
-		}
 		return result;
 	}
 
@@ -161,7 +157,6 @@ public class UpdatePasswordDialog extends Dialog {
 				if (validateFields()) {
 					updatePassword();
 					MessagesUtil.showInformation("Actualizar password", "El password ha sido actualizado exitosamente.");
-					image.dispose();
 					shell.close();
 				};				
 			}
@@ -170,7 +165,6 @@ public class UpdatePasswordDialog extends Dialog {
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				image.dispose();
 				shell.close();
 			}
 		});

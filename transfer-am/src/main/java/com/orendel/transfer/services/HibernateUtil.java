@@ -20,7 +20,7 @@ public class HibernateUtil {
 	private static StandardServiceRegistryImpl sr;
 	private static SessionFactory sessionFactorySQL;
 
-	private static String CONFIG_FILE_SQL_SERVER = "/hibernate.cfg.xml";
+	private static String CONFIG_FILE_SQL_SERVER = "/counterpoint.cfg.xml";
 
 	static {
 		try {

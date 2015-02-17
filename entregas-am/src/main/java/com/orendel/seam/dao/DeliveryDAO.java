@@ -16,7 +16,7 @@ public class DeliveryDAO extends GenericDAOImpl<Delivery, Long> {
 	
 	public DeliveryDAO() {
 		super();
-		dataSource = Datasource.DELIVERY;
+		dataSource = Datasource.SEAM;
 	}
 
 
