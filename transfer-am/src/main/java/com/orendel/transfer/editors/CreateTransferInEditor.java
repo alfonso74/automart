@@ -61,6 +61,10 @@ public class CreateTransferInEditor extends Composite {
 	private Listener listenerF04;
 	private Listener listenerF09;
 	private Listener listenerF12;
+	private Text txtLines;
+	private Text txtReceived;
+	private Text txtTotal;
+	private Text txtPending;
 	
 
 	/**
@@ -184,6 +188,54 @@ public class CreateTransferInEditor extends Composite {
 				}
 			}
 		});
+		
+		Group grpTotales = new Group(this, SWT.NONE);
+		grpTotales.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.NORMAL));
+		GridLayout gl_grpTotales = new GridLayout(8, false);
+		gl_grpTotales.marginBottom = 5;
+		grpTotales.setLayout(gl_grpTotales);
+		grpTotales.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		
+		Label lblLineas = new Label(grpTotales, SWT.NONE);
+		lblLineas.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		lblLineas.setText("Total de líneas:");
+		
+		txtLines = new Text(grpTotales, SWT.BORDER);
+		txtLines.setEnabled(false);
+		txtLines.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		
+		Label lblArtRecibidos = new Label(grpTotales, SWT.NONE);
+		GridData gd_lblArtRecibidos = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblArtRecibidos.horizontalIndent = 20;
+		lblArtRecibidos.setLayoutData(gd_lblArtRecibidos);
+		lblArtRecibidos.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		lblArtRecibidos.setText("Art. recibidos:");
+		
+		txtReceived = new Text(grpTotales, SWT.BORDER);
+		txtReceived.setEnabled(false);
+		txtReceived.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		
+		Label lblValor = new Label(grpTotales, SWT.NONE);
+		lblValor.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		GridData gd_lblValor = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		gd_lblValor.horizontalIndent = 20;
+		lblValor.setLayoutData(gd_lblValor);
+		lblValor.setText("Valor:");
+		
+		txtTotal = new Text(grpTotales, SWT.BORDER);
+		txtTotal.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		txtTotal.setEnabled(false);
+		
+		Label lblArtPendientes = new Label(grpTotales, SWT.NONE);
+		GridData gd_lblArtPendientes = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblArtPendientes.horizontalIndent = 20;
+		lblArtPendientes.setLayoutData(gd_lblArtPendientes);
+		lblArtPendientes.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		lblArtPendientes.setText("Art. pendientes");
+		
+		txtPending = new Text(grpTotales, SWT.BORDER);
+		txtPending.setEnabled(false);
+		txtPending.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
 		
 		tableTransferLines = new Table(this, SWT.BORDER | SWT.HIDE_SELECTION);
 		tableTransferLines.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
@@ -400,6 +452,11 @@ public class CreateTransferInEditor extends Composite {
 			logger.warn("TransferControl object is null!");
 			return;
 		}
+		
+		txtLines.setText("" + tcControl.getLines().size());
+		txtReceived.setText("" + tcControl.getTotalReceivedItems());
+		txtTotal.setText("" + tcControl.getTotalReceivedItemsValue().setScale(2));
+		txtPending.setText("" + (tcControl.getTotalExpectedItems() - tcControl.getTotalReceivedItems()));
 		
 		tableTransferLines.removeAll();
 		TableItem item;

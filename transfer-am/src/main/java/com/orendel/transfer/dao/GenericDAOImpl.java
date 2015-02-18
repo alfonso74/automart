@@ -24,7 +24,7 @@ public class GenericDAOImpl<T, ID extends Serializable>
 	
 	private Class<T> persistentClass;
 	private Session session;
-	protected Datasource dataSource = Datasource.DEFAULT;
+	protected Datasource dataSource = Datasource.COUNTERPOINT;
 	
 	@SuppressWarnings("unchecked")
 	public GenericDAOImpl() {
@@ -37,7 +37,7 @@ public class GenericDAOImpl<T, ID extends Serializable>
 	}
 	
 	protected Session getSession() {
-		if (dataSource == Datasource.DELIVERY) {
+		if (dataSource == Datasource.SEAM) {
 			if (session == null) {
 				session = HibernateUtilDelivery.getSessionFactorySQL().getCurrentSession();
 			} else {

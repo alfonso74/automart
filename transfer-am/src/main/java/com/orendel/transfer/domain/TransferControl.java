@@ -1,5 +1,6 @@
 package com.orendel.transfer.domain;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +33,7 @@ public class TransferControl {
 	@Column(name = "CREATED_DATE", nullable = false)
 	private Date created;
 	
-	/** Delivery closed date */
+	/** Transfer closed date */
 	@Column(name = "CLOSED_DATE")
 	private Date closed;
 	
@@ -44,7 +45,7 @@ public class TransferControl {
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "transfer", fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
-	private List<TransferControlLine> lines = new ArrayList<>();
+	private List<TransferControlLine> lines = new ArrayList<TransferControlLine>();
 
 	
 	// *************************** Helper methods ********************************
@@ -96,6 +97,43 @@ public class TransferControl {
 		return tcLines;
 	}
 	
+	/**
+	 * Calcula el total de artículos recibidos vs los esperados.
+	 * @return un {@link String} con formato "N1 de N2" (N1: recibidos, N2: esperados) 
+	 */
+	public String getReceivedItemsIndicator() {
+		int totalExpected = 0;
+		int totalReceived = 0;
+		for (TransferControlLine line : getLines()) {
+			totalReceived += line.getQtyReceived().intValue();
+			totalExpected += line.getQtyPrevExpected().intValue();
+		}
+		return totalReceived + " de " + totalExpected;
+	}
+	
+	public int getTotalExpectedItems() {
+		int totalExpected = 0;
+		for (TransferControlLine line : getLines()) {
+			totalExpected += line.getQtyPrevExpected().intValue();
+		}
+		return totalExpected;
+	}
+	
+	public int getTotalReceivedItems() {
+		int totalReceived = 0;
+		for (TransferControlLine line : getLines()) {
+			totalReceived += line.getQtyReceived().intValue();
+		}
+		return totalReceived;
+	}
+	
+	public BigDecimal getTotalReceivedItemsValue() {
+		BigDecimal totalReceivedValue = new BigDecimal(0);
+		for (TransferControlLine line : getLines()) {
+			totalReceivedValue = totalReceivedValue.add(line.getEstExtCost());
+		}
+		return totalReceivedValue;
+	}
 	
 	public void addTransferControlLine(TransferControlLine line) {
 		getLines().add(line);

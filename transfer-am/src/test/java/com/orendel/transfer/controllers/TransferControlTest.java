@@ -66,7 +66,7 @@ public class TransferControlTest {
 	
 	@Test
 	public void testAdjustDeliveredQuantityForItem_Happy() {
-		logger.info("------- Scenario: Adjust delivered quantity (Happy) -----------");
+		logger.info("------- Scenario: Adjust received quantity (Happy) -----------");
 		TransferControl transfer = createTransferControl();
 
 		TransferControlLine line = transfer.adjustReceivedQuantityForItem("00N", 1);
@@ -77,7 +77,7 @@ public class TransferControlTest {
 
 //	@Test
 	public void testAdjustDeliveredQuantityForItem_QtyDeliveredOverflow() {
-		logger.info("------- Scenario: Adjust delivered quantity (should distribute among two lines) -----------");
+		logger.info("------- Scenario: Adjust received quantity (should distribute among two lines) -----------");
 		TransferControl transfer = createTransferControl();
 
 		TransferControlLine line = transfer.adjustReceivedQuantityForItem("00N", 3);
@@ -92,7 +92,7 @@ public class TransferControlTest {
 
 	@Test
 	public void testAdjustDeliveredQuantityForItem_NoLinePendingTransferControl() {
-		logger.info("------- Scenario: Adjust delivered quantity (No line with pending delivery), should select first found -----------");
+		logger.info("------- Scenario: Adjust received quantity (No line with pending delivery), should select first found -----------");
 		TransferControl transfer = createTransferControl();
 		transfer.adjustReceivedQuantityForItem("00N", 2);
 		transfer.adjustReceivedQuantityForItem("00N", 3);
@@ -101,6 +101,18 @@ public class TransferControlTest {
 		logger.info("Description: " + line.getItemDescription() + ", Expected: " + line.getQtyPrevExpected() + 
 				", received: " + line.getQtyReceived() + ", pending: " + line.getQtyNewExpected());
 		assertTrue(line.getItemDescription().equals("N lines2"));
+	}
+	
+	@Test
+	public void testGetDeliveredItemsIndicator_Happy() {
+		logger.info("------- Scenario: Get indicator for received vs expected items -----------");
+		TransferControl transfer = createTransferControl();
+		transfer.adjustReceivedQuantityForItem("00N", 1);
+		transfer.adjustReceivedQuantityForItem("00N", 3);
+		transfer.adjustReceivedQuantityForItem("100", 50);
+		
+		String indicator = transfer.getReceivedItemsIndicator();
+		assertTrue("Wrong indicator value: " + indicator, "54 de 108".equals(indicator));
 	}
 	
 	@Test

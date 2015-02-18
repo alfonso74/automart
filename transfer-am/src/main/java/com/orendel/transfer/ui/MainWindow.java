@@ -27,6 +27,7 @@ import com.orendel.transfer.dialogs.UserDialog;
 import com.orendel.transfer.domain.User;
 import com.orendel.transfer.editors.CreateDeliveryEditor;
 import com.orendel.transfer.editors.CreateTransferInEditor;
+import com.orendel.transfer.editors.ViewTransfersEditor;
 import com.orendel.transfer.editors.ViewUsersEditor;
 import com.orendel.transfer.services.HibernateUtil;
 import com.orendel.transfer.services.HibernateUtilDelivery;
@@ -169,11 +170,11 @@ public class MainWindow {
 		
 		new MenuItem(menu_2, SWT.SEPARATOR);
 		
-		MenuItem mntmConsultarEntregas = new MenuItem(menu_2, SWT.NONE);
-		mntmConsultarEntregas.setText("Consultar transferencias");
+		MenuItem mntmConsultarTransferencias = new MenuItem(menu_2, SWT.NONE);
+		mntmConsultarTransferencias.setText("Consultar transferencias");
 		
-		MenuItem mntmConsultarEntregasParciales = new MenuItem(menu_2, SWT.NONE);
-		mntmConsultarEntregasParciales.setText("Consultar transferencias en proceso");
+//		MenuItem mntmConsultarEntregasParciales = new MenuItem(menu_2, SWT.NONE);
+//		mntmConsultarEntregasParciales.setText("Consultar transferencias en proceso");
 		
 		MenuItem mntmReporte01 = null;
 		if (LoggedUserService.INSTANCE.getUser().isAdmin()) {
@@ -253,23 +254,15 @@ public class MainWindow {
 			}
 		});
 		
-//		mntmConsultarEntregas.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				disposeChildrenComposites(composite);
-//				openViewDeliveriesEditor(composite);
-//				composite.layout();
-//			}
-//		});
 		
-//		mntmConsultarEntregasParciales.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				disposeChildrenComposites(composite);
-//				openViewPartialDeliveriesEditor(composite);
-//				composite.layout();
-//			}
-//		});
+		mntmConsultarTransferencias.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				disposeChildrenComposites(composite);
+				openViewTransfersEditor(composite);
+				composite.layout();
+			}
+		});
 		
 //		if (LoggedUserService.INSTANCE.getUser().isAdmin()) {
 //			mntmReporte01.addSelectionListener(new SelectionAdapter() {
@@ -326,13 +319,6 @@ public class MainWindow {
 	}
 	
 	
-	private CreateDeliveryEditor openCreateDeliveryEditor(Composite composite) {
-		CreateDeliveryEditor editor = new CreateDeliveryEditor(composite, SWT.NONE);
-		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		return editor;
-	}
-	
-	
 	private CreateTransferInEditor openCreateTransferInEditor(Composite composite) {
 		CreateTransferInEditor editor = new CreateTransferInEditor(composite, SWT.NONE);
 		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -340,18 +326,11 @@ public class MainWindow {
 	}
 	
 	
-//	private ViewDeliveriesEditorMod openViewDeliveriesEditor(Composite composite) {
-//		ViewDeliveriesEditorMod editor = new ViewDeliveriesEditorMod(composite, SWT.NONE);
-//		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-//		return editor;
-//	}
-	
-	
-//	private ViewPartialDeliveriesEditor openViewPartialDeliveriesEditor(Composite composite) {
-//		ViewPartialDeliveriesEditor editor = new ViewPartialDeliveriesEditor(composite, SWT.NONE);
-//		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-//		return editor;
-//	}
+	private ViewTransfersEditor openViewTransfersEditor(Composite composite) {
+		ViewTransfersEditor editor = new ViewTransfersEditor(composite, SWT.NONE);
+		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		return editor;
+	}
 	
 	
 //	private void openReport01(Composite composite) {

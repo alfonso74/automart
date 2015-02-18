@@ -69,6 +69,7 @@ public class TransferControlLine {
 		int newQty = currentQty + receivedQuantity;
 		this.setQtyReceived(new BigDecimal(newQty));
 		this.setQtyNewExpected(this.getQtyPrevExpected().subtract(this.getQtyReceived()));
+		this.setEstExtCost(this.getQtyReceived().multiply(this.getEstUnitCost()));
 	}
 
 	

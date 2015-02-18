@@ -38,6 +38,11 @@ public abstract class AbstractControllerDelivery<X> {
 		this.dao = dao;
 		this.dao.setSession(session);
 	}
+	
+	public AbstractControllerDelivery(GenericDAOImpl<X, Long> dao, boolean isTest) {
+		LOGGER = Logger.getLogger(getClass());
+		this.dao = dao;
+	}
 
 	/*
 	public AbstractController() {
