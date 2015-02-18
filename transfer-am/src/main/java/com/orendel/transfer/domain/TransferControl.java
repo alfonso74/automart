@@ -54,7 +54,7 @@ public class TransferControl {
 		TransferControlLine tcLine = null;
 		List<TransferControlLine> tcLines = this.locateLinesWithItem(itemNo);
 		
-		// buscamos si alguna línea tiene artículos para entregar
+		// buscamos si alguna línea tiene artículos pendientes de entrega
 		for (TransferControlLine line : tcLines) {
 			if (line.getQtyPrevExpected().longValue() > line.getQtyReceived().longValue()) {
 				tcLine = tcLine == null ? line : tcLine;
@@ -63,7 +63,7 @@ public class TransferControl {
 		
 		// si no hay ninguna línea con cantidades pendientes...
 		if (tcLine == null) {
-			// ...se selecciona la primera línea (con el item indicado) que aparezca listada en la factura
+			// ...se selecciona la primera línea (con el item indicado) que aparezca listada en la transferencia
 			if (!tcLines.isEmpty()) {
 				tcLine = tcLines.get(0);
 			}
