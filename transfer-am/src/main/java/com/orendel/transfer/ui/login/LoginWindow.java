@@ -19,6 +19,7 @@ public class LoginWindow extends LoginDialog {
 		super.setVerifier(verifier);
 		super.setImage(image);
 		super.setDisplayRememberPassword(false);
+		super.setDescription("Por favor, introduzca su nombre de usuario y contraseña");
 	}
 
 }
