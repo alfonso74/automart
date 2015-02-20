@@ -143,6 +143,8 @@ public class TransferControlTest {
 		line.setQtyPrevExpected(new BigDecimal(qtyExpected).setScale(0));
 		line.setQtyReceived(new BigDecimal(qtyReceived).setScale(0));
 		line.setQtyNewExpected(new BigDecimal(qtyExpected - qtyReceived).setScale(0));
+		line.setEstUnitCost(new BigDecimal(1));
+		line.setEstExtCost(line.getEstUnitCost().multiply(line.getQtyReceived()));
 		return line;
 	}
 }

@@ -12,9 +12,9 @@ public class ShellImagesService {
 	public ShellImagesService(Display display) {
 //		this.display = display;
 		shellImages = new Image[3];
-		shellImages[0] = ImagesService.INSTANCE.getImage(display, IImageKeys.PDF_16);
-		shellImages[1] = ImagesService.INSTANCE.getImage(display, IImageKeys.PDF_24);
-		shellImages[2] = ImagesService.INSTANCE.getImage(display, IImageKeys.PDF_32);
+		shellImages[0] = ImagesService.INSTANCE.getImage(display, IImageKeys.SHELL_16);
+		shellImages[1] = ImagesService.INSTANCE.getImage(display, IImageKeys.SHELL_24);
+		shellImages[2] = ImagesService.INSTANCE.getImage(display, IImageKeys.SHELL_32);
 	}
 	
 	public Image[] getShellImages() {

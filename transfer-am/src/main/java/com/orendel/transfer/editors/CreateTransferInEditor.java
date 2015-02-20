@@ -273,11 +273,12 @@ public class CreateTransferInEditor extends Composite {
 		tblclmnComentarios.setText("Comentario");
 		
 		Composite compositeActions = new Composite(this, SWT.NONE);
-		GridLayout gl_compositeActions = new GridLayout(3, false);
+		GridLayout gl_compositeActions = new GridLayout(3, true);
 		gl_compositeActions.marginWidth = 0;
 		compositeActions.setLayout(gl_compositeActions);
 		
 		btnParcial = new Button(compositeActions, SWT.NONE);
+		btnParcial.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnParcial.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
 		btnParcial.setText("Txfer parcial (F4)");
 		btnParcial.addSelectionListener(new SelectionAdapter() {
@@ -289,6 +290,7 @@ public class CreateTransferInEditor extends Composite {
 		});
 		
 		btnLimpiar = new Button(compositeActions, SWT.NONE);
+		btnLimpiar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnLimpiar.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
 		btnLimpiar.setText("Limpiar (F9)");
 		btnLimpiar.addSelectionListener(new SelectionAdapter() {
@@ -300,6 +302,7 @@ public class CreateTransferInEditor extends Composite {
 		});
 		
 		btnGuardar = new Button(compositeActions, SWT.NONE);
+		btnGuardar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnGuardar.setEnabled(false);
 		btnGuardar.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
 		btnGuardar.setText("Txfer realizada (F12)");

@@ -4,9 +4,9 @@ public interface IImageKeys {
 	
 	final String UNKNOWN = "icons/unknown.gif";
 	
-	final String PDF_16 = "icons/shell/pdf_16.png";
-	final String PDF_24 = "icons/shell/pdf_24.png";
-	final String PDF_32 = "icons/shell/pdf_32.png";
+	final String SHELL_16 = "icons/shell/transfer_16.png";
+	final String SHELL_24 = "icons/shell/transfer_22.png";
+	final String SHELL_32 = "icons/shell/transfer_32.png";
 	
 	final String LOGIN = "icons/login/automartLogin.gif";
 	
