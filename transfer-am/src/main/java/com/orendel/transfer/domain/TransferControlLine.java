@@ -3,6 +3,7 @@ package com.orendel.transfer.domain;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -10,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.orendel.counterpoint.domain.Comments;
 
 
 @Entity
@@ -30,8 +33,8 @@ public class TransferControlLine {
 	@Column(name = "XFER_LIN_SEQ_NO", nullable = false)
 	private Integer positionId;
 	
-	@Column(name = "COMMNT_1")
-	private String comment;
+	@Embedded
+	private Comments comments;
 	
 	/** Expected quantity to be received */
 	@Column(name = "PREV_QTY_EXPECTD", columnDefinition="decimal")
@@ -107,15 +110,18 @@ public class TransferControlLine {
 	public void setPositionId(Integer positionId) {
 		this.positionId = positionId;
 	}
-
-	public String getComment() {
-		return comment;
+	
+	public Comments getComments() {
+		if (comments == null) {
+			comments = new Comments();
+		}
+		return comments;
 	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
+	
+	public void setComments(Comments comments) {
+		this.comments = comments;
 	}
-
+	
 	/** Gets the item <b>expected</b> quantity to be received */
 	public BigDecimal getQtyPrevExpected() {
 		return qtyPrevExpected;

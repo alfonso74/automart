@@ -478,6 +478,7 @@ public class CreateTransferInEditor extends Composite {
 			item.setText(column++, v.getQtyNewExpected().setScale(0).toString());
 			item.setText(column++, v.getItemNumber());
 			item.setText(column++, v.getItemDescription());
+			item.setText(column++, v.getComments().getComment1() == null ? "" : v.getComments().getComment1());
 			logger.info("EXPECTED: " + v.getQtyPrevExpected() + ", RECEIVED: " + v.getQtyReceived() + ", PENDING: " + v.getQtyNewExpected());
 			if (v.getQtyPrevExpected().intValue() == v.getQtyReceived().intValue()) {
 				// marcar verde
@@ -579,5 +580,6 @@ public class CreateTransferInEditor extends Composite {
 		tcController.finalizarSesion();
 		super.dispose();		
 	}
+	
 }
 

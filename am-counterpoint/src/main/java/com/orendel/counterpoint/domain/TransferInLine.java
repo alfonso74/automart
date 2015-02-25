@@ -3,6 +3,7 @@ package com.orendel.counterpoint.domain;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
@@ -27,8 +28,8 @@ public class TransferInLine {
 	@Column(name = "XFER_LIN_SEQ_NO", insertable = false, updatable = false)
 	private Integer positionId;
 	
-	@Column(name = "COMMNT_1")
-	private String comment;
+	@Embedded
+	private Comments comments;
 	
 	@Column(name = "PREV_QTY_EXPECTD", columnDefinition="t_qty")
 	private BigDecimal qtyPrevExpected;
@@ -97,13 +98,13 @@ public class TransferInLine {
 	public void setPositionId(Integer positionId) {
 		this.positionId = positionId;
 	}
-
-	public String getComment() {
-		return comment;
+	
+	public Comments getComments() {
+		return comments;
 	}
 
-	public void setComment(String comment) {
-		this.comment = comment;
+	public void setComments(Comments comments) {
+		this.comments = comments;
 	}
 
 	public BigDecimal getQtyPrevExpected() {

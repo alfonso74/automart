@@ -19,6 +19,8 @@ public final class TransferMapper {
 		TransferControl control = new TransferControl();
 		
 		control.setTransferNo(transferIn.getId());
+		control.setReference(transferIn.getReference());
+		control.setComments(transferIn.getComments());
 		control.setCreated(new Date());
 		control.setStatus(TransferControlStatus.PARTIAL.getCode());
 		for (TransferInLine line : transferIn.getLines()) {
@@ -36,7 +38,7 @@ public final class TransferMapper {
 		
 		tcLine.setLineId(transferInLine.getLineId());
 		tcLine.setPositionId(transferInLine.getPositionId());
-		tcLine.setComment(transferInLine.getComment());
+		tcLine.setComments(transferInLine.getComments());
 		tcLine.setQtyPrevExpected(transferInLine.getQtyPrevExpected());
 		tcLine.setQtyReceived(transferInLine.getQtyReceived());
 		tcLine.setQtyNewExpected(transferInLine.getQtyNewExpected());

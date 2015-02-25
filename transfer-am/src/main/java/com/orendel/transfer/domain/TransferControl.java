@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,6 +17,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+
+import com.orendel.counterpoint.domain.Comments;
 
 
 @Entity
@@ -29,6 +32,12 @@ public class TransferControl {
 	
 	@Column(name = "XFER_NO", updatable = false, nullable = false)
 	private String transferNo;
+	
+	@Column(name = "REF")
+	private String reference;
+	
+	@Embedded
+	private Comments comments;
 	
 	@Column(name = "CREATED_DATE", nullable = false)
 	private Date created;
@@ -164,7 +173,23 @@ public class TransferControl {
 	public void setTransferNo(String transferNo) {
 		this.transferNo = transferNo;
 	}
-
+	
+	public String getReference() {
+		return reference;
+	}
+	
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+	
+	public Comments getComments() {
+		return comments;
+	}
+	
+	public void setComments(Comments comments) {
+		this.comments = comments;
+	}
+	
 	public Date getCreated() {
 		return created;
 	}

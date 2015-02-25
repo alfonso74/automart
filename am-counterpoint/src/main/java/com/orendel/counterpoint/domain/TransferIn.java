@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -26,6 +27,12 @@ public class TransferIn {
 	
 	@Column(name = "TO_LOC_ID")
 	private String locationTo;
+	
+	@Column(name = "REF")
+	private String reference;
+	
+	@Embedded
+	private Comments comments;
 
 	@Column(name = "TOT_QTY_RECVD", columnDefinition="t_qty")
 	private BigDecimal qtyReceived;
@@ -70,6 +77,23 @@ public class TransferIn {
 
 	public void setLocationTo(String locationTo) {
 		this.locationTo = locationTo;
+	}
+	
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+	
+	public Comments getComments() {
+		comments = comments == null ? new Comments() : comments;
+		return comments;
+	}
+
+	public void setComments(Comments comments) {
+		this.comments = comments;
 	}
 
 	public BigDecimal getQtyReceived() {
