@@ -33,7 +33,7 @@ public final class TransferMapper {
 	}
 
 	
-	public static TransferControlLine from(TransferInLine transferInLine) {
+	private static TransferControlLine from(TransferInLine transferInLine) {
 		TransferControlLine tcLine = new TransferControlLine();
 		
 		tcLine.setLineId(transferInLine.getLineId());

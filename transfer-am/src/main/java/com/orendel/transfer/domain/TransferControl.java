@@ -136,6 +136,11 @@ public class TransferControl {
 		return totalReceived;
 	}
 	
+	/**
+	 * Calcula el valor de todos los items recibidos en la transferencia.  Para esto se suma el valor total 
+	 * de cada línea (campo estExtCost del objeto {@link TransferControlLine}).
+	 * @return
+	 */
 	public BigDecimal getTotalReceivedItemsValue() {
 		BigDecimal totalReceivedValue = new BigDecimal(0);
 		for (TransferControlLine line : getLines()) {

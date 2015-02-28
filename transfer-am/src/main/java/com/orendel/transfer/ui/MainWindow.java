@@ -110,7 +110,8 @@ public class MainWindow {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				MessagesUtil.showError("Error de aplicación", e.getMessage());
+				MessagesUtil.showError("Error de aplicación", 
+						(e.getMessage() == null ? e.toString() + '\n' + e.getStackTrace()[0] : e.getMessage()));
 			}
 		}
 		ImagesService.INSTANCE.disposeImages();

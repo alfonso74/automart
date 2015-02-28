@@ -31,6 +31,7 @@ import com.orendel.transfer.domain.TransferControlLine;
 import com.orendel.transfer.ui.login.LoggedUserService;
 import com.orendel.transfer.util.MessagesUtil;
 import com.orendel.transfer.util.TransferMapper;
+import com.orendel.transfer.util.TransferUpdater;
 
 
 public class CreateTransferInEditor extends Composite {
@@ -407,6 +408,7 @@ public class CreateTransferInEditor extends Composite {
 	
 	private void createTransfer() {
 		saveTransfer();
+		updateCounterpoint();
 		logger.info("Control de transferencia generada: " + tcControl.getId());
 		MessagesUtil.showInformation("Guardar transferencia", "<size=+6>Se ha guardado exitosamente la transferencia (número " + tcControl.getId() + ").</size>");
 		resetFields();
@@ -583,6 +585,13 @@ public class CreateTransferInEditor extends Composite {
 		logger.info("Líneas de la transferencia: " + tcControl.getLines().size());
 		tcController.doSave(tcControl);
 		return tcControl;
+	}
+	
+	private void updateCounterpoint() {
+		TransferIn in = cpController.findTransferInByNumber(txtTransferNo.getText());
+		TransferUpdater updater = new TransferUpdater();
+		updater.updateTransferInFromTransferControl(in, tcControl);
+		cpController.doSave(in);
 	}
 	
 	/**

@@ -53,6 +53,24 @@ public class TransferIn {
 		line.setTransfer(this);
 	}
 	
+	/**
+	 * Busca una línea que tenga la propiedad lineId indicada
+	 * @param lineId propiedad "lineId" de la línea a ser buscada (no confundir con el identificador de la línea o campo "id")
+	 * @return línea con el id indicado, o <code>null</code> si no se encuentra ninguna línea
+	 */
+	public TransferInLine findLineById(Integer lineId) {
+		TransferInLine line = null;
+		if (getLines() != null) {
+			for (TransferInLine v : getLines()) {
+				if (v.getLineId().intValue() == lineId.intValue()) {
+					line = v;
+					break;
+				}
+			}
+		}
+		return line;
+	}
+	
 	// ******************************** Getters y setters ***********************************
 	
 	public String getId() {
