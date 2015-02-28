@@ -7,6 +7,7 @@ import java.util.List;
 import com.orendel.transfer.dao.GenericDAOImpl;
 import com.orendel.transfer.dao.TransferControlDAO;
 import com.orendel.transfer.domain.TransferControl;
+import com.orendel.transfer.domain.TransferControlStatus;
 
 
 public class TransferControlController extends AbstractControllerDelivery<TransferControl> {
@@ -21,6 +22,26 @@ public class TransferControlController extends AbstractControllerDelivery<Transf
 
 	public TransferControlController(String editorId) {
 		super(editorId, new TransferControlDAO());
+	}
+	
+	/**
+	 * Busca una transferencia en base al número de transferencia indicado.
+	 * @param transferNo número de transferencia a buscar
+	 * @return {@link TransferControl} asociado al número indicado, o <code>null</code> si no se encuentra
+	 */
+	public TransferControl findPartialTransferControlByNumber(String transferNo) {
+		TransferControl tc = null;
+		TransferControlDAO dao = (TransferControlDAO) getDAO();
+		List<TransferControl> tcList = dao.findByField("transferNo", transferNo);
+		if (tcList != null && !tcList.isEmpty()) {
+			for(TransferControl v : tcList) {
+				if (v.getStatus().equalsIgnoreCase(TransferControlStatus.PARTIAL.getCode())) {
+					tc = v;
+					break;
+				}
+			}
+		}
+		return tc;
 	}
 	
 	/**

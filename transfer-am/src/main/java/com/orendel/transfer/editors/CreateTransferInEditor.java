@@ -26,7 +26,6 @@ import com.orendel.counterpoint.domain.Item;
 import com.orendel.counterpoint.domain.TransferIn;
 import com.orendel.transfer.controllers.TransferControlController;
 import com.orendel.transfer.controllers.CounterpointController;
-import com.orendel.transfer.dao.TransferControlDAO;
 import com.orendel.transfer.domain.TransferControl;
 import com.orendel.transfer.domain.TransferControlLine;
 import com.orendel.transfer.ui.login.LoggedUserService;
@@ -37,13 +36,9 @@ import com.orendel.transfer.util.TransferMapper;
 public class CreateTransferInEditor extends Composite {
 	private static final Logger logger = Logger.getLogger(CreateTransferInEditor.class);
 	
-//	private InvoicesController controller;
-//	private DeliveriesController deliveriesController;
-//	private Delivery delivery;
-	
 	private TransferControl tcControl;
 	
-	private CounterpointController controller;
+	private CounterpointController cpController;
 	private TransferControlController tcController;
 	
 	private boolean saveFlag = false;
@@ -65,6 +60,10 @@ public class CreateTransferInEditor extends Composite {
 	private Text txtReceived;
 	private Text txtTotal;
 	private Text txtPending;
+	private Text txtReference;
+	private Text txtComment1;
+	private Text txtComment2;
+	private Text txtComment3;
 	
 
 	/**
@@ -75,7 +74,7 @@ public class CreateTransferInEditor extends Composite {
 	public CreateTransferInEditor(Composite parent, int style) {
 		super(parent, style);
 		
-		controller = new CounterpointController("TransferIn");
+		cpController = new CounterpointController("TransferIn");
 		tcController = new TransferControlController("TransferControl");
 		
 		GridLayout gridLayout = new GridLayout(1, false);
@@ -104,10 +103,11 @@ public class CreateTransferInEditor extends Composite {
 			public void keyPressed(KeyEvent e) {
 //				if (!txtInvoiceNo.getText().isEmpty() && e.keyCode == 13) {
 				if (e.keyCode == 13) {
-					if (buscarDetallesFactura()) {
+					if (existeRegistro(txtTransferNo.getText())) {
 						txtQty.setFocus();
 						txtQty.selectAll();
 					} else {
+						tableTransferLines.removeAll();
 						txtTransferNo.setFocus();
 						txtTransferNo.selectAll();
 					}
@@ -122,10 +122,11 @@ public class CreateTransferInEditor extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					if (buscarDetallesFactura()) {
+					if (existeRegistro(txtTransferNo.getText())) {
 						txtQty.setFocus();
 						txtQty.selectAll();
 					} else {
+						tableTransferLines.removeAll();
 						txtTransferNo.setFocus();
 						txtTransferNo.selectAll();
 					}
@@ -189,53 +190,48 @@ public class CreateTransferInEditor extends Composite {
 			}
 		});
 		
-		Group grpTotales = new Group(this, SWT.NONE);
-		grpTotales.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.NORMAL));
-		GridLayout gl_grpTotales = new GridLayout(8, false);
-		gl_grpTotales.marginBottom = 5;
-		grpTotales.setLayout(gl_grpTotales);
-		grpTotales.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		Group groupReference = new Group(this, SWT.NONE);
+		GridLayout gl_groupReference = new GridLayout(6, false);
+		groupReference.setLayout(gl_groupReference);
+		groupReference.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		
-		Label lblLineas = new Label(grpTotales, SWT.NONE);
-		lblLineas.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
-		lblLineas.setText("Total de líneas:");
+		Label lblReference = new Label(groupReference, SWT.NONE);
+		lblReference.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		GridData gd_lblReference = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		gd_lblReference.horizontalIndent = 19;
+		lblReference.setLayoutData(gd_lblReference);
+		lblReference.setText("Referencia:");
 		
-		txtLines = new Text(grpTotales, SWT.BORDER);
-		txtLines.setEnabled(false);
-		txtLines.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		txtReference = new Text(groupReference, SWT.BORDER);
+		txtReference.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		GridData gd_txtReference = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_txtReference.widthHint = 160;
+		txtReference.setLayoutData(gd_txtReference);
 		
-		Label lblArtRecibidos = new Label(grpTotales, SWT.NONE);
-		GridData gd_lblArtRecibidos = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_lblArtRecibidos.horizontalIndent = 20;
-		lblArtRecibidos.setLayoutData(gd_lblArtRecibidos);
-		lblArtRecibidos.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
-		lblArtRecibidos.setText("Art. recibidos:");
+		Label lblComments = new Label(groupReference, SWT.NONE);
+		GridData gd_lblComments = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		gd_lblComments.horizontalIndent = 40;
+		lblComments.setLayoutData(gd_lblComments);
+		lblComments.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		lblComments.setText("Comentarios:");
 		
-		txtReceived = new Text(grpTotales, SWT.BORDER);
-		txtReceived.setEnabled(false);
-		txtReceived.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		txtComment1 = new Text(groupReference, SWT.BORDER);
+		txtComment1.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		GridData gd_txtComment1 = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_txtComment1.widthHint = 200;
+		txtComment1.setLayoutData(gd_txtComment1);
 		
-		Label lblValor = new Label(grpTotales, SWT.NONE);
-		lblValor.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
-		GridData gd_lblValor = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
-		gd_lblValor.horizontalIndent = 20;
-		lblValor.setLayoutData(gd_lblValor);
-		lblValor.setText("Valor:");
+		txtComment2 = new Text(groupReference, SWT.BORDER);
+		txtComment2.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		GridData gd_txtComment2 = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_txtComment2.widthHint = 200;
+		txtComment2.setLayoutData(gd_txtComment2);
 		
-		txtTotal = new Text(grpTotales, SWT.BORDER);
-		txtTotal.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
-		txtTotal.setEnabled(false);
-		
-		Label lblArtPendientes = new Label(grpTotales, SWT.NONE);
-		GridData gd_lblArtPendientes = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_lblArtPendientes.horizontalIndent = 20;
-		lblArtPendientes.setLayoutData(gd_lblArtPendientes);
-		lblArtPendientes.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
-		lblArtPendientes.setText("Art. pendientes");
-		
-		txtPending = new Text(grpTotales, SWT.BORDER);
-		txtPending.setEnabled(false);
-		txtPending.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		txtComment3 = new Text(groupReference, SWT.BORDER);
+		txtComment3.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		GridData gd_txtComment3 = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_txtComment3.widthHint = 200;
+		txtComment3.setLayoutData(gd_txtComment3);
 		
 		tableTransferLines = new Table(this, SWT.BORDER | SWT.HIDE_SELECTION);
 		tableTransferLines.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
@@ -271,6 +267,52 @@ public class CreateTransferInEditor extends Composite {
 		TableColumn tblclmnComentarios = new TableColumn(tableTransferLines, SWT.NONE);
 		tblclmnComentarios.setWidth(300);
 		tblclmnComentarios.setText("Comentario");
+		
+		Composite grpTotales = new Composite(this, SWT.NONE);
+		grpTotales.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.NORMAL));
+		GridLayout gl_grpTotales = new GridLayout(8, false);
+		gl_grpTotales.marginHeight = 0;
+		gl_grpTotales.marginBottom = 10;
+		grpTotales.setLayout(gl_grpTotales);
+		grpTotales.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1));
+		
+		Label lblLineas = new Label(grpTotales, SWT.NONE);
+		lblLineas.setText("Total de líneas:");
+		
+		txtLines = new Text(grpTotales, SWT.BORDER);
+		txtLines.setEnabled(false);
+		
+		Label lblArtRecibidos = new Label(grpTotales, SWT.NONE);
+		GridData gd_lblArtRecibidos = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblArtRecibidos.horizontalIndent = 20;
+		lblArtRecibidos.setLayoutData(gd_lblArtRecibidos);
+		lblArtRecibidos.setText("Art. recibidos:");
+		
+		txtReceived = new Text(grpTotales, SWT.BORDER);
+		txtReceived.setEnabled(false);
+		
+		Label lblValor = new Label(grpTotales, SWT.NONE);
+		GridData gd_lblValor = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		gd_lblValor.horizontalIndent = 20;
+		lblValor.setLayoutData(gd_lblValor);
+		lblValor.setText("Valor:");
+		
+		txtTotal = new Text(grpTotales, SWT.BORDER);
+		txtTotal.setEnabled(false);
+		
+		Label lblArtPendientes = new Label(grpTotales, SWT.NONE);
+		GridData gd_lblArtPendientes = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblArtPendientes.horizontalIndent = 20;
+		lblArtPendientes.setLayoutData(gd_lblArtPendientes);
+		lblArtPendientes.setText("Art. pendientes");
+		
+		txtPending = new Text(grpTotales, SWT.BORDER);
+		txtPending.setEnabled(false);
+		
+		Label label = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
+		GridData gd_label = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_label.verticalIndent = 5;
+		label.setLayoutData(gd_label);
 		
 		Composite compositeActions = new Composite(this, SWT.NONE);
 		GridLayout gl_compositeActions = new GridLayout(3, true);
@@ -378,61 +420,59 @@ public class CreateTransferInEditor extends Composite {
 		resetFields();
 		txtTransferNo.setFocus();
 	}
-
 	
-	private boolean buscarDetallesFactura() {
+	private boolean existeRegistro(String transferNo) {
 		boolean result = false;
 		
-		if (!txtTransferNo.getText().isEmpty()) {
-			TransferIn transferIn = controller.findTransferInByNumber(txtTransferNo.getText());
-			if (transferIn != null) {
-				logger.info("Transferencia encontrada (CP), número: " + transferIn.getId() + ", líneas: " + transferIn.getLines().size());
-				tcControl = TransferMapper.from(transferIn);
-				refreshFormDetails();
-				result = true;
-			} else {
-				tableTransferLines.removeAll();
-				MessagesUtil.showWarning("Buscar transferencia", "No se encontró la transferencia número " + txtTransferNo.getText() + ".");
-			}
+		if (transferNo.isEmpty()) {
+			return result;
 		}
-		
-//		if (!txtInvoiceNo.getText().isEmpty()) {
-//			Invoice invoice = controller.findInvoiceByNumber(txtInvoiceNo.getText());
-//			if (invoice != null) {
-//				delivery = deliveriesController.findDeliveryByInvoiceNumber(txtInvoiceNo.getText());
-//				if (delivery == null) {
-//					logger.info("Factura encontrada!, documento: " + invoice.getTicket() + ", líneas: " + invoice.getLines());
-//					delivery = InvoiceDeliveryMapper.from(invoice);
-//					refreshFormDetails();
-//					result = true;
-//				} else {
-//					if (delivery.getStatus().equals(Status.CLOSED.getCode())) {
-//						MessagesUtil.showError("Buscar factura", "La factura número " + txtInvoiceNo.getText() + " ya tiene una entrega realizada.");
-//					} else {
-//						int action = MessagesUtil.showConfirmation("Buscar factura", "<size=+2>La factura número " + txtInvoiceNo.getText() + " ya tiene una entrega"
-//								+ "parcial, desea completarla?</size>");
-//						logger.info("Botón presionado: " + action);
-//						if (action == 0) {
-//							logger.info("Abrir entrega parcial");
-//							// editar delivery en current editor
-//							refreshFormDetails();
-//							result = true;
-//						}
-//					}					
-//				}
-//			} else {
-//				tableInvoiceLines.removeAll();
-//				MessagesUtil.showWarning("Buscar factura", "No se encontró la factura número " + txtInvoiceNo.getText() + ".");
-//			}
-//		}
+		TransferControl tc = findPartialTransferControl(transferNo);
+		if (tc != null) {
+			int action = MessagesUtil.showConfirmation("Buscar transferencia", "<size=+2>La transferencia número " + transferNo + " ya tiene un control de "
+					+ "entrega parcial, desea completarla?</size>");
+			logger.info("Botón presionado: " + action);
+			if (action == 0) {
+				logger.info("Editar transferencia parcial: " + transferNo + ", id: " + tc.getId());
+			} else {
+				return false;
+			}
+		} else {
+			tc = tryToGetTransferControlFromCounterPoint(transferNo);
+		}
+		if (tc != null) {
+			tcControl = tc;
+			refreshFormDetails();
+			result = true;
+		} else {
+			MessagesUtil.showWarning("Buscar transferencia", "No se encontró la transferencia número " + transferNo + ".");
+		}
 		return result;
+	}
+	
+	private TransferControl tryToGetTransferControlFromCounterPoint(String transferNo) {
+		TransferControl tc = null;
+		TransferIn transferIn = cpController.findTransferInByNumber(transferNo);
+		if (transferIn != null) {
+			logger.info("Transferencia encontrada (CP), número: " + transferIn.getId() + ", líneas: " + transferIn.getLines().size());
+			tc = TransferMapper.from(transferIn);
+		}
+		return tc;
+	}
+	
+	private TransferControl findPartialTransferControl(String transferNo) {
+		TransferControl tc = tcController.findPartialTransferControlByNumber(transferNo);
+		if (tc != null) {
+			logger.info("Transferencia encontrada (Delivery), número: " + tc.getId() + ", líneas: " + tc.getLines().size());
+		}
+		return tc;
 	}
 	
 	
 	private void accountForItemWithBarCodeOrItemCode(String barcode) {
-		Item item = controller.findItemByBarCode(barcode);
+		Item item = cpController.findItemByBarCode(barcode);
 		if (item == null) {
-			item = controller.findItemByItemCode(barcode);
+			item = cpController.findItemByItemCode(barcode);
 		}
 		if (item != null) {
 			logger.info("Artículo encontrado en DB: " + item.getDescription());
@@ -454,6 +494,13 @@ public class CreateTransferInEditor extends Composite {
 		if (tcControl == null) {
 			logger.warn("TransferControl object is null!");
 			return;
+		}
+		
+		txtReference.setText(checkNull(tcControl.getReference()));
+		if (tcControl.getComments() != null) {
+			txtComment1.setText(checkNull(tcControl.getComments().getComment1()));
+			txtComment2.setText(checkNull(tcControl.getComments().getComment2()));
+			txtComment3.setText(checkNull(tcControl.getComments().getComment3()));
 		}
 		
 		txtLines.setText("" + tcControl.getLines().size());
@@ -510,12 +557,7 @@ public class CreateTransferInEditor extends Composite {
 	 * @return
 	 */
 	private TransferControl saveTransfer() {
-		tcControl.setUserName(LoggedUserService.INSTANCE.getUser().getUserName());
-		tcControl.close();
-		logger.info("Líneas de la transferencia: " + tcControl.getLines().size());
-		TransferControlDAO dao = new TransferControlDAO();
-		dao.doSave(tcControl);
-		return tcControl;
+		return this.save(true);
 	}
 	
 	/**
@@ -523,10 +565,23 @@ public class CreateTransferInEditor extends Composite {
 	 * @return
 	 */
 	private TransferControl savePartialTransfer() {
+		return this.save(false);
+	}
+	
+	/**
+	 * Saves a transfer
+	 * @param closeTransfer indicates if the {@link TransferControl} is final and should be closed
+	 * or is a partial transfer.
+	 */
+	private TransferControl save(boolean closeTransfer) {
 		tcControl.setUserName(LoggedUserService.INSTANCE.getUser().getUserName());
+		tcControl.setReference(txtReference.getText());
+		tcControl.setComments(txtComment1.getText(), txtComment2.getText(), txtComment3.getText());		
+		if (closeTransfer) {
+			tcControl.close();
+		}
 		logger.info("Líneas de la transferencia: " + tcControl.getLines().size());
-		TransferControlDAO dao = new TransferControlDAO();
-		dao.doSave(tcControl);
+		tcController.doSave(tcControl);
 		return tcControl;
 	}
 	
@@ -538,6 +593,10 @@ public class CreateTransferInEditor extends Composite {
 		txtTransferNo.setText("");
 		txtBarcode.setText("");
 		txtQty.setSelection(1);
+		txtReference.setText("");
+		txtComment1.setText("");
+		txtComment2.setText("");
+		txtComment3.setText("");
 		tableTransferLines.clearAll();
 		tcControl = null;
 		btnGuardar.setEnabled(false);
@@ -548,17 +607,18 @@ public class CreateTransferInEditor extends Composite {
 	 * details (but without any transfer information).
 	 */
 	private void resetTransferData() {
-		controller.finalizarSesion();
+		cpController.finalizarSesion();
 		tcController.finalizarSesion();
-		controller = new CounterpointController("TransferIn");
+		cpController = new CounterpointController("TransferIn");
 		tcController = new TransferControlController("TransferControl");
 		tableTransferLines.clearAll();
 		tcControl = null;
 		btnGuardar.setEnabled(false);
-		if (buscarDetallesFactura()) {
+		if (existeRegistro(txtTransferNo.getText())) {
 			txtQty.setFocus();
 			txtQty.selectAll();
 		} else {
+			tableTransferLines.removeAll();
 			txtTransferNo.setFocus();
 			txtTransferNo.selectAll();
 		}
@@ -576,10 +636,13 @@ public class CreateTransferInEditor extends Composite {
 		getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF04);
 		getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF09);
 		getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF12);
-		controller.finalizarSesion();
+		cpController.finalizarSesion();
 		tcController.finalizarSesion();
 		super.dispose();		
 	}
 	
+	public String checkNull(String valorCampo) {
+		return valorCampo == null ? "" : valorCampo;
+	}
 }
 

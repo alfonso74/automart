@@ -1,14 +1,10 @@
 package com.orendel.transfer.domain;
 
 public enum Status {
-	/** Active delivery/user */
+	/** Active user */
 	ACTIVE("A", "Activo"),
-	/** Closed delivery */
-	CLOSED("C", "Cerrado"),
 	/** Inactive user */
 	INACTIVE("I", "Inactivo"),
-	/** Partial/Pending delivery */
-	PARTIAL("P", "Parcial"),
 	;
 
 	private String code;

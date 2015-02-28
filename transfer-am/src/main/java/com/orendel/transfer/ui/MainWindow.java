@@ -35,6 +35,7 @@ import com.orendel.transfer.services.ImagesService;
 import com.orendel.transfer.services.ShellImagesService;
 import com.orendel.transfer.ui.login.LoggedUserService;
 import com.orendel.transfer.ui.login.LoginWindow;
+import com.orendel.transfer.util.MessagesUtil;
 
 
 public class MainWindow {
@@ -109,6 +110,7 @@ public class MainWindow {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				MessagesUtil.showError("Error de aplicación", e.getMessage());
 			}
 		}
 		ImagesService.INSTANCE.disposeImages();
