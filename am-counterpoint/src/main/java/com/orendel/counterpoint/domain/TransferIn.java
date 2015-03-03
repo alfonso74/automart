@@ -28,6 +28,9 @@ public class TransferIn {
 	@Column(name = "TO_LOC_ID")
 	private String locationTo;
 	
+	@Column(name = "TOT_SEL_LINS")
+	private Integer totalSelectedLines;
+	
 	@Column(name = "REF")
 	private String reference;
 	
@@ -97,6 +100,14 @@ public class TransferIn {
 		this.locationTo = locationTo;
 	}
 	
+	public Integer getTotalSelectedLines() {
+		return totalSelectedLines;
+	}
+
+	public void setTotalSelectedLines(Integer totalSelectedLines) {
+		this.totalSelectedLines = totalSelectedLines;
+	}
+
 	public String getReference() {
 		return reference;
 	}

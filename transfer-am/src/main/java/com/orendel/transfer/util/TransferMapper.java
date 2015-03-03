@@ -38,6 +38,8 @@ public final class TransferMapper {
 		
 		tcLine.setLineId(transferInLine.getLineId());
 		tcLine.setPositionId(transferInLine.getPositionId());
+		System.out.println("Selected: " + transferInLine.getSelected());
+		tcLine.setSelected("Y");
 		tcLine.setComments(transferInLine.getComments());
 		tcLine.setQtyPrevExpected(transferInLine.getQtyPrevExpected());
 		tcLine.setQtyReceived(transferInLine.getQtyReceived());

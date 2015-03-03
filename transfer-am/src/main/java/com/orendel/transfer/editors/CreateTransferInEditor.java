@@ -42,7 +42,7 @@ public class CreateTransferInEditor extends Composite {
 	private CounterpointController cpController;
 	private TransferControlController tcController;
 	
-	private boolean saveFlag = false;
+	private boolean allItemsAccountedFor = false;
 	
 	private Text txtTransferNo;
 	private Table tableTransferLines;
@@ -59,7 +59,6 @@ public class CreateTransferInEditor extends Composite {
 	private Listener listenerF12;
 	private Text txtLines;
 	private Text txtReceived;
-	private Text txtTotal;
 	private Text txtPending;
 	private Text txtReference;
 	private Text txtComment1;
@@ -292,15 +291,6 @@ public class CreateTransferInEditor extends Composite {
 		txtReceived = new Text(grpTotales, SWT.BORDER);
 		txtReceived.setEnabled(false);
 		
-		Label lblValor = new Label(grpTotales, SWT.NONE);
-		GridData gd_lblValor = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
-		gd_lblValor.horizontalIndent = 20;
-		lblValor.setLayoutData(gd_lblValor);
-		lblValor.setText("Valor:");
-		
-		txtTotal = new Text(grpTotales, SWT.BORDER);
-		txtTotal.setEnabled(false);
-		
 		Label lblArtPendientes = new Label(grpTotales, SWT.NONE);
 		GridData gd_lblArtPendientes = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_lblArtPendientes.horizontalIndent = 20;
@@ -323,7 +313,8 @@ public class CreateTransferInEditor extends Composite {
 		btnParcial = new Button(compositeActions, SWT.NONE);
 		btnParcial.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnParcial.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
-		btnParcial.setText("Txfer parcial (F4)");
+		btnParcial.setText("Transfer Parcial (F4)");
+		btnParcial.setToolTipText("Guarda una transferencia parcial en la computadora (sin actualizar CounterPoint)");
 		btnParcial.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -336,6 +327,7 @@ public class CreateTransferInEditor extends Composite {
 		btnLimpiar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnLimpiar.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
 		btnLimpiar.setText("Limpiar (F9)");
+		btnLimpiar.setToolTipText("Reinicia el estado de las entrega para la sesión actual");
 		btnLimpiar.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -346,9 +338,9 @@ public class CreateTransferInEditor extends Composite {
 		
 		btnGuardar = new Button(compositeActions, SWT.NONE);
 		btnGuardar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnGuardar.setEnabled(false);
 		btnGuardar.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
-		btnGuardar.setText("Txfer realizada (F12)");
+		btnGuardar.setText("Actualizar CP (F12)");
+		btnGuardar.setToolTipText("Guarda y actualiza la información de la transferencia en el CounterPoint");
 		btnGuardar.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -407,6 +399,16 @@ public class CreateTransferInEditor extends Composite {
 	}
 	
 	private void createTransfer() {
+		if (!allItemsAccountedFor) {
+			int action = MessagesUtil.showConfirmation("Actualizar CounterPoint", "<size=+2>La transferencia número " + 
+					txtTransferNo.getText() + " tiene " + txtPending.getText() + " artículos pendientes, está seguro de querer\n" +
+					"actualizar la información en CounterPoint?</size>");
+			logger.info("Botón presionado: " + action);
+			if (action != 0) {
+				MessagesUtil.showInformation("Actualizar CounterPoint", "<size=+2>La acción ha sido cancelada.</size>");
+				return;
+			}
+		}
 		saveTransfer();
 		updateCounterpoint();
 		logger.info("Control de transferencia generada: " + tcControl.getId());
@@ -507,13 +509,12 @@ public class CreateTransferInEditor extends Composite {
 		
 		txtLines.setText("" + tcControl.getLines().size());
 		txtReceived.setText("" + tcControl.getTotalReceivedItems());
-		txtTotal.setText("" + tcControl.getTotalReceivedItemsValue().setScale(2));
 		txtPending.setText("" + (tcControl.getTotalExpectedItems() - tcControl.getTotalReceivedItems()));
 		
 		tableTransferLines.removeAll();
 		TableItem item;
 		
-		saveFlag = true;
+		allItemsAccountedFor = true;
 		
 		System.out.println("TTT: " + tcControl.getLines());
 		
@@ -547,11 +548,9 @@ public class CreateTransferInEditor extends Composite {
 			}
 //			item.setBackground(1, blue);
 			if (!item.getBackground().equals(transferOK)) {
-				saveFlag = false;
+				allItemsAccountedFor = false;
 			}
 		}
-		
-		btnGuardar.setEnabled(saveFlag);
 	}
 	
 	/**

@@ -11,6 +11,13 @@ public class TransferUpdater {
 	
 	public void updateTransferInFromTransferControl(TransferIn in, TransferControl tc) {
 		//TODO Verificar existencia de todas las líneas del tc en in, y en caso contrario reventar olímpicamente
+		for (TransferControlLine tcLine : tc.getLines()) {
+			TransferInLine inLine = in.findLineById(tcLine.getLineId());
+			if (inLine == null) {
+				// Lanzar exception
+			}					
+		}
+		in.setTotalSelectedLines(tc.getTotalSelectedLines());
 		in.setReference(tc.getReference());
 		in.setComments(tc.getComments());
 		in.setQtyReceived(new BigDecimal(tc.getTotalReceivedItems()));
@@ -23,6 +30,7 @@ public class TransferUpdater {
 	}
 	
 	private void updateLine(TransferInLine inLine, TransferControlLine tcLine) {
+		inLine.setSelected(tcLine.getSelected());
 		inLine.setComments(tcLine.getComments());
 		inLine.setQtyPrevExpected(tcLine.getQtyPrevExpected());
 		inLine.setQtyReceived(tcLine.getQtyReceived());

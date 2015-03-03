@@ -33,6 +33,9 @@ public class TransferControlLine {
 	@Column(name = "XFER_LIN_SEQ_NO", nullable = false)
 	private Integer positionId;
 	
+	@Column(name = "SELECTD", columnDefinition="varchar", nullable = false)
+	private String selected;
+	
 	@Embedded
 	private Comments comments;
 	
@@ -111,6 +114,14 @@ public class TransferControlLine {
 		this.positionId = positionId;
 	}
 	
+	public String getSelected() {
+		return selected;
+	}
+	
+	public void setSelected(String selected) {
+		this.selected = selected;
+	}
+
 	public Comments getComments() {
 		if (comments == null) {
 			comments = new Comments();

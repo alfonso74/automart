@@ -28,6 +28,9 @@ public class TransferInLine {
 	@Column(name = "XFER_LIN_SEQ_NO", insertable = false, updatable = false)
 	private Integer positionId;
 	
+	@Column(name = "SELECTD")
+	private String selected;
+	
 	@Embedded
 	private Comments comments;
 	
@@ -99,6 +102,14 @@ public class TransferInLine {
 		this.positionId = positionId;
 	}
 	
+	public String getSelected() {
+		return selected;
+	}
+
+	public void setSelected(String selected) {
+		this.selected = selected;
+	}
+
 	public Comments getComments() {
 		return comments;
 	}

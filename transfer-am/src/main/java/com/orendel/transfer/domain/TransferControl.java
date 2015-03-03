@@ -59,6 +59,20 @@ public class TransferControl {
 	
 	// *************************** Helper methods ********************************
 	
+	public Integer getTotalSelectedLines() {
+		Integer selected = 0;
+		if (getLines() == null || getLines().isEmpty()) {
+			return selected;
+		}
+		for (TransferControlLine line : getLines()) {
+			if (line.getSelected().equalsIgnoreCase("y")) {
+				selected++;
+			}
+		}
+		return selected;
+	}
+	
+	
 	public TransferControlLine adjustReceivedQuantityForItem(String itemNo, int qtyReceived) {
 		TransferControlLine tcLine = null;
 		List<TransferControlLine> tcLines = this.locateLinesWithItem(itemNo);

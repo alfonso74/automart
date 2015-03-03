@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.orendel.transfer.domain.TransferControl;
 import com.orendel.transfer.domain.TransferControlLine;
@@ -30,7 +31,6 @@ public class TransferControlTest {
 	public void setup() {
 
 	}
-	
 	
 	@Test
 	public void testLocateLinesWithItem_Happy() {
@@ -125,6 +125,25 @@ public class TransferControlTest {
 		assertTrue("Unexpected status: " + transfer.getStatus(), transfer.getStatus().equalsIgnoreCase(TransferControlStatus.CLOSED.getCode()));
 	}
 	
+	@Test
+	public void testGetTotalSelectedLines_Happy() {
+		logger.info("------- Scenario: Get the total number of selected lines -----------");
+		TransferControl transfer = createTransferControl();
+		Integer selected = transfer.getTotalSelectedLines();
+		Integer expected = 5;
+		assertTrue("Wrong number of total selected lines: " + selected + " expected: " + expected, selected.equals(expected));
+	}
+	
+	@Test
+	public void testGetTotalSelectedLines_NullLines() {
+		logger.info("------- Scenario: Get the total number of selected lines (TransferControl with lines set to null) -----------");
+		TransferControl transfer = new TransferControl();
+		transfer.setLines(null);
+		Integer selected = transfer.getTotalSelectedLines();
+		Integer expected = 0;
+		assertTrue("Wrong number of total selected lines: " + selected + " expected: " + expected, selected.equals(expected));
+	}
+	
 	
 	private TransferControl createTransferControl() {
 		TransferControl transfer = new TransferControl();		
@@ -145,6 +164,7 @@ public class TransferControlTest {
 		line.setQtyNewExpected(new BigDecimal(qtyExpected - qtyReceived).setScale(0));
 		line.setEstUnitCost(new BigDecimal(1));
 		line.setEstExtCost(line.getEstUnitCost().multiply(line.getQtyReceived()));
+		line.setSelected("Y");
 		return line;
 	}
 }
