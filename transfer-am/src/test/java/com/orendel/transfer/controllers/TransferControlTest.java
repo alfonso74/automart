@@ -10,7 +10,6 @@ import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.orendel.transfer.domain.TransferControl;
 import com.orendel.transfer.domain.TransferControlLine;

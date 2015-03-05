@@ -8,17 +8,23 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.widgets.Group;
 
@@ -46,6 +52,7 @@ public class CreateTransferInEditor extends Composite {
 	
 	private Text txtTransferNo;
 	private Table tableTransferLines;
+	private TableEditor editor;
 	
 	private Text txtBarcode;
 	private Text txtQty;
@@ -234,6 +241,7 @@ public class CreateTransferInEditor extends Composite {
 		txtComment3.setLayoutData(gd_txtComment3);
 		
 		tableTransferLines = new Table(this, SWT.BORDER | SWT.HIDE_SELECTION);
+//		tableTransferLines = new Table(this, SWT.FULL_SELECTION | SWT.BORDER | SWT.HIDE_SELECTION);
 		tableTransferLines.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
 		GridData gd_tableInvoiceLines = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_tableInvoiceLines.verticalIndent = 10;
@@ -518,10 +526,12 @@ public class CreateTransferInEditor extends Composite {
 		
 		System.out.println("TTT: " + tcControl.getLines());
 		
+		int lineNumber = 0;
 		for (TransferControlLine v : tcControl.getLines()) {
 			Color transferOK = new Color(getDisplay(), 200, 255, 190);
 			
 			item = new TableItem(tableTransferLines, SWT.NONE);
+			item.setData("lineNumber", lineNumber++);
 			int column = 0;
 			item.setText(column++, " " + v.getQtyPrevExpected().setScale(0).toString());
 			item.setText(column++, v.getQtyReceived().setScale(0).toString());
@@ -551,6 +561,137 @@ public class CreateTransferInEditor extends Composite {
 				allItemsAccountedFor = false;
 			}
 		}
+		
+		addEditorControl2();
+	}
+	
+	private void addEditorControl() {
+		editor = new TableEditor(tableTransferLines);
+		//The editor must have the same size as the cell and must
+		//not be any smaller than 50 pixels.
+		editor.horizontalAlignment = SWT.LEFT;
+		editor.grabHorizontal = true;
+		editor.minimumWidth = 50;
+		// editing the fifth column
+		final int EDITABLECOLUMN = 5;
+		
+		tableTransferLines.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				super.widgetSelected(e);
+			}			
+		});
+		
+		tableTransferLines.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// Clean up any previous editor control
+				Control oldEditor = editor.getEditor();
+				if (oldEditor != null) oldEditor.dispose();
+		
+				// Identify the selected row
+				TableItem item = (TableItem)e.item;
+				if (item == null) return;
+				
+				System.out.println("EEE: " + item.getText(4));
+				Object d = item.getData();
+		
+				// The control that will be the editor must be a child of the Table
+				Text newEditor = new Text(tableTransferLines, SWT.NONE);
+				newEditor.setText(item.getText(EDITABLECOLUMN));
+				newEditor.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+				newEditor.addModifyListener(new ModifyListener() {
+					public void modifyText(ModifyEvent e) {
+						Text text = (Text)editor.getEditor();
+						editor.getItem().setText(EDITABLECOLUMN, text.getText());
+						int lineNumber = (int) editor.getItem().getData("lineNumber");
+						tcControl.getLines().get(lineNumber).getComments().setComment1(text.getText());
+					}
+				});
+				newEditor.addKeyListener(new KeyAdapter() {
+					@Override
+					public void keyPressed(KeyEvent arg0) {
+						logger.info("Key: " + arg0.keyCode);
+						if (arg0.keyCode == 13) {
+							txtQty.setFocus();
+							txtQty.setText("1");
+							txtQty.selectAll();
+						}
+					}
+				});
+				newEditor.selectAll();
+				newEditor.setFocus();
+				editor.setEditor(newEditor, item, EDITABLECOLUMN);
+			}
+		});
+	}
+	
+	private void addEditorControl2() {
+		editor = new TableEditor(tableTransferLines);
+		editor.horizontalAlignment = SWT.LEFT;
+		editor.grabHorizontal = true;
+
+		// editing the fifth column
+		final int EDITABLECOLUMN = 5;
+		tableTransferLines.addListener(SWT.MouseDown, new Listener() {
+			public void handleEvent(Event event) {
+				Rectangle clientArea = tableTransferLines.getClientArea();
+				Point pt = new Point(event.x, event.y);
+				int index = tableTransferLines.getTopIndex();
+				while (index < tableTransferLines.getItemCount()) {
+					boolean visible = false;
+					final TableItem item = tableTransferLines.getItem(index);
+					Rectangle rect = item.getBounds(EDITABLECOLUMN);
+					if (rect.contains(pt)) {
+						final Text text = new Text(tableTransferLines, SWT.NONE);
+						text.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+						Listener textListener = new Listener() {
+							public void handleEvent(final Event e) {
+								int lineNumber = (int) editor.getItem().getData("lineNumber");
+								switch (e.type) {
+								case SWT.FocusOut:
+									System.out.println("FocusOut");
+									item.setText(EDITABLECOLUMN, text.getText());
+									tcControl.getLines().get(lineNumber).getComments().setComment1(text.getText());
+									text.dispose();
+									break;
+								case SWT.Traverse:
+									switch (e.detail) {
+									case SWT.TRAVERSE_RETURN:
+										System.out.println("TRAVERSE_RETURN");
+										item.setText(EDITABLECOLUMN, text.getText());
+										tcControl.getLines().get(lineNumber).getComments().setComment1(text.getText());
+										// FALL THROUGH
+									case SWT.TRAVERSE_ESCAPE:
+										System.out.println("TRAVERSE_ESCAPE");
+										txtQty.setFocus();
+										txtQty.setText("1");
+										txtQty.selectAll();
+										text.dispose();
+										e.doit = false;
+									}
+									break;
+								}
+							}
+						};
+						text.addListener(SWT.FocusOut, textListener);
+						text.addListener(SWT.Traverse, textListener);
+						editor.setEditor(text, item, EDITABLECOLUMN);
+						text.setText(item.getText(EDITABLECOLUMN));
+						text.selectAll();
+						text.setFocus();
+						return;
+					}
+					if (!visible && rect.intersects(clientArea)) {
+						visible = true;
+					}
+					if (!visible)
+						return;
+					index++;
+				}
+			}
+		});
 	}
 	
 	/**
@@ -605,7 +746,8 @@ public class CreateTransferInEditor extends Composite {
 		txtComment1.setText("");
 		txtComment2.setText("");
 		txtComment3.setText("");
-		tableTransferLines.clearAll();
+		tableTransferLines.removeAll();
+		editor.getEditor().dispose();
 		tcControl = null;
 		btnGuardar.setEnabled(false);
 	}
