@@ -37,8 +37,8 @@ import com.orendel.transfer.util.TransferMapper;
 import com.orendel.transfer.util.TransferUpdater;
 
 
-public class CreateTransferInEditor extends Composite {
-	private static final Logger logger = Logger.getLogger(CreateTransferInEditor.class);
+public class CreateTransferInEditorV0 extends Composite {
+	private static final Logger logger = Logger.getLogger(CreateTransferInEditorV0.class);
 	
 	private TransferControl tcControl;
 	
@@ -54,9 +54,9 @@ public class CreateTransferInEditor extends Composite {
 	private Text txtBarcode;
 	private Text txtQty;
 	
-	private Button btnInitTransfer;
-	private Button btnSaveDraft;
-	private Button btnCounterPoint;
+	private Button btnParcial;
+	private Button btnGuardar;
+	private Button btnLimpiar;
 	
 	private Listener listenerF04;
 	private Listener listenerF09;
@@ -75,7 +75,7 @@ public class CreateTransferInEditor extends Composite {
 	 * @param parent
 	 * @param style
 	 */
-	public CreateTransferInEditor(Composite parent, int style) {
+	public CreateTransferInEditorV0(Composite parent, int style) {
 		super(parent, style);
 		
 		cpController = new CounterpointController("TransferIn");
@@ -304,8 +304,6 @@ public class CreateTransferInEditor extends Composite {
 		
 		txtPending = new Text(grpTotales, SWT.BORDER);
 		txtPending.setEnabled(false);
-		new Label(grpTotales, SWT.NONE);
-		new Label(grpTotales, SWT.NONE);
 		
 		Label label = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
 		GridData gd_label = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
@@ -317,68 +315,48 @@ public class CreateTransferInEditor extends Composite {
 		gl_compositeActions.marginWidth = 0;
 		compositeActions.setLayout(gl_compositeActions);
 		
-		btnInitTransfer = new Button(compositeActions, SWT.NONE);
-		btnInitTransfer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnInitTransfer.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
-		btnInitTransfer.setText("Iniciar Entrada (F4)");
-		btnInitTransfer.setToolTipText("Guarda una transferencia parcial en la computadora (sin actualizar CounterPoint)");
-		btnInitTransfer.addSelectionListener(new SelectionAdapter() {
+		btnParcial = new Button(compositeActions, SWT.NONE);
+		btnParcial.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnParcial.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
+		btnParcial.setText("Transfer Parcial (F4)");
+		btnParcial.setToolTipText("Guarda una transferencia parcial en la computadora (sin actualizar CounterPoint)");
+		btnParcial.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println("Init transfer button pressed!");
-				initTransfer();
-			}
-		});
-		
-		btnSaveDraft = new Button(compositeActions, SWT.NONE);
-		btnSaveDraft.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnSaveDraft.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
-		btnSaveDraft.setText("Guardar Entrada (F9)");
-		btnSaveDraft.setToolTipText("Reinicia el estado de las entrega para la sesión actual");
-		btnSaveDraft.setEnabled(false);
-		btnSaveDraft.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				System.out.println("Save draft button pressed!");
+				System.out.println("Partial transfer button pressed!");
 				createPartialTransfer();
 			}
 		});
 		
-		btnCounterPoint = new Button(compositeActions, SWT.NONE);
-		btnCounterPoint.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnCounterPoint.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
-		btnCounterPoint.setText("Actualizar CP (F12)");
-		btnCounterPoint.setToolTipText("Guarda y actualiza la información de la transferencia en el CounterPoint");
-		btnCounterPoint.setEnabled(false);
-		btnCounterPoint.addSelectionListener(new SelectionAdapter() {
+		btnLimpiar = new Button(compositeActions, SWT.NONE);
+		btnLimpiar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnLimpiar.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
+		btnLimpiar.setText("Limpiar (F9)");
+		btnLimpiar.setToolTipText("Reinicia el estado de las entrega para la sesión actual");
+		btnLimpiar.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println("Update CounterPoint transfer button pressed!");
+				System.out.println("Reset button pressed!");
+				resetTransferData();
+			}
+		});
+		
+		btnGuardar = new Button(compositeActions, SWT.NONE);
+		btnGuardar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnGuardar.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
+		btnGuardar.setText("Actualizar CP (F12)");
+		btnGuardar.setToolTipText("Guarda y actualiza la información de la transferencia en el CounterPoint");
+		btnGuardar.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				System.out.println("Save transfer button pressed!");
 				createTransfer();
 			}
 		});
 		
 		addGlobalListeners();
 		
-		toggleEditableFields(false);
-		
 		txtTransferNo.setFocus();
-	}
-	
-	
-	private void toggleEditableFields(boolean newStatus) {
-		txtQty.setEnabled(newStatus);
-		txtBarcode.setEnabled(newStatus);
-		txtReference.setEnabled(newStatus);
-		txtComment1.setEnabled(newStatus);
-		txtComment2.setEnabled(newStatus);
-		txtComment3.setEnabled(newStatus);
-		
-		tableTransferLines.setEnabled(newStatus);
-		
-		btnInitTransfer.setEnabled(!newStatus);
-		btnSaveDraft.setEnabled(newStatus);
-		btnCounterPoint.setEnabled(newStatus);
 	}
 	
 	
@@ -392,8 +370,8 @@ public class CreateTransferInEditor extends Composite {
 			@Override
 			public void handleEvent(Event event) {
 				if (event.keyCode == SWT.F12) {
-					System.out.println("Update CounterPoint transfer button pressed!");
-					if (btnCounterPoint.getEnabled()) {
+					System.out.println("F12 (save transfer) pressed!");
+					if (btnGuardar.getEnabled()) {
 						createTransfer();
 					}
 				}
@@ -404,10 +382,8 @@ public class CreateTransferInEditor extends Composite {
 			@Override
 			public void handleEvent(Event event) {
 				if (event.keyCode == SWT.F9) {
-					System.out.println("Save draft button pressed!");
-					if (btnSaveDraft.getEnabled()) {
-						createPartialTransfer();
-					}
+					System.out.println("F9 (reset transfer form) pressed!");
+					resetTransferData();
 				}
 			}
 		};
@@ -417,9 +393,7 @@ public class CreateTransferInEditor extends Composite {
 			public void handleEvent(Event event) {
 				if (event.keyCode == SWT.F4) {
 					System.out.println("F4 (partial transfer form) pressed!");
-					if (btnInitTransfer.getEnabled()) {
-						initTransfer();
-					}
+					createPartialTransfer();
 				}
 			}
 		};
@@ -440,31 +414,20 @@ public class CreateTransferInEditor extends Composite {
 				return;
 			}
 		}
-		txtTransferNo.setFocus();	// necesario para capturar el comentario de una línea (si no se ha perdido el foco)
 		saveTransfer();
 		updateCounterpoint();
 		logger.info("Control de transferencia generada: " + tcControl.getId());
 		MessagesUtil.showInformation("Guardar transferencia", "<size=+6>Se ha guardado exitosamente la transferencia (número " + tcControl.getId() + ").</size>");
 		resetFields();
-		toggleEditableFields(false);
 		txtTransferNo.setFocus();
 	}
 	
 	private void createPartialTransfer() {
-		txtTransferNo.setFocus();	// necesario para capturar el comentario de una línea (si no se ha perdido el foco)
 		savePartialTransfer();
 		logger.info("Control de transferencia PARCIAL generada: " + tcControl.getId());
 		MessagesUtil.showInformation("Guardar transferencia parcial", "<size=+6>Se ha guardado exitosamente la transferencia parcial (número " + tcControl.getId() + ").</size>");
 		resetFields();
-		toggleEditableFields(false);
 		txtTransferNo.setFocus();
-	}
-	
-	private void initTransfer() {
-		toggleEditableFields(true);
-		savePartialTransfer();
-		txtQty.setFocus();
-		txtQty.selectAll();
 	}
 	
 	private boolean existeRegistro(String transferNo) {
@@ -622,7 +585,6 @@ public class CreateTransferInEditor extends Composite {
 						Listener textListener = new Listener() {
 							public void handleEvent(final Event e) {
 								int lineNumber = (Integer) editor.getItem().getData("lineNumber");
-								System.out.println("Setting line number: " + lineNumber + ", event: " + e.type);
 								switch (e.type) {
 								case SWT.FocusOut:
 									System.out.println("FocusOut");

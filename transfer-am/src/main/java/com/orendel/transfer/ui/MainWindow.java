@@ -27,6 +27,7 @@ import com.orendel.transfer.dialogs.UserDialog;
 import com.orendel.transfer.domain.User;
 import com.orendel.transfer.editors.CreateDeliveryEditor;
 import com.orendel.transfer.editors.CreateTransferInEditor;
+import com.orendel.transfer.editors.CreateTransferInEditorV0;
 import com.orendel.transfer.editors.ViewTransfersEditor;
 import com.orendel.transfer.editors.ViewUsersEditor;
 import com.orendel.transfer.services.HibernateUtil;
@@ -171,6 +172,9 @@ public class MainWindow {
 		MenuItem mntmRealizarEntrega = new MenuItem(menu_2, SWT.NONE);
 		mntmRealizarEntrega.setText("Realizar transferencia");
 		
+		MenuItem mntmRealizarEntregaV0 = new MenuItem(menu_2, SWT.NONE);
+		mntmRealizarEntregaV0.setText("Realizar transferencia V0");
+		
 		new MenuItem(menu_2, SWT.SEPARATOR);
 		
 		MenuItem mntmConsultarTransferencias = new MenuItem(menu_2, SWT.NONE);
@@ -257,6 +261,15 @@ public class MainWindow {
 			}
 		});
 		
+		mntmRealizarEntregaV0.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				disposeChildrenComposites(composite);
+				openCreateTransferInEditorV0(composite);
+				composite.layout();
+			}
+		});
+		
 		
 		mntmConsultarTransferencias.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -282,7 +295,7 @@ public class MainWindow {
 		fillFooterInfo();
 		
 //		openCreateDeliveryEditor(composite);
-		openCreateTransferInEditor(composite);
+		openCreateTransferInEditorV0(composite);
 	}
 	
 	
@@ -324,6 +337,13 @@ public class MainWindow {
 	
 	private CreateTransferInEditor openCreateTransferInEditor(Composite composite) {
 		CreateTransferInEditor editor = new CreateTransferInEditor(composite, SWT.NONE);
+		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		return editor;
+	}
+	
+	
+	private CreateTransferInEditorV0 openCreateTransferInEditorV0(Composite composite) {
+		CreateTransferInEditorV0 editor = new CreateTransferInEditorV0(composite, SWT.NONE);
 		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		return editor;
 	}
