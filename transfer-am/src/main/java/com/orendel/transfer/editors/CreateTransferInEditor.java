@@ -473,7 +473,7 @@ public class CreateTransferInEditor extends Composite {
 	private boolean validateUser() {
 		String currentUser = LoggedUserService.INSTANCE.getUser().getUserName();
 		String tcUser = tcControl.getUserName();
-		if (!currentUser.equalsIgnoreCase(tcUser)) {
+		if (tcUser != null && !currentUser.equalsIgnoreCase(tcUser)) {
 			MessagesUtil.showWarning("Iniciar entrada de transferencia", "<size=+2>La transferencia número " + 
 					txtTransferNo.getText() + " está asignada al usuario '" + tcUser + "', y debe ser finalizada o cancelada para\n" +
 					"poder ser atendida por otro usuario.</size>");
