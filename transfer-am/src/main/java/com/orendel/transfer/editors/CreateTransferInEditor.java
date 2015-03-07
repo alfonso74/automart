@@ -461,10 +461,25 @@ public class CreateTransferInEditor extends Composite {
 	}
 	
 	private void initTransfer() {
+		if (!validateUser()) {
+			return;
+		}
 		toggleEditableFields(true);
 		savePartialTransfer();
 		txtQty.setFocus();
 		txtQty.selectAll();
+	}
+	
+	private boolean validateUser() {
+		String currentUser = LoggedUserService.INSTANCE.getUser().getUserName();
+		String tcUser = tcControl.getUserName();
+		if (!currentUser.equalsIgnoreCase(tcUser)) {
+			MessagesUtil.showWarning("Iniciar entrada de transferencia", "<size=+2>La transferencia número " + 
+					txtTransferNo.getText() + " está asignada al usuario '" + tcUser + "', y debe ser finalizada o cancelada para\n" +
+					"poder ser atendida por otro usuario.</size>");
+			return false;
+		}
+		return true;
 	}
 	
 	private boolean existeRegistro(String transferNo) {
@@ -492,6 +507,9 @@ public class CreateTransferInEditor extends Composite {
 			result = true;
 		} else {
 			MessagesUtil.showWarning("Buscar transferencia", "No se encontró la transferencia número " + transferNo + ".");
+		}
+		if (result) {
+			validateUser();
 		}
 		return result;
 	}
