@@ -70,6 +70,16 @@ public class TransferControlLine {
 	
 	// *************************** Helper methods ********************************
 	
+	/**
+	 * Adjust the line's quantities:
+	 * <li>Initial expected items - property qtyPrevExpected</li>
+	 * <li>Received items - property qtyReceived</li>
+	 * <li>Pending items - property qtyNewExpected</li>
+	 * <br>
+	 * Also updates the line's total cost, equals to the quantity received multiplied by the
+	 * unit cost.
+	 * @param receivedQuantity the item quantity that is being received
+	 */
 	public void adjustQuantities(int receivedQuantity) {
 		int currentQty = this.getQtyReceived().intValue();
 		int newQty = currentQty + receivedQuantity;

@@ -181,6 +181,21 @@ public class TransferControl {
 		setComments(comments);
 	}
 	
+	/**
+	 * Indicates if a user can edit the Transfer Control document.
+	 * @param aspiringUser the username trying to edit the Transfer Control.
+	 * @return <code>true</code> if the transfer control doesn't have an assigned user, or if the same user is 
+	 * trying to edit, <code>false</code> otherwise.
+	 */
+	public boolean isEditableByUser(String aspiringUser) {
+		// if the transfer control doesn't have an assigned user, or the same user is trying to edit
+		// then return true.
+		if (this.userName == null || this.userName.equalsIgnoreCase(aspiringUser)) {
+			return true;
+		}
+		return false;
+	}
+	
 	
 	// ***************************** Getters and Setters ************************************
 	

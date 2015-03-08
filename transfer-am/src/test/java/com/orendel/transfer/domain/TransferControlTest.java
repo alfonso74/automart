@@ -1,7 +1,8 @@
-package com.orendel.transfer.controllers;
+package com.orendel.transfer.domain;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.CoreMatchers.*;
+//import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -71,7 +72,7 @@ public class TransferControlTest {
 		TransferControlLine line = transfer.adjustReceivedQuantityForItem("00N", 1);
 		logger.info("Description: " + line.getItemDescription() + ", Expected: " + line.getQtyPrevExpected() + 
 				", received: " + line.getQtyReceived() + ", pending: " + line.getQtyNewExpected());
-		assertTrue(line.getQtyReceived().intValue() == 1);
+		assertThat(line.getQtyReceived().intValue(), is(1));
 	}
 
 //	@Test
@@ -142,6 +143,52 @@ public class TransferControlTest {
 		Integer expected = 0;
 		assertTrue("Wrong number of total selected lines: " + selected + " expected: " + expected, selected.equals(expected));
 	}
+	
+	@Test
+	public void testIsEditableByUser_AssignedTC_Happy() {
+		logger.info("------- Scenario: Assigned transfer, being edited by same user -----------");
+		TransferControl transfer = new TransferControl();
+		transfer.setUserName("carlos");
+		boolean isEditable = transfer.isEditableByUser("carlos");
+		assertTrue(isEditable);
+	}
+	
+	@Test
+	public void testIsEditableByUser_AssignedTC_NullUser() {
+		logger.info("------- Scenario: Assigned transfer, being edited by null user -----------");
+		TransferControl transfer = new TransferControl();
+		transfer.setUserName("carlos");
+		boolean isEditable = transfer.isEditableByUser(null);
+		assertFalse(isEditable);
+	}
+	
+	@Test
+	public void testIsEditableByUser_AssignedTC_WrongUser() {
+		logger.info("------- Scenario: Assigned transfer, being edited by another user -----------");
+		TransferControl transfer = new TransferControl();
+		transfer.isEditableByUser(null);
+		transfer.setUserName("carlos");
+		boolean isEditable = transfer.isEditableByUser("roxana");
+		assertFalse(isEditable);
+	}
+	
+	@Test
+	public void testIsEditableByUser_UnnasignedTC_NullUser() {
+		logger.info("------- Scenario: UnAssigned transfer, being edited by null user -----------");
+		TransferControl transfer = new TransferControl();
+		boolean isEditable = transfer.isEditableByUser(null);
+		assertTrue(isEditable);
+	}
+	
+	@Test
+	public void testIsEditableByUser_UnnasignedTC_AnyUser() {
+		logger.info("------- Scenario: UnAssigned transfer, being edited by some user -----------");
+		TransferControl transfer = new TransferControl();
+		boolean isEditable = transfer.isEditableByUser("carlos");
+		assertTrue(isEditable);
+	}
+	
+	
 	
 	
 	private TransferControl createTransferControl() {

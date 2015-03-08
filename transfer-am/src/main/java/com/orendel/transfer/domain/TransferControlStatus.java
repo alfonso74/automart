@@ -3,12 +3,14 @@ package com.orendel.transfer.domain;
 
 public enum TransferControlStatus {
 	
-	/** Active delivery/user */
+	/** Active */
 	ACTIVE("A", "Activo"),
-	/** Closed delivery */
+	/** Closed */
 	CLOSED("C", "Cerrado"),
-	/** Partial/Pending delivery */
+	/** Partial/Pending */
 	PARTIAL("P", "Parcial"),
+	/** Canceled */
+	CANCELED("X", "Cancelada")
 	;
 
 	private String code;
