@@ -31,6 +31,7 @@ import com.orendel.transfer.controllers.TransferControlController;
 import com.orendel.transfer.controllers.CounterpointController;
 import com.orendel.transfer.domain.TransferControl;
 import com.orendel.transfer.domain.TransferControlLine;
+import com.orendel.transfer.domain.TransferControlStatus;
 import com.orendel.transfer.ui.login.LoggedUserService;
 import com.orendel.transfer.util.MessagesUtil;
 import com.orendel.transfer.util.TransferMapper;
@@ -656,7 +657,7 @@ public class CreateTransferInEditorV0 extends Composite {
 		tcControl.setReference(txtReference.getText());
 		tcControl.setComments(txtComment1.getText(), txtComment2.getText(), txtComment3.getText());		
 		if (closeTransfer) {
-			tcControl.close();
+			tcControl.close(TransferControlStatus.CLOSED);
 		}
 		logger.info("Líneas de la transferencia: " + tcControl.getLines().size());
 		tcController.doSave(tcControl);

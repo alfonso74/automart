@@ -54,7 +54,7 @@ public class ViewTransfersEditor extends Composite {
 		setLayout(gridLayout);
 		
 		Group groupBuscar = new Group(this, SWT.NONE);
-		groupBuscar.setText(" Búsqueda de Transferencias ");
+		groupBuscar.setText(" Búsqueda de Entradas Realizadas");
 		GridLayout gl_groupBuscar = new GridLayout(1, false);
 		gl_groupBuscar.marginBottom = 5;
 		gl_groupBuscar.marginHeight = 0;
@@ -80,6 +80,10 @@ public class ViewTransfersEditor extends Composite {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
+		TableColumn tblclmnEntrada = new TableColumn(table, SWT.NONE);
+		tblclmnEntrada.setWidth(75);
+		tblclmnEntrada.setText("Entrada");
+		
 		TableColumn tblclmnTransferencia = new TableColumn(table, SWT.NONE);
 		tblclmnTransferencia.setWidth(110);
 		tblclmnTransferencia.setText("Transferencia");
@@ -101,7 +105,7 @@ public class ViewTransfersEditor extends Composite {
 		tblclmnUsuario.setText("Usuario");
 		
 		TableColumn tblclmnStatus = new TableColumn(table, SWT.NONE);
-		tblclmnStatus.setWidth(80);
+		tblclmnStatus.setWidth(90);
 		tblclmnStatus.setText("Status");
 		
 		TableColumn tblclmnCreacion = new TableColumn(table, SWT.CENTER);
@@ -111,6 +115,9 @@ public class ViewTransfersEditor extends Composite {
 		TableColumn tblclmnCierre = new TableColumn(table, SWT.CENTER);
 		tblclmnCierre.setWidth(175);
 		tblclmnCierre.setText("Fecha de cierre");
+		
+		TableColumn tblclmnLog = new TableColumn(table, SWT.LEFT);
+		tblclmnLog.setWidth(200);
 
 		addDoubleClickListener(table);
 	}
@@ -122,8 +129,8 @@ public class ViewTransfersEditor extends Composite {
 			refreshTableDetails(tcList);
 		} else {
 			table.removeAll();
-			MessagesUtil.showWarning("Buscar entrega parcial", 
-					"No se encontró ninguna entrega parcial en el rango de fechas indicado.");
+			MessagesUtil.showWarning("Buscar entradas por fecha", 
+					"No se encontró ninguna entrada en el rango de fechas indicado.");
 		}
 	}
 	
@@ -136,6 +143,7 @@ public class ViewTransfersEditor extends Composite {
 			item = new TableItem(table, SWT.NONE);
 			int column = 0;
 			item.setData(v);
+			item.setText(column++, " " + v.getId());
 			item.setText(column++, " " + v.getTransferNo());
 			item.setText(column++, v.getLines().size() + " ");
 			item.setText(column++, v.getTotalExpectedItems() + " ");
@@ -144,6 +152,7 @@ public class ViewTransfersEditor extends Composite {
 			item.setText(column++, v.getStatus() == null ? "?" : TransferControlStatus.fromCode(v.getStatus()).getDescription());
 			item.setText(column++, DateUtil.toString(v.getCreated(), DateUtil.formatoFechaHora));
 			item.setText(column++, DateUtil.toString(v.getClosed(), DateUtil.formatoFechaHora));
+			item.setText(column++, checkNull(v.getLog()));
 		}
 	}
 	
@@ -226,5 +235,9 @@ public class ViewTransfersEditor extends Composite {
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
+	}
+	
+	public String checkNull(String valorCampo) {
+		return valorCampo == null ? "" : valorCampo;
 	}
 }

@@ -52,6 +52,9 @@ public class TransferControl {
 	@Column(name = "USERNAME", nullable = false)
 	private String userName;
 	
+	@Column(name = "SYS_LOG")
+	private String log;
+	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "transfer", fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	private List<TransferControlLine> lines = new ArrayList<TransferControlLine>();
@@ -168,9 +171,9 @@ public class TransferControl {
 		line.setTransfer(this);
 	}
 		
-	public void close() {
+	public void close(TransferControlStatus finalStatus) {
 		this.setClosed(new Date());
-		this.setStatus(TransferControlStatus.CLOSED.getCode());
+		this.setStatus(finalStatus.getCode());
 	}
 	
 	public void setComments(String comment1, String comment2, String comment3) {
@@ -194,6 +197,27 @@ public class TransferControl {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Adds the indicated text to the Transfer Control document log.  The log has a maximum capacity of 255
+	 * characters. 
+	 * @param entry the text being added
+	 * @return <code>true</code> if the entry is successfully inserted in the log, <code>false</code> otherwise.
+	 */
+	public boolean addLogEntry(String entry) {
+		boolean result = false;
+		if (entry == null || entry.isEmpty()) {
+			return result;
+		}
+		if (log == null) {
+			log = new String();
+		}
+		if ((log.length() + entry.length()) < 255) {
+			log = log += entry + "\n";
+			result = true;
+		}
+		return result;
 	}
 	
 	
@@ -262,7 +286,15 @@ public class TransferControl {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-
+	
+	public String getLog() {
+		return log;
+	}
+	
+	public void setLog(String log) {
+		this.log = log;
+	}
+	
 	public List<TransferControlLine> getLines() {
 		return lines;
 	}

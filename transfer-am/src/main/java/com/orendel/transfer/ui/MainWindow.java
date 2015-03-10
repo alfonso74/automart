@@ -1,10 +1,8 @@
 package com.orendel.transfer.ui;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Control;
@@ -15,6 +13,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -25,13 +24,13 @@ import com.orendel.transfer.config.AppConfig;
 import com.orendel.transfer.dialogs.UpdatePasswordDialog;
 import com.orendel.transfer.dialogs.UserDialog;
 import com.orendel.transfer.domain.User;
-import com.orendel.transfer.editors.CreateDeliveryEditor;
 import com.orendel.transfer.editors.CreateTransferInEditor;
 import com.orendel.transfer.editors.CreateTransferInEditorV0;
 import com.orendel.transfer.editors.ViewTransfersEditor;
 import com.orendel.transfer.editors.ViewUsersEditor;
 import com.orendel.transfer.services.HibernateUtil;
 import com.orendel.transfer.services.HibernateUtilDelivery;
+import com.orendel.transfer.services.IImageKeys;
 import com.orendel.transfer.services.ImagesService;
 import com.orendel.transfer.services.ShellImagesService;
 import com.orendel.transfer.ui.login.LoggedUserService;
@@ -127,7 +126,7 @@ public class MainWindow {
 		shell = new Shell();
 //		shell.setSize(800, 600);
 		shell.setMaximized(true);
-		shell.setText("AutoMart - Control de Transferencias");
+		shell.setText("AutoMart - Control de Entrada (Transferencias)");
 		shell.setLayout(new GridLayout(1, false));
 		
 		Menu menu = new Menu(shell, SWT.BAR);
@@ -170,15 +169,24 @@ public class MainWindow {
 		mntmAcciones.setMenu(menu_2);
 		
 		MenuItem mntmRealizarEntrega = new MenuItem(menu_2, SWT.NONE);
-		mntmRealizarEntrega.setText("Realizar transferencia");
+		mntmRealizarEntrega.setText("Entrada de transferencia");
 		
-		MenuItem mntmRealizarEntregaV0 = new MenuItem(menu_2, SWT.NONE);
-		mntmRealizarEntregaV0.setText("Realizar transferencia V0");
+		MenuItem mntmRealizarEntregaV0 = null;
+		if (LoggedUserService.INSTANCE.getUser().isAdmin()) {
+			mntmRealizarEntregaV0 = new MenuItem(menu_2, SWT.NONE);
+			mntmRealizarEntregaV0.setText("Realizar transferencia V0");
+		}
+		
+		final MenuItem mntmCancelarEntrega = new MenuItem(menu_2, SWT.NONE);
+		mntmCancelarEntrega.setText("Cancelar entrada");
+		Image image = ImagesService.INSTANCE.getImage(Display.getDefault(), IImageKeys.CANCEL_16);
+		mntmCancelarEntrega.setImage(image);
+//		mntmCancelarEntrega.setEnabled(false);
 		
 		new MenuItem(menu_2, SWT.SEPARATOR);
 		
 		MenuItem mntmConsultarTransferencias = new MenuItem(menu_2, SWT.NONE);
-		mntmConsultarTransferencias.setText("Consultar transferencias");
+		mntmConsultarTransferencias.setText("Consultar entradas");
 		
 //		MenuItem mntmConsultarEntregasParciales = new MenuItem(menu_2, SWT.NONE);
 //		mntmConsultarEntregasParciales.setText("Consultar transferencias en proceso");
@@ -199,7 +207,7 @@ public class MainWindow {
 
 		final Composite composite = new Composite(shell, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		composite.setLayout(new GridLayout(1, false));
+		composite.setLayout(new GridLayout(1, false));		
 		
 		Composite compositeFooter = new Composite(shell, SWT.NONE);
 		compositeFooter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -261,15 +269,52 @@ public class MainWindow {
 			}
 		});
 		
-		mntmRealizarEntregaV0.addSelectionListener(new SelectionAdapter() {
+		if (LoggedUserService.INSTANCE.getUser().isAdmin()) {
+			mntmRealizarEntregaV0.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					disposeChildrenComposites(composite);
+					openCreateTransferInEditorV0(composite);
+					composite.layout();
+				}
+			});
+		}
+		
+		mntmCancelarEntrega.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				disposeChildrenComposites(composite);
-				openCreateTransferInEditorV0(composite);
-				composite.layout();
+//				logger.info("TTT0: " + composite.getChildren().length);
+//				Object data = composite.getData("txtTransferNo");
+				for (Control v : composite.getChildren()) {
+					if (v instanceof CreateTransferInEditor) {
+						logger.info("TransferInEditor found!");
+						CreateTransferInEditor editor = (CreateTransferInEditor) v;
+						editor.cancelTransferControl();
+					}
+				}
+//				if (data != null) {
+//					String x = (String) data;
+//					logger.info("TransferNo: " + x);
+//				}
 			}
 		});
 		
+		mntmAcciones.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				logger.info("mntmAcciones selected!");
+				boolean enableCancelarEntrega = false;
+				Object txNo = composite.getData("txtTransferNo");
+				String currentTxNo = "";
+				if (txNo != null) {
+					currentTxNo = (String) txNo;
+					if (!currentTxNo.isEmpty()) {
+						enableCancelarEntrega = true;
+					}
+				}
+				mntmCancelarEntrega.setEnabled(enableCancelarEntrega);
+			}
+		});
 		
 		mntmConsultarTransferencias.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -294,8 +339,7 @@ public class MainWindow {
 		
 		fillFooterInfo();
 		
-//		openCreateDeliveryEditor(composite);
-		openCreateTransferInEditorV0(composite);
+		openCreateTransferInEditor(composite);
 	}
 	
 	

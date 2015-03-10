@@ -120,7 +120,7 @@ public class TransferControlTest {
 		logger.info("------- Scenario: Close delivery (should have a closure date, and status 'CLOSED' -----------");
 		TransferControl transfer = createTransferControl();
 		
-		transfer.close();
+		transfer.close(TransferControlStatus.CLOSED);
 		assertNotNull(transfer.getClosed());
 		assertTrue("Unexpected status: " + transfer.getStatus(), transfer.getStatus().equalsIgnoreCase(TransferControlStatus.CLOSED.getCode()));
 	}
