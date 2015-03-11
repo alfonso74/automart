@@ -4,7 +4,7 @@
 
   <groupId>com.orendel</groupId>
   <artifactId>transfer-am</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.1</version>
   <packaging>jar</packaging>
 
   <name>transfer-am</name>
@@ -203,7 +203,7 @@
 		<dependency>
 			<groupId>com.orendel</groupId>
 			<artifactId>am-counterpoint</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 </project>
