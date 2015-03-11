@@ -171,11 +171,11 @@ public class MainWindow {
 		MenuItem mntmRealizarEntrega = new MenuItem(menu_2, SWT.NONE);
 		mntmRealizarEntrega.setText("Entrada de transferencia");
 		
-		MenuItem mntmRealizarEntregaV0 = null;
-		if (LoggedUserService.INSTANCE.getUser().isAdmin()) {
-			mntmRealizarEntregaV0 = new MenuItem(menu_2, SWT.NONE);
-			mntmRealizarEntregaV0.setText("Realizar transferencia V0");
-		}
+//		MenuItem mntmRealizarEntregaV0 = null;
+//		if (LoggedUserService.INSTANCE.getUser().isAdmin()) {
+//			mntmRealizarEntregaV0 = new MenuItem(menu_2, SWT.NONE);
+//			mntmRealizarEntregaV0.setText("Realizar transferencia V0");
+//		}
 		
 		final MenuItem mntmCancelarEntrega = new MenuItem(menu_2, SWT.NONE);
 		mntmCancelarEntrega.setText("Cancelar entrada");
@@ -187,21 +187,6 @@ public class MainWindow {
 		
 		MenuItem mntmConsultarTransferencias = new MenuItem(menu_2, SWT.NONE);
 		mntmConsultarTransferencias.setText("Consultar entradas");
-		
-
-//		MenuItem mntmReporte01 = null;
-//		if (LoggedUserService.INSTANCE.getUser().isAdmin()) {
-//
-//			MenuItem mntmReports = new MenuItem(menu, SWT.CASCADE);
-//			mntmReports.setText("Reportes");
-//
-//			Menu menuReports = new Menu(mntmReports);
-//			mntmReports.setMenu(menuReports);
-//
-//			mntmReporte01 = new MenuItem(menuReports, SWT.NONE);
-//			mntmReporte01.setText("Entregas por fecha");
-//
-//		}
 
 		final Composite composite = new Composite(shell, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -267,16 +252,16 @@ public class MainWindow {
 			}
 		});
 		
-		if (LoggedUserService.INSTANCE.getUser().isAdmin()) {
-			mntmRealizarEntregaV0.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					disposeChildrenComposites(composite);
-					openCreateTransferInEditorV0(composite);
-					composite.layout();
-				}
-			});
-		}
+//		if (LoggedUserService.INSTANCE.getUser().isAdmin()) {
+//			mntmRealizarEntregaV0.addSelectionListener(new SelectionAdapter() {
+//				@Override
+//				public void widgetSelected(SelectionEvent e) {
+//					disposeChildrenComposites(composite);
+//					openCreateTransferInEditorV0(composite);
+//					composite.layout();
+//				}
+//			});
+//		}
 		
 		mntmCancelarEntrega.addSelectionListener(new SelectionAdapter() {
 			@Override
