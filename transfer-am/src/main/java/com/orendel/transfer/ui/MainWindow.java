@@ -188,22 +188,20 @@ public class MainWindow {
 		MenuItem mntmConsultarTransferencias = new MenuItem(menu_2, SWT.NONE);
 		mntmConsultarTransferencias.setText("Consultar entradas");
 		
-//		MenuItem mntmConsultarEntregasParciales = new MenuItem(menu_2, SWT.NONE);
-//		mntmConsultarEntregasParciales.setText("Consultar transferencias en proceso");
-		
-		MenuItem mntmReporte01 = null;
-		if (LoggedUserService.INSTANCE.getUser().isAdmin()) {
 
-			MenuItem mntmReports = new MenuItem(menu, SWT.CASCADE);
-			mntmReports.setText("Reportes");
-
-			Menu menuReports = new Menu(mntmReports);
-			mntmReports.setMenu(menuReports);
-
-			mntmReporte01 = new MenuItem(menuReports, SWT.NONE);
-			mntmReporte01.setText("Entregas por fecha");
-
-		}
+//		MenuItem mntmReporte01 = null;
+//		if (LoggedUserService.INSTANCE.getUser().isAdmin()) {
+//
+//			MenuItem mntmReports = new MenuItem(menu, SWT.CASCADE);
+//			mntmReports.setText("Reportes");
+//
+//			Menu menuReports = new Menu(mntmReports);
+//			mntmReports.setMenu(menuReports);
+//
+//			mntmReporte01 = new MenuItem(menuReports, SWT.NONE);
+//			mntmReporte01.setText("Entregas por fecha");
+//
+//		}
 
 		final Composite composite = new Composite(shell, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -283,19 +281,18 @@ public class MainWindow {
 		mntmCancelarEntrega.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-//				logger.info("TTT0: " + composite.getChildren().length);
-//				Object data = composite.getData("txtTransferNo");
+				CreateTransferInEditor editor = null;
 				for (Control v : composite.getChildren()) {
 					if (v instanceof CreateTransferInEditor) {
 						logger.info("TransferInEditor found!");
-						CreateTransferInEditor editor = (CreateTransferInEditor) v;
+						editor = (CreateTransferInEditor) v;
 						editor.cancelTransferControl();
+						break;
 					}
 				}
-//				if (data != null) {
-//					String x = (String) data;
-//					logger.info("TransferNo: " + x);
-//				}
+				if (editor == null) {
+					MessagesUtil.showInformation("Cancelar entrada", "<size=+2>Debe estar abierta una entrada de transferencia para ejecutar esta acción.</size>");
+				}
 			}
 		});
 		
@@ -324,18 +321,6 @@ public class MainWindow {
 				composite.layout();
 			}
 		});
-		
-//		if (LoggedUserService.INSTANCE.getUser().isAdmin()) {
-//			mntmReporte01.addSelectionListener(new SelectionAdapter() {
-//				@Override
-//				public void widgetSelected(SelectionEvent e) {
-//					disposeChildrenComposites(composite);
-////					openReport01Editor(composite);
-//					openReport01(composite);
-//					composite.layout();
-//				}
-//			});
-//		}
 		
 		fillFooterInfo();
 		
@@ -398,26 +383,7 @@ public class MainWindow {
 		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		return editor;
 	}
-	
-	
-//	private void openReport01(Composite composite) {
-//		logger.info("Open Report01 called.");
-//		Report01Parameters dialog = new Report01Parameters(composite.getShell(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-//		Map<String, Serializable> result = dialog.open(); 
-//		if (result != null && result.size() > 0) {
-//			BirtReport editor = new BirtReport(composite, SWT.None);
-//			editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-//			editor.execute(result);
-//		}
-//	}
-	
-	
-//	private BirtReport openReport01Editor(Composite composite) {
-//		BirtReport editor = new BirtReport(composite, SWT.None);
-//		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-//		return editor;
-//	}
-	
+
 	
 	private void createDateTimeThread(final Display display) {
 		Thread timeThread = new Thread() {

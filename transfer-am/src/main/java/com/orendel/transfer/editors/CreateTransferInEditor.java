@@ -111,7 +111,6 @@ public class CreateTransferInEditor extends Composite {
 		txtTransferNo.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-//				if (!txtInvoiceNo.getText().isEmpty() && e.keyCode == 13) {
 				if (e.keyCode == 13) {
 					resetFields();
 					toggleEditableFields(false);
@@ -120,7 +119,6 @@ public class CreateTransferInEditor extends Composite {
 						txtQty.setFocus();
 						txtQty.selectAll();
 					} else {
-//						tableTransferLines.removeAll();
 						txtTransferNo.setFocus();
 						txtTransferNo.selectAll();
 					}
@@ -142,7 +140,6 @@ public class CreateTransferInEditor extends Composite {
 						txtQty.setFocus();
 						txtQty.selectAll();
 					} else {
-//						tableTransferLines.removeAll();
 						txtTransferNo.setFocus();
 						txtTransferNo.selectAll();
 					}
@@ -774,7 +771,7 @@ public class CreateTransferInEditor extends Composite {
 	
 	public void cancelTransferControl() {
 		if (tcControl == null) {
-			MessagesUtil.showInformation("Cancelar entrada", "<size=+2>Debe estar seleccionada una entrada de transferencia para ejecutar\nesta acción.</size>");
+			MessagesUtil.showInformation("Cancelar entrada", "<size=+2>Debe estar abierta una entrada de transferencia para ejecutar esta acción.</size>");
 			return;
 		}
 		int action = MessagesUtil.showConfirmation("Cancelar entrada", "<size=+2>Está seguro de querer cancelar la entrada para la transferencia " + 
