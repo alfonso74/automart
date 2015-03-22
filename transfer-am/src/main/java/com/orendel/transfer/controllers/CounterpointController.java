@@ -2,6 +2,8 @@ package com.orendel.transfer.controllers;
 
 import java.util.List;
 
+import org.hibernate.HibernateException;
+
 import com.orendel.counterpoint.domain.BarCode;
 import com.orendel.counterpoint.domain.Item;
 import com.orendel.counterpoint.domain.TransferIn;
@@ -9,6 +11,7 @@ import com.orendel.transfer.dao.BarCodeDAO;
 import com.orendel.transfer.dao.GenericDAOImpl;
 import com.orendel.transfer.dao.ItemDAO;
 import com.orendel.transfer.dao.TransferInDAO;
+import com.orendel.transfer.services.HibernateUtil;
 
 
 public class CounterpointController extends AbstractController<TransferIn> {
@@ -68,5 +71,24 @@ public class CounterpointController extends AbstractController<TransferIn> {
 		}
 		return item;
 	}
+	
 
+	public String doUpdateCounterPointTransferIn(TransferIn transferIn) {
+		String msg = null;
+		TransferInDAO dao = null;
+		try {
+			dao = (TransferInDAO) getDAO();
+			dao.updateCounterpointTransferIn(transferIn);
+		} catch (HibernateException he) {
+			if (getSession().isOpen()) {
+				HibernateUtil.rollback(getSession().getTransaction());
+				HibernateUtil.closeEditorSession(getEditorId());
+			}
+			HibernateUtil.procesarError(he);
+			HibernateUtil.verSesiones();
+			msg = he.toString();
+		}
+		return msg;
+	}
+	
 }

@@ -451,12 +451,15 @@ public class CreateTransferInEditor extends Composite {
 		}
 		txtTransferNo.setFocus();	// necesario para capturar el comentario de una línea (si no se ha perdido el foco)
 		saveTransfer();
-		if (updateCounterpoint()) {
+		String errorMsg = updateCounterpoint();
+		if (errorMsg == null) {
 			logger.info("Entrada de transferencia cerrada exitosamente: " + tcControl.getId());
 			MessagesUtil.showInformation("Actualizar CounterPoint", "<size=+6>Se ha completado exitosamente la entrada número " + tcControl.getId() + " (transferencia " + tcControl.getTransferNo() + ").</size>");
 		} else {
 			logger.info("Control de transferencia cancelada (error actualizando CP): " + tcControl.getId());
-			tcControl.addLogEntry("Canceled by the system. TransferIn " + tcControl.getTransferNo() + " not found in CP.");
+//			tcControl.addLogEntry("Canceled by the system. TransferIn " + tcControl.getTransferNo() + " not found in CP.");
+			logger.info("Error: " + errorMsg);
+			tcControl.addLogEntry("Canceled by the system:  " + errorMsg);
 			tcControl.close(TransferControlStatus.CANCELED);
 			tcController.doSave(tcControl);
 		}
@@ -735,17 +738,19 @@ public class CreateTransferInEditor extends Composite {
 		return tcControl;
 	}
 	
-	private boolean updateCounterpoint() {
-		TransferIn in = cpController.findTransferInByNumber(tcControl.getTransferNo());
-		if (in == null) {
+	private String updateCounterpoint() {
+		String errorMsg = null;
+		TransferIn transferIn = cpController.findTransferInByNumber(tcControl.getTransferNo());
+		if (transferIn == null) {
 			MessagesUtil.showError("Actualizar CounterPoint", "<size=+2>No se encontró la transferencia con el código: " + tcControl.getTransferNo() + 
 					".  La entrada\nactual (número " + tcControl.getId() + ") será cancelada por el sistema.</size>");
-			return false;
+			errorMsg = "TransferIn " + tcControl.getTransferNo() + " not found in CP.";
+			return errorMsg;
 		}
 		TransferUpdater updater = new TransferUpdater();
-		updater.updateTransferInFromTransferControl(in, tcControl);
-		cpController.doSave(in);
-		return true;
+		updater.updateTransferInFromTransferControl(transferIn, tcControl);
+		errorMsg = cpController.doUpdateCounterPointTransferIn(transferIn); 
+		return errorMsg;
 	}
 	
 	/**
