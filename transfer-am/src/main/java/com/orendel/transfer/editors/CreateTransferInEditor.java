@@ -1,5 +1,7 @@
 package com.orendel.transfer.editors;
 
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.GridLayout;
@@ -33,6 +35,8 @@ import com.orendel.transfer.controllers.CounterpointController;
 import com.orendel.transfer.domain.TransferControl;
 import com.orendel.transfer.domain.TransferControlLine;
 import com.orendel.transfer.domain.TransferControlStatus;
+import com.orendel.transfer.services.HibernateUtil;
+import com.orendel.transfer.services.HibernateUtilDelivery;
 import com.orendel.transfer.ui.login.LoggedUserService;
 import com.orendel.transfer.util.MessagesUtil;
 import com.orendel.transfer.util.TransferMapper;
@@ -84,8 +88,8 @@ public class CreateTransferInEditor extends Composite {
 	public CreateTransferInEditor(Composite parent, int style) {
 		super(parent, style);
 		
-		cpController = new CounterpointController("TransferIn");
-		tcController = new TransferControlController("TransferControl");
+		cpController = new CounterpointController("TransferIn" + new Date().getTime());
+		tcController = new TransferControlController("TransferControl" + new Date().getTime());
 		
 		GridLayout gridLayout = new GridLayout(1, false);
 		gridLayout.marginHeight = 0;
@@ -827,6 +831,8 @@ public class CreateTransferInEditor extends Composite {
 		getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF12);
 		cpController.finalizarSesion();
 		tcController.finalizarSesion();
+		HibernateUtil.verSesiones();
+		HibernateUtilDelivery.verSesiones();
 		super.dispose();		
 	}
 	
