@@ -352,7 +352,7 @@ public class CreateTransferInEditor extends Composite {
 		btnSaveDraft.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println("Save draft button pressed!");
+				System.out.println("Save partial transfer button pressed!");
 				createPartialTransfer();
 			}
 		});
@@ -417,7 +417,7 @@ public class CreateTransferInEditor extends Composite {
 			@Override
 			public void handleEvent(Event event) {
 				if (event.keyCode == SWT.F9) {
-					System.out.println("Save draft button pressed!");
+					System.out.println("Save partial transfer button pressed!");
 					if (btnSaveDraft.getEnabled()) {
 						createPartialTransfer();
 					}
@@ -429,7 +429,7 @@ public class CreateTransferInEditor extends Composite {
 			@Override
 			public void handleEvent(Event event) {
 				if (event.keyCode == SWT.F4) {
-					System.out.println("F4 (partial transfer form) pressed!");
+					System.out.println("F4 (init transfer) pressed!");
 					if (btnInitTransfer.getEnabled()) {
 						initTransfer();
 					}
@@ -467,9 +467,6 @@ public class CreateTransferInEditor extends Composite {
 			tcControl.close(TransferControlStatus.CANCELED);
 			tcController.doSave(tcControl);
 		}
-//		resetFields();
-//		toggleEditableFields(false);
-//		txtTransferNo.setFocus();
 		createNewEditor();
 	}
 	
@@ -478,13 +475,14 @@ public class CreateTransferInEditor extends Composite {
 		savePartialTransfer();
 		logger.info("Control de transferencia PARCIAL generada: " + tcControl.getId());
 		MessagesUtil.showInformation("Guardar entrada parcial", "<size=+6>Se ha guardado exitosamente la entrada parcial (número " + tcControl.getId() + ").</size>");
-//		resetFields();
-//		toggleEditableFields(false);
-//		txtTransferNo.setFocus();
 		createNewEditor();
 	}
 	
 	private void initTransfer() {
+		if (tcControl == null) {
+			logger.info("No se ha cargando ningún control de transferencia... cancelando acción.");
+			return;
+		}
 		if (!validateUser()) {
 			return;
 		}
