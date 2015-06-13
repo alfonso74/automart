@@ -77,8 +77,10 @@ public class HibernateUtilDelivery {
 	
 	public static void closeEditorSession(String editor) throws HibernateException {
 		Session s = (Session) sessionMap.get(editor);
-		if (s != null)
+		if (s != null && s.isOpen()) {
+			s.disconnect();
 			s.close();
+		}
 		sessionMap.remove(editor);
 	}
 	
@@ -95,8 +97,9 @@ public class HibernateUtilDelivery {
 	
 	public static void verSesiones() {
 //		LOGGER.debug("Total de sesiones de hibernate: " + sessionMap.size());
+		System.out.println("Total de sesiones registradas: " + sessionMap.size());
 		for (String s : sessionMap.keySet()) {
-			System.out.println("Sesión: " + s);
+			System.out.println("- Sesión: " + s);
 		}
 	}
 	

@@ -93,17 +93,17 @@ public abstract class AbstractController<X> {
 
 
 	/**
-	 * Finaliza una sesi�n de hibernate
-	 * @param editorId id asociado a la sesi�n que ser� finalizada
+	 * Finaliza una sesión de hibernate
+	 * @param editorId id asociado a la sesión que será finalizada
 	 */
 	public void finalizarSesion() {
-//		System.out.println("Finalizando sesi�n: " + getEditorId());
-		LOGGER.info("Finalizando sesi�n: " + getEditorId());
+//		System.out.println("Finalizando sesión: " + getEditorId());
+		LOGGER.info("Finalizando sesión: " + getEditorId());
 		HibernateUtil.closeEditorSession(getEditorId());     // graba en la base de datos
 	}
 
 	/**
-	 * Retorna el editor que est� asociado a este controller
+	 * Retorna el editor que está asociado a este controller
 	 * @return id del editor asociado
 	 */
 	public String getEditorId() {
@@ -111,8 +111,8 @@ public abstract class AbstractController<X> {
 	}
 
 	/**
-	 * Retorna la sesi�n que ha sida creada para este editor
-	 * @return sesi�n de hibernate
+	 * Retorna la sesión que ha sida creada para este editor
+	 * @return sesión de hibernate
 	 */
 	public Session getSession() {
 		return session;
@@ -132,8 +132,8 @@ public abstract class AbstractController<X> {
 
 
 	/**
-	 * Obtiene un registro en base a su identificador en la base de datos.  Este m�todo se utiliza frecuentemente en
-	 * la inicializaci�n de los editores.
+	 * Obtiene un registro en base a su identificador en la base de datos.  Este método se utiliza frecuentemente en
+	 * la inicialización de los editores.
 	 * @param id identificador del registro en la DB
 	 * @return registro de tipo X
 	 */

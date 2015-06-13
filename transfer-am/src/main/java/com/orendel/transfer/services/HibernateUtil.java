@@ -18,14 +18,14 @@ import com.orendel.transfer.config.AppConfig;
 public class HibernateUtil {
 
 	private static StandardServiceRegistryImpl sr;
-	private static SessionFactory sessionFactorySQL;
+	private static SessionFactory sessionFactoryCounterpointDB;
 
-	private static String CONFIG_FILE_SQL_SERVER = "/counterpoint.cfg.xml";
+	private static String CONFIG_FILE_COUNTERPOINT_DB = "/counterpoint.cfg.xml";
 
 	static {
 		try {
 			Configuration configuration = new Configuration();  
-			configuration.configure(CONFIG_FILE_SQL_SERVER);
+			configuration.configure(CONFIG_FILE_COUNTERPOINT_DB);
 			// get user defined properties
 			String dbURL = AppConfig.INSTANCE.getValue("cp.database.url");
 			String userName = AppConfig.INSTANCE.getValue("cp.database.username");
@@ -35,7 +35,7 @@ public class HibernateUtil {
 			configuration.setProperty("hibernate.connection.username", userName);
 			configuration.setProperty("hibernate.connection.password", password);
 			sr= (StandardServiceRegistryImpl) new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build(); 
-			sessionFactorySQL = configuration.buildSessionFactory(sr);
+			sessionFactoryCounterpointDB = configuration.buildSessionFactory(sr);
 		} catch (Throwable ex) {
 			ex.printStackTrace();
 			throw new ExceptionInInitializerError(ex);
@@ -44,7 +44,7 @@ public class HibernateUtil {
 	
 
 	public static SessionFactory getSessionFactorySQL() {
-		return sessionFactorySQL;
+		return sessionFactoryCounterpointDB;
 	}
 
 	
@@ -57,7 +57,7 @@ public class HibernateUtil {
 		}
 		Session s = (Session) sessionMap.get(editor);
 		if (s == null) {
-			s = sessionFactorySQL.openSession();
+			s = sessionFactoryCounterpointDB.openSession();
 			sessionMap.put(editor, s);
 		}
 		return s;
@@ -65,16 +65,18 @@ public class HibernateUtil {
 	
 	public static void closeEditorSession(String editor) throws HibernateException {
 		Session s = (Session) sessionMap.get(editor);
-		if (s != null)
+		if (s != null && s.isOpen()) {
+			s.disconnect();
 			s.close();
+		}
 		sessionMap.remove(editor);
 	}
 	
 	
 	public static void destroy() {
-		if (sessionFactorySQL != null) {
-			sessionFactorySQL.close();
-			sessionFactorySQL = null;
+		if (sessionFactoryCounterpointDB != null) {
+			sessionFactoryCounterpointDB.close();
+			sessionFactoryCounterpointDB = null;
 			sr.destroy();
 			sr = null;
 		}
@@ -83,8 +85,9 @@ public class HibernateUtil {
 	
 	public static void verSesiones() {
 //		LOGGER.debug("Total de sesiones de hibernate: " + sessionMap.size());
+		System.out.println("Total de sesiones registradas: " + sessionMap.size());
 		for (String s : sessionMap.keySet()) {
-			System.out.println("Sesión: " + s);
+			System.out.println("- Sesión: " + s);
 		}
 	}
 	

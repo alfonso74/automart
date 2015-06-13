@@ -27,6 +27,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.widgets.Group;
+import org.hibernate.HibernateError;
+import org.hibernate.HibernateException;
 
 import com.orendel.counterpoint.domain.Item;
 import com.orendel.counterpoint.domain.TransferIn;
@@ -147,8 +149,18 @@ public class CreateTransferInEditor extends Composite {
 						txtTransferNo.setFocus();
 						txtTransferNo.selectAll();
 					}
+				} catch (HibernateException ex) {
+					ex.printStackTrace();
+					logger.info("Reloading sessions after HibernateException...");
+					cpController.finalizarSesion();
+					tcController.finalizarSesion();
+					HibernateUtil.verSesiones();
+					cpController = new CounterpointController("TransferIn" + new Date().getTime());
+					tcController = new TransferControlController("TransferControl" + new Date().getTime());
 				} catch (Exception ex) {
 					ex.printStackTrace();
+					MessagesUtil.showError("Error de aplicación", 
+							(ex.getMessage() == null ? e.toString() + '\n' + ex.getStackTrace()[0] : ex.getMessage()));
 				}
 			}
 		});
