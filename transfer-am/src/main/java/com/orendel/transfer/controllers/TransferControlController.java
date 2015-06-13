@@ -45,6 +45,35 @@ public class TransferControlController extends AbstractControllerDelivery<Transf
 	}
 	
 	/**
+	 * Busca una transferencia en base al número de transferencia indicado.
+	 * @param transferNo número de transferencia a buscar
+	 * @param tcStatus {@link TransferControlStatus estado} de la transferencia a buscar
+	 * @return {@link TransferControl} asociado al número indicado, o <code>null</code> si no se encuentra
+	 */
+	public List<TransferControl> findTransferControlByNumberAndStatus(String transferNo, TransferControlStatus tcStatus) {
+		List<TransferControl> result = new ArrayList<TransferControl>();
+		TransferControlDAO dao = (TransferControlDAO) getDAO();
+		List<TransferControl> tcList = dao.findByField("transferNo", transferNo);
+		if (tcList != null && !tcList.isEmpty()) {
+			if (tcStatus != null) {
+				for(TransferControl v : tcList) {
+					if (v.getStatus().equalsIgnoreCase(tcStatus.getCode())) {
+						result.add(v);
+						break;
+					}
+				}
+			}			
+		}
+		return result;
+	}
+	
+	//TODO programar esto!!
+	public List<TransferControl> findTransferControlByNumber(String transferNo, TransferControlStatus... tcStatus) {
+		List<TransferControl> result = new ArrayList<TransferControl>();
+		return result;
+	}
+	
+	/**
 	 * Busca las transferencias que estén dentro del rango de fechas especificado.
 	 * @param initialDate fecha inicial del rango
 	 * @param endDate fecha final del rango

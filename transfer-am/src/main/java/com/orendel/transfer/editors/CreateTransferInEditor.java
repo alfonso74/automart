@@ -1,6 +1,7 @@
 package com.orendel.transfer.editors;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Composite;
@@ -532,6 +533,11 @@ public class CreateTransferInEditor extends Composite {
 				return false;
 			}
 		} else {
+			if (transferHasAnyClosedTransferControl(transferNo)) {
+				MessagesUtil.showError("Buscar transferencia", "<size=+2>La transferencia número " + transferNo + " ya tiene una entrada "
+						+ "completada y enviada al Counterpoint, no es\nposible realizar modificaciones adicionales.</size>");
+				return false;
+			}
 			tc = tryToGetTransferControlFromCounterPoint(transferNo);
 		}
 		if (tc != null) {
@@ -560,9 +566,18 @@ public class CreateTransferInEditor extends Composite {
 	private TransferControl findPartialTransferControl(String transferNo) {
 		TransferControl tc = tcController.findPartialTransferControlByNumber(transferNo);
 		if (tc != null) {
-			logger.info("Entrada de transferencia encontrada, número: " + tc.getId() + ", líneas: " + tc.getLines().size());
+			logger.info("Entrada de transferencia PARCIAL encontrada, número: " + tc.getId() + ", líneas: " + tc.getLines().size());
 		}
 		return tc;
+	}
+	
+	private boolean transferHasAnyClosedTransferControl(String transferNo) {
+		boolean result = false;
+		List<TransferControl> tcList  = tcController.findTransferControlByNumberAndStatus(transferNo, TransferControlStatus.CLOSED);
+		if (tcList != null && !tcList.isEmpty()) {
+			result = true;
+		}
+		return result;
 	}
 	
 	
