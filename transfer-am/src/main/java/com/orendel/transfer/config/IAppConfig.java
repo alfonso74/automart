@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Properties;
 
 
-public interface IConfiguration {
+public interface IAppConfig {
 
 	public abstract void initializeProperties(String filePath);
 

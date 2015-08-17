@@ -12,7 +12,7 @@ import java.util.Properties;
 import com.orendel.transfer.exceptions.ApplicationPropertiesException;
 
 
-public enum AppConfig implements IConfiguration {
+public enum AppConfig implements IAppConfig {
 	INSTANCE;
 	private final Properties properties = new Properties();
 	private String filePath = "";

@@ -15,8 +15,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import com.orendel.transfer.config.Datasource;
-import com.orendel.transfer.services.HibernateUtil;
-import com.orendel.transfer.services.HibernateUtilDelivery;
+import com.orendel.transfer.config.MultiDbSessionManager;
 
 
 public class GenericDAOImpl<T, ID extends Serializable> 
@@ -37,22 +36,8 @@ public class GenericDAOImpl<T, ID extends Serializable>
 	}
 	
 	protected Session getSession() {
-		if (dataSource == Datasource.SEAM) {
-			if (session == null) {
-				session = HibernateUtilDelivery.getSessionFactorySQL().getCurrentSession();
-			} else {
-				if (!session.isOpen()) {
-					session = HibernateUtilDelivery.getSessionFactorySQL().getCurrentSession();
-				}
-			}
-		} else {
-			if (session == null) {
-				session = HibernateUtil.getSessionFactorySQL().getCurrentSession();
-			} else {
-				if (!session.isOpen()) {
-					session = HibernateUtil.getSessionFactorySQL().getCurrentSession();
-				}
-			}
+		if (session == null || !session.isOpen()) {
+			session = MultiDbSessionManager.getSessionForDatasource(dataSource);
 		}
 		return session;
 	}
