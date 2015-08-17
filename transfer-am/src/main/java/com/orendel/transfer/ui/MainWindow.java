@@ -25,7 +25,6 @@ import com.orendel.transfer.dialogs.UpdatePasswordDialog;
 import com.orendel.transfer.dialogs.UserDialog;
 import com.orendel.transfer.domain.User;
 import com.orendel.transfer.editors.CreateTransferInEditor;
-import com.orendel.transfer.editors.CreateTransferInEditorV0;
 import com.orendel.transfer.editors.ViewTransfersEditor;
 import com.orendel.transfer.editors.ViewUsersEditor;
 import com.orendel.transfer.services.HibernateUtil;
@@ -50,14 +49,6 @@ public class MainWindow {
 	 * Launch the application.
 	 * @param args
 	 */
-//	public static void main(String[] args) {
-//		try {
-//			MainWindow window = new MainWindow();
-//			window.open();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
 	public static void main(String[] args) {
 		try {
 			Locale.setDefault(new Locale("es", "ES"));
@@ -67,14 +58,9 @@ public class MainWindow {
 			HibernateUtil.verSesiones();
 			HibernateUtilDelivery.verSesiones();
 			LoginWindow dialog = new LoginWindow(Display.getDefault());
-//			LoginDialog dialog = new LoginDialog();
-//			LoginVerifier verifier = new LoginVerifier();
-//			dialog.setVerifier(verifier);
 			if (dialog.open()) {
 				User user = LoggedUserService.INSTANCE.getUser();
-//				User user = dialog.getValidatedUser();
 				System.out.println("GO GO GO!!, usuario: " + user.getFullName());
-//				LoggedUserService.INSTANCE.setUser(user);
 				window.open();
 			} else {
 				System.out.println("Cancelado!");
@@ -129,26 +115,26 @@ public class MainWindow {
 		shell.setText("AutoMart - Control de Entrada (Transferencias)");
 		shell.setLayout(new GridLayout(1, false));
 		
-		Menu menu = new Menu(shell, SWT.BAR);
-		shell.setMenuBar(menu);
+		Menu menuMainBar = new Menu(shell, SWT.BAR);
+		shell.setMenuBar(menuMainBar);
 		
-		MenuItem mntmAplicacin = new MenuItem(menu, SWT.CASCADE);
-		mntmAplicacin.setText("Aplicación");
+		MenuItem itemApplication = new MenuItem(menuMainBar, SWT.CASCADE);
+		itemApplication.setText("Aplicación");
 		
-		Menu menu_1 = new Menu(mntmAplicacin);
-		mntmAplicacin.setMenu(menu_1);
+		Menu menuApplication = new Menu(itemApplication);
+		itemApplication.setMenu(menuApplication);
 		
-		MenuItem mntmCambiarPassword = new MenuItem(menu_1, SWT.NONE);
-		mntmCambiarPassword.setText("Contraseña");
+		MenuItem itemPassword = new MenuItem(menuApplication, SWT.NONE);
+		itemPassword.setText("Contraseña");
 		
-		MenuItem mntmSalir = new MenuItem(menu_1, SWT.NONE);
-		mntmSalir.setText("Salir");
+		MenuItem itemExit = new MenuItem(menuApplication, SWT.NONE);
+		itemExit.setText("Salir");
 		
 		MenuItem mntmAgregarUsuario = null;
 		MenuItem mntmVerUsuarios = null;
 		if (LoggedUserService.INSTANCE.getUser().isAdmin()) {
 
-			MenuItem mntmUsuarios = new MenuItem(menu, SWT.CASCADE);
+			MenuItem mntmUsuarios = new MenuItem(menuMainBar, SWT.CASCADE);
 			mntmUsuarios.setText("Usuarios");
 
 			Menu menuUsuarios = new Menu(mntmUsuarios);
@@ -162,31 +148,24 @@ public class MainWindow {
 
 		}
 		
-		MenuItem mntmAcciones = new MenuItem(menu, SWT.CASCADE);
-		mntmAcciones.setText("Acciones");
+		MenuItem itemAcciones = new MenuItem(menuMainBar, SWT.CASCADE);
+		itemAcciones.setText("Acciones");
 		
-		Menu menu_2 = new Menu(mntmAcciones);
-		mntmAcciones.setMenu(menu_2);
+		Menu menuAcciones = new Menu(itemAcciones);
+		itemAcciones.setMenu(menuAcciones);
 		
-		MenuItem mntmRealizarEntrega = new MenuItem(menu_2, SWT.NONE);
-		mntmRealizarEntrega.setText("Entrada de transferencia");
+		MenuItem itemEntradaTx = new MenuItem(menuAcciones, SWT.NONE);
+		itemEntradaTx.setText("Entrada de transferencia");
 		
-//		MenuItem mntmRealizarEntregaV0 = null;
-//		if (LoggedUserService.INSTANCE.getUser().isAdmin()) {
-//			mntmRealizarEntregaV0 = new MenuItem(menu_2, SWT.NONE);
-//			mntmRealizarEntregaV0.setText("Realizar transferencia V0");
-//		}
-		
-		final MenuItem mntmCancelarEntrega = new MenuItem(menu_2, SWT.NONE);
-		mntmCancelarEntrega.setText("Cancelar entrada");
+		final MenuItem itemCancelarEntrega = new MenuItem(menuAcciones, SWT.NONE);
+		itemCancelarEntrega.setText("Cancelar entrada");
 		Image image = ImagesService.INSTANCE.getImage(Display.getDefault(), IImageKeys.CANCEL_16);
-		mntmCancelarEntrega.setImage(image);
-//		mntmCancelarEntrega.setEnabled(false);
+		itemCancelarEntrega.setImage(image);
 		
-		new MenuItem(menu_2, SWT.SEPARATOR);
+		new MenuItem(menuAcciones, SWT.SEPARATOR);
 		
-		MenuItem mntmConsultarTransferencias = new MenuItem(menu_2, SWT.NONE);
-		mntmConsultarTransferencias.setText("Consultar entradas");
+		MenuItem itemConsultarTransferencias = new MenuItem(menuAcciones, SWT.NONE);
+		itemConsultarTransferencias.setText("Consultar entradas");
 
 		final Composite composite = new Composite(shell, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -209,14 +188,14 @@ public class MainWindow {
 		txtDatetime = new Text(compositeFooter, SWT.READ_ONLY);
 		txtDatetime.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 
-		mntmSalir.addSelectionListener(new SelectionAdapter() {
+		itemExit.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				shell.dispose();
 			}
 		});
 		
-		mntmCambiarPassword.addSelectionListener(new SelectionAdapter() {
+		itemPassword.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				openUpdatePasswordDialog(composite);
@@ -243,7 +222,7 @@ public class MainWindow {
 		}
 		
 		
-		mntmRealizarEntrega.addSelectionListener(new SelectionAdapter() {
+		itemEntradaTx.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				disposeChildrenComposites(composite);
@@ -252,18 +231,7 @@ public class MainWindow {
 			}
 		});
 		
-//		if (LoggedUserService.INSTANCE.getUser().isAdmin()) {
-//			mntmRealizarEntregaV0.addSelectionListener(new SelectionAdapter() {
-//				@Override
-//				public void widgetSelected(SelectionEvent e) {
-//					disposeChildrenComposites(composite);
-//					openCreateTransferInEditorV0(composite);
-//					composite.layout();
-//				}
-//			});
-//		}
-		
-		mntmCancelarEntrega.addSelectionListener(new SelectionAdapter() {
+		itemCancelarEntrega.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				CreateTransferInEditor editor = null;
@@ -281,7 +249,7 @@ public class MainWindow {
 			}
 		});
 		
-		mntmAcciones.addSelectionListener(new SelectionAdapter() {
+		itemAcciones.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				logger.info("mntmAcciones selected!");
@@ -294,11 +262,11 @@ public class MainWindow {
 						enableCancelarEntrega = true;
 					}
 				}
-				mntmCancelarEntrega.setEnabled(enableCancelarEntrega);
+				itemCancelarEntrega.setEnabled(enableCancelarEntrega);
 			}
 		});
 		
-		mntmConsultarTransferencias.addSelectionListener(new SelectionAdapter() {
+		itemConsultarTransferencias.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				disposeChildrenComposites(composite);
@@ -351,13 +319,6 @@ public class MainWindow {
 	
 	private CreateTransferInEditor openCreateTransferInEditor(Composite composite) {
 		CreateTransferInEditor editor = new CreateTransferInEditor(composite, SWT.NONE);
-		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		return editor;
-	}
-	
-	
-	private CreateTransferInEditorV0 openCreateTransferInEditorV0(Composite composite) {
-		CreateTransferInEditorV0 editor = new CreateTransferInEditorV0(composite, SWT.NONE);
 		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		return editor;
 	}

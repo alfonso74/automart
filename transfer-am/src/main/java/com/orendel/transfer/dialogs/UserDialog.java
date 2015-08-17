@@ -89,10 +89,6 @@ public class UserDialog extends Dialog {
 				display.sleep();
 			}
 		}
-//		if (image != null) {
-//			System.out.println("Dispose image called!");
-//			image.dispose();
-//		}
 		return result;
 	}
 

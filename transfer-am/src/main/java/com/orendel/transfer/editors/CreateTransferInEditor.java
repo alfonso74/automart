@@ -28,7 +28,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.widgets.Group;
-import org.hibernate.HibernateError;
 import org.hibernate.HibernateException;
 
 import com.orendel.counterpoint.domain.Item;

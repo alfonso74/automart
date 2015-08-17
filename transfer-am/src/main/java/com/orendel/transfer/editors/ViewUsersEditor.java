@@ -107,7 +107,6 @@ public class ViewUsersEditor extends Composite {
 
 				logger.info("View Shell: " + getShell());
 				UserDialog dialog = new UserDialog(getShell(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL, user);
-//				dialog.setText("OHHH!!");
 				dialog.open();
 				getUsers();
 			}
