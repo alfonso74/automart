@@ -1,5 +1,8 @@
 package com.orendel.counterpoint.domain;
 
+import BarCodeType;
+import Item;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,7 +15,7 @@ import javax.persistence.Table;
 /**
  * Clase para el manejo de códigos de barra. 
  * Llave primaria compuesta por el ID del item, y por un secuencial.
- * Asociado a un item y a un tipo de código de barra.  
+ * Asociado a un {@link Item} y a un tipo de código de barra ({@link BarCodeType}).  
  * @author Admin
  *
  */
