@@ -38,6 +38,20 @@ public class CounterpointController extends AbstractController<TransferIn> {
 	}
 	
 	/**
+	 * Busca un item en base a un código de barra o al código del item (en ese orden).
+	 * @param code código de barra o del item que (hopefully) existe en base de datos
+	 * @return un Item identificado por el código suministrado, o null si no se encontró ningún
+	 * Item con el mismo.
+	 */
+	public Item findItem(String code) {
+		Item item = findItemByBarCode(code);
+		if (item == null) {
+			item = findItemByItemCode(code);
+		}
+		return item;
+	}
+	
+	/**
 	 * Busca un item en base a un código de barra. 
 	 * @param barCode código de barra de un item (hopefully) existente en base de datos
 	 * @return un Item con el código de barra suministrado, o null si no se encontró ningún
@@ -46,6 +60,7 @@ public class CounterpointController extends AbstractController<TransferIn> {
 	public Item findItemByBarCode(String barCode) {
 		Item item = null;
 		BarCodeDAO dao = new BarCodeDAO();
+		dao.setSession(this.getSession());
 		List<BarCode> itemBarcodeList = dao.findByField("code", barCode);
 		if (itemBarcodeList != null && !itemBarcodeList.isEmpty()) {
 			if (itemBarcodeList.size() > 1) {
@@ -65,6 +80,7 @@ public class CounterpointController extends AbstractController<TransferIn> {
 	public Item findItemByItemCode(String itemCode) {
 		Item item = null;
 		ItemDAO dao = new ItemDAO();
+		dao.setSession(this.getSession());
 		List<Item> itemList = dao.findByField("itemNo", itemCode);
 		if (itemList != null && !itemList.isEmpty()) {
 			item = itemList.get(0);

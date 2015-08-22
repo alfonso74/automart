@@ -40,6 +40,18 @@ public class Inventory {
 	@Column(name = "QTY_AVAIL", columnDefinition="decimal")
 	private BigDecimal qtyAvailable;
 	
+	@Column(name = "BIN_1")
+	private String bin01;
+	
+	@Column(name = "BIN_2")
+	private String bin02;
+	
+	@Column(name = "BIN_3")
+	private String bin03;
+	
+	@Column(name = "BIN_4")
+	private String bin04;
+	
 	/** Item al que está asociado este inventario */
 	@ManyToOne
     @JoinColumn(name = "ITEM_NO")
@@ -102,6 +114,38 @@ public class Inventory {
 
 	public void setQtyAvailable(BigDecimal qtyAvailable) {
 		this.qtyAvailable = qtyAvailable;
+	}
+	
+	public String getBin01() {
+		return bin01;
+	}
+
+	public void setBin01(String bin01) {
+		this.bin01 = bin01;
+	}
+
+	public String getBin02() {
+		return bin02;
+	}
+
+	public void setBin02(String bin02) {
+		this.bin02 = bin02;
+	}
+
+	public String getBin03() {
+		return bin03;
+	}
+
+	public void setBin03(String bin03) {
+		this.bin03 = bin03;
+	}
+
+	public String getBin04() {
+		return bin04;
+	}
+
+	public void setBin04(String bin04) {
+		this.bin04 = bin04;
 	}
 
 	public Item getItem() {

@@ -1,25 +1,37 @@
 package com.orendel.transfer.editors;
 
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Composite;
 
+import com.orendel.counterpoint.domain.Inventory;
+import com.orendel.counterpoint.domain.Item;
 import com.orendel.transfer.controllers.CounterpointController;
+import com.orendel.transfer.services.HibernateUtil;
+import com.orendel.transfer.util.MessagesUtil;
+
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.hibernate.HibernateException;
 
 public class ViewItemDetailsEditor extends Composite {
 	private static final Logger logger = Logger.getLogger(ViewItemDetailsEditor.class);
+	
+	private static final String EMPTY_STRING = "";
 	
 	private CounterpointController controller;
 	private Text txtBarcode;
@@ -33,6 +45,9 @@ public class ViewItemDetailsEditor extends Composite {
 	 */
 	public ViewItemDetailsEditor(Composite parent, int style) {
 		super(parent, style);
+		
+		controller = new CounterpointController("ItemDetails" + new Date().getTime());
+		
 		GridLayout gridLayout = new GridLayout(1, false);
 		gridLayout.marginHeight = 0;
 		setLayout(gridLayout);
@@ -79,26 +94,126 @@ public class ViewItemDetailsEditor extends Composite {
 		tblclmnLocation.setWidth(100);
 		tblclmnLocation.setText("Ubicación");
 		
-		TableColumn tblclmnOnhand = new TableColumn(tableItemDetails, SWT.NONE);
+		TableColumn tblclmnOnhand = new TableColumn(tableItemDetails, SWT.RIGHT);
 		tblclmnOnhand.setWidth(100);
 		tblclmnOnhand.setText("OnHand");
 		
-		TableColumn tblclmnAvailable = new TableColumn(tableItemDetails, SWT.NONE);
+		TableColumn tblclmnAvailable = new TableColumn(tableItemDetails, SWT.RIGHT);
 		tblclmnAvailable.setWidth(100);
 		tblclmnAvailable.setText("Disponible");
 		
-		TableColumn tblclmnCommited = new TableColumn(tableItemDetails, SWT.NONE);
+		TableColumn tblclmnCommited = new TableColumn(tableItemDetails, SWT.RIGHT);
 		tblclmnCommited.setWidth(100);
 		tblclmnCommited.setText("Commited");
 		
-		TableColumn tblclmnXferout = new TableColumn(tableItemDetails, SWT.NONE);
+		TableColumn tblclmnXferout = new TableColumn(tableItemDetails, SWT.RIGHT);
 		tblclmnXferout.setWidth(100);
-		tblclmnXferout.setText("Salida");
+		tblclmnXferout.setText("Saliendo");
 		
-		TableColumn tblclmnXferin = new TableColumn(tableItemDetails, SWT.NONE);
+		TableColumn tblclmnXferin = new TableColumn(tableItemDetails, SWT.RIGHT);
 		tblclmnXferin.setWidth(100);
-		tblclmnXferin.setText("Entrada");
+		tblclmnXferin.setText("Entrando");
+		
+		TableColumn tblclmnBin01 = new TableColumn(tableItemDetails, SWT.NONE);
+		tblclmnBin01.setWidth(100);
+		tblclmnBin01.setText("Bin01");
+		
+		TableColumn tblclmnBin02 = new TableColumn(tableItemDetails, SWT.NONE);
+		tblclmnBin02.setWidth(100);
+		tblclmnBin02.setText("Bin02");
+		
+		TableColumn tblclmnBin03 = new TableColumn(tableItemDetails, SWT.NONE);
+		tblclmnBin03.setWidth(100);
+		tblclmnBin03.setText("Bin03");
+		
+		TableColumn tblclmnBin04 = new TableColumn(tableItemDetails, SWT.NONE);
+		tblclmnBin04.setWidth(100);
+		tblclmnBin04.setText("Bin04");
+		
+		txtBarcode.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == 13) {
+					showItemDetails(txtBarcode.getText());
+				}
+			}
+		});
+		
+		btnSearch.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				showItemDetails(txtBarcode.getText());
+			}
+		});
 
+	}
+	
+	
+	private void showItemDetails(String code) {
+		if (code == null || code.isEmpty()) {
+			resetFields();
+			return;
+		}
+		resetFields();
+		try {
+			Item item = controller.findItem(code);
+			if (item != null) {
+				logger.info("Artículo encontrado en DB: " + item.getDescription());
+				refreshItemLocationDetails(item);
+			} else {
+				MessagesUtil.showWarning("Búsqueda por código", "No se encontró ningún artículo con el código de barra o código de item suministrado: " + code + ".");
+			}	
+		} catch (HibernateException e) {
+			resetHibernateConnection(e);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			MessagesUtil.showError("Error de aplicación", 
+					(e.getMessage() == null ? e.toString() + '\n' + e.getStackTrace()[0] : e.getMessage()));
+		}
+	}
+	
+	
+	private void refreshItemLocationDetails(Item item) {
+		txtItemDescription.setText(item.getDescription());
+		
+		tableItemDetails.clearAll();
+		TableItem itemLine;
+		
+		for (Inventory v : item.getInventory()) {
+			itemLine = new TableItem(tableItemDetails, SWT.NONE);
+			int column = 0;
+			itemLine.setData(v);
+			itemLine.setText(column++, " " + v.getLocationId());
+			itemLine.setText(column++, " " + v.getQtyOnHand());
+			itemLine.setText(column++, " " + v.getQtyAvailable());
+			itemLine.setText(column++, " " + v.getQtyCommited());
+			itemLine.setText(column++, " " + v.getQtyXferOut());
+			itemLine.setText(column++, " " + v.getQtyXferIn());
+			itemLine.setText(column++, " " + checkNull(v.getBin01()));
+			itemLine.setText(column++, " " + checkNull(v.getBin02()));
+			itemLine.setText(column++, " " + checkNull(v.getBin03()));
+			itemLine.setText(column++, " " + checkNull(v.getBin04()));
+		}		
+	}
+	
+	
+	private void resetFields() {
+		txtItemDescription.setText(EMPTY_STRING);
+		tableItemDetails.removeAll();
+	}
+	
+	
+	private void resetHibernateConnection(HibernateException ex) {
+		logger.error(ex.getMessage(), ex);
+		logger.info("Reloading sessions after HibernateException...");
+		controller.finalizarSesion();
+		HibernateUtil.verSesiones();
+		controller = new CounterpointController("ItemDetails" + new Date().getTime());
+	}
+	
+	
+	public String checkNull(String valorCampo) {
+		return valorCampo == null ? "" : valorCampo;
 	}
 
 	@Override
