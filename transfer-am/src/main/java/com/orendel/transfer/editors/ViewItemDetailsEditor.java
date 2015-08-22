@@ -17,6 +17,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
@@ -33,6 +34,8 @@ public class ViewItemDetailsEditor extends Composite {
 	
 	private static final String EMPTY_STRING = "";
 	
+	private static Color lightCyan = null;
+	
 	private CounterpointController controller;
 	private Text txtBarcode;
 	private Table tableItemDetails;
@@ -46,6 +49,7 @@ public class ViewItemDetailsEditor extends Composite {
 	public ViewItemDetailsEditor(Composite parent, int style) {
 		super(parent, style);
 		
+		lightCyan = new Color(getDisplay(), 240, 248, 255);
 		controller = new CounterpointController("ItemDetails" + new Date().getTime());
 		
 		GridLayout gridLayout = new GridLayout(1, false);
@@ -146,6 +150,7 @@ public class ViewItemDetailsEditor extends Composite {
 			}
 		});
 
+		txtBarcode.setFocus();
 	}
 	
 	
@@ -193,6 +198,9 @@ public class ViewItemDetailsEditor extends Composite {
 			itemLine.setText(column++, " " + checkNull(v.getBin02()));
 			itemLine.setText(column++, " " + checkNull(v.getBin03()));
 			itemLine.setText(column++, " " + checkNull(v.getBin04()));
+			if (tableItemDetails.getItemCount() % 2 == 0) {
+				itemLine.setBackground(lightCyan);
+			}
 		}		
 	}
 	
