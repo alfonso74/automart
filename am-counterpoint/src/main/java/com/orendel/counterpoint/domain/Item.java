@@ -29,7 +29,9 @@ public class Item {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "item", fetch = FetchType.LAZY)
 	private List<BarCode> barcodeList;
 	
-	
+	/** Inventario asociado a este item */
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "item", fetch = FetchType.LAZY)
+	private List<Inventory> inventory;
 	
 	
 	
@@ -62,4 +64,15 @@ public class Item {
 		this.barcodeList = barcodeList;
 	}
 
+	public List<Inventory> getInventory() {
+		if (inventory == null) {
+			inventory = new ArrayList<Inventory>();
+		}
+		return inventory;
+	}
+
+	public void setInventory(List<Inventory> inventory) {
+		this.inventory = inventory;
+	}
+	
 }

@@ -48,6 +48,8 @@
         <mapping class="com.orendel.counterpoint.domain.BarCodeType"></mapping>
         <mapping class="com.orendel.counterpoint.domain.BarCode"></mapping>
         
+        <mapping class="com.orendel.counterpoint.domain.Inventory"></mapping>
+        
  <!-- 
 		<mapping class="com.orendel.seam.domain.counterpoint.Invoice"></mapping>
         <mapping class="com.orendel.seam.domain.counterpoint.InvoiceLine"></mapping>
