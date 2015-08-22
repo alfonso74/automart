@@ -49,7 +49,7 @@ public class ViewItemDetailsEditor extends Composite {
 	public ViewItemDetailsEditor(Composite parent, int style) {
 		super(parent, style);
 		
-		lightCyan = new Color(getDisplay(), 240, 248, 255);
+		lightCyan = new Color(getDisplay(), 226, 244, 255);
 		controller = new CounterpointController("ItemDetails" + new Date().getTime());
 		
 		GridLayout gridLayout = new GridLayout(1, false);
