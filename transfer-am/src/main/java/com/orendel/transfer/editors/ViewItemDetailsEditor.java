@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Composite;
 import com.orendel.counterpoint.domain.Inventory;
 import com.orendel.counterpoint.domain.Item;
 import com.orendel.transfer.controllers.CounterpointController;
+import com.orendel.transfer.dialogs.ItemDetailsDialog;
 import com.orendel.transfer.services.HibernateUtil;
 import com.orendel.transfer.util.MessagesUtil;
 
@@ -28,6 +29,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.hibernate.HibernateException;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 
 public class ViewItemDetailsEditor extends Composite {
 	private static final Logger logger = Logger.getLogger(ViewItemDetailsEditor.class);
@@ -139,6 +142,7 @@ public class ViewItemDetailsEditor extends Composite {
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == 13) {
 					showItemDetails(txtBarcode.getText());
+					txtBarcode.selectAll();
 				}
 			}
 		});
@@ -147,10 +151,30 @@ public class ViewItemDetailsEditor extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				showItemDetails(txtBarcode.getText());
+				txtBarcode.setFocus();
+				txtBarcode.selectAll();
 			}
 		});
 
 		txtBarcode.setFocus();
+		
+		addDoubleClickListener();
+	}
+
+
+	private void addDoubleClickListener() {
+		tableItemDetails.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				logger.info("Event: " + e);
+				Table t = (Table) e.getSource();
+				TableItem item = t.getItem(t.getSelectionIndex());
+				Inventory inventory = (Inventory) item.getData();
+				logger.info("Delivery: " + item.getText(1) + ", " + inventory);
+				ItemDetailsDialog dialog = new ItemDetailsDialog(getShell(), SWT.APPLICATION_MODAL, inventory.getItemNo());
+				dialog.open();
+			}
+		});
 	}
 	
 	
