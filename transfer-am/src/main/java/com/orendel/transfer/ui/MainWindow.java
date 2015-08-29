@@ -25,6 +25,7 @@ import com.orendel.transfer.dialogs.UpdatePasswordDialog;
 import com.orendel.transfer.dialogs.UserDialog;
 import com.orendel.transfer.domain.User;
 import com.orendel.transfer.editors.CreateTransferInEditor;
+import com.orendel.transfer.editors.ViewExtendedItemDetailsEditor;
 import com.orendel.transfer.editors.ViewItemDetailsEditor;
 import com.orendel.transfer.editors.ViewTransfersEditor;
 import com.orendel.transfer.editors.ViewUsersEditor;
@@ -172,6 +173,9 @@ public class MainWindow {
 		
 		MenuItem itemConsultarArticulos = new MenuItem(menuAcciones, SWT.NONE);
 		itemConsultarArticulos.setText("Consultar artículos");
+		
+		MenuItem itemConsultarArticulosExtended = new MenuItem(menuAcciones, SWT.NONE);
+		itemConsultarArticulosExtended.setText("Consultar artículos (extended)");
 
 		final Composite composite = new Composite(shell, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -290,6 +294,15 @@ public class MainWindow {
 			}
 		});
 		
+		itemConsultarArticulosExtended.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				disposeChildrenComposites(composite);
+				openViewExtendedItemDetailsEditor(composite);
+				composite.layout();
+			}
+		});
+		
 		fillFooterInfo();
 		
 		openCreateTransferInEditor(composite);
@@ -348,6 +361,13 @@ public class MainWindow {
 	
 	private ViewItemDetailsEditor openViewItemDetailsEditor(Composite composite) {
 		ViewItemDetailsEditor editor = new ViewItemDetailsEditor(composite, SWT.NONE);
+		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		return editor;
+	}
+	
+	
+	private ViewExtendedItemDetailsEditor openViewExtendedItemDetailsEditor(Composite composite) {
+		ViewExtendedItemDetailsEditor editor = new ViewExtendedItemDetailsEditor(composite, SWT.NONE);
 		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		return editor;
 	}

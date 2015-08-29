@@ -6,11 +6,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.SWT;
 
-import com.orendel.transfer.composites.ItemDetailsComposite;
+import com.orendel.transfer.composites.EditBarcodeComposite;
 import com.orendel.transfer.util.DialogUtil;
 
 
-public class ItemDetailsDialog extends Dialog {
+public class EditBarcodeDialog extends Dialog {
 
 	protected Object result;
 	protected Shell shell;
@@ -21,9 +21,9 @@ public class ItemDetailsDialog extends Dialog {
 	 * @param parent
 	 * @param style
 	 */
-	public ItemDetailsDialog(Shell parent, int style, String itemNo) {
+	public EditBarcodeDialog(Shell parent, int style, String itemNo) {
 		super(parent, style);
-		setText("Ver detalles del artículo");
+		setText("Editar código de barra");
 		this.itemNo = itemNo;
 	}
 
@@ -54,7 +54,7 @@ public class ItemDetailsDialog extends Dialog {
 		shell.setLocation(DialogUtil.calculateDialogLocation(shell, false));
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
-		ItemDetailsComposite composite = new ItemDetailsComposite(shell, SWT.None, itemNo);
+		EditBarcodeComposite composite = new EditBarcodeComposite(shell, SWT.None, itemNo);
 		composite.layout();
 	}
 
