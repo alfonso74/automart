@@ -171,7 +171,7 @@ public class ViewItemDetailsEditor extends Composite {
 				TableItem item = t.getItem(t.getSelectionIndex());
 				Inventory inventory = (Inventory) item.getData();
 				logger.info("Delivery: " + item.getText(1) + ", " + inventory);
-				ItemDetailsDialog dialog = new ItemDetailsDialog(getShell(), SWT.APPLICATION_MODAL, inventory.getItemNo());
+				ItemDetailsDialog dialog = new ItemDetailsDialog(getShell(), SWT.APPLICATION_MODAL, inventory.getItemNo(), inventory.getLocationId());
 				dialog.open();
 			}
 		});

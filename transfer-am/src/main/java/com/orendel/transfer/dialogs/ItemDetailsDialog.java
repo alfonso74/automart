@@ -15,16 +15,18 @@ public class ItemDetailsDialog extends Dialog {
 	protected Object result;
 	protected Shell shell;
 	private String itemNo;
+	private String locationId;
 
 	/**
 	 * Create the dialog.
 	 * @param parent
 	 * @param style
 	 */
-	public ItemDetailsDialog(Shell parent, int style, String itemNo) {
+	public ItemDetailsDialog(Shell parent, int style, String itemNo, String locationId) {
 		super(parent, style);
-		setText("Ver detalles del artículo");
+		setText("Ver detalles (Ubicación)");
 		this.itemNo = itemNo;
+		this.locationId = locationId;
 	}
 
 	/**
@@ -54,7 +56,7 @@ public class ItemDetailsDialog extends Dialog {
 		shell.setLocation(DialogUtil.calculateDialogLocation(shell, false));
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
-		ItemDetailsComposite composite = new ItemDetailsComposite(shell, SWT.None, itemNo);
+		ItemDetailsComposite composite = new ItemDetailsComposite(shell, SWT.None, itemNo, locationId);
 		composite.layout();
 	}
 

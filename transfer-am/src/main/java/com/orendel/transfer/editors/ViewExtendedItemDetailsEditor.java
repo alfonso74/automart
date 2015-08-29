@@ -222,7 +222,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 				TableItem item = t.getItem(t.getSelectionIndex());
 				Inventory inventory = (Inventory) item.getData();
 				logger.info("Delivery: " + item.getText(1) + ", " + inventory);
-				ItemDetailsDialog dialog = new ItemDetailsDialog(getShell(), SWT.APPLICATION_MODAL, inventory.getItemNo());
+				ItemDetailsDialog dialog = new ItemDetailsDialog(getShell(), SWT.APPLICATION_MODAL, inventory.getItemNo(), inventory.getLocationId());
 				dialog.open();
 			}
 		});
@@ -277,10 +277,10 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 			itemLine.setText(column++, " " + v.getQtyCommited());
 			itemLine.setText(column++, " " + v.getQtyXferOut());
 			itemLine.setText(column++, " " + v.getQtyXferIn());
-			itemLine.setText(column++, " " + checkNull(v.getBin01()));
-			itemLine.setText(column++, " " + checkNull(v.getBin02()));
-			itemLine.setText(column++, " " + checkNull(v.getBin03()));
-			itemLine.setText(column++, " " + checkNull(v.getBin04()));
+			itemLine.setText(column++, checkNullx(v.getBin01()));
+			itemLine.setText(column++, checkNullx(v.getBin02()));
+			itemLine.setText(column++, checkNullx(v.getBin03()));
+			itemLine.setText(column++, checkNullx(v.getBin04()));
 			if (tableItemDetails.getItemCount() % 2 == 0) {
 				itemLine.setBackground(lightCyan);
 			}
@@ -323,7 +323,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	}
 	
 	
-	public String checkNull(String valorCampo) {
+	public String checkNullx(String valorCampo) {
 		return valorCampo == null ? "" : valorCampo;
 	}
 
