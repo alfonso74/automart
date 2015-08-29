@@ -10,7 +10,10 @@ public interface IImageKeys {
 	
 	final String LOGIN = "icons/login/automartLogin.png";
 	
+	final String ITEM_24 = "icons/item_24.png";
+	
 	final String USER_24 = "icons/user_24.png";
+	
 	final String BAR_CHART_16 = "icons/bar_chart_16.png";
 	
 	final String CANCEL_16 = "icons/close_16.png";
