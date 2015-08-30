@@ -19,6 +19,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -384,6 +386,7 @@ public class CreateTransferInEditor extends Composite {
 		});
 		
 		addGlobalListeners();
+		addDisposeListener();
 		
 		toggleEditableFields(false);
 		
@@ -842,26 +845,28 @@ public class CreateTransferInEditor extends Composite {
 		parent.layout();
 	}
 	
-	@Override
-	protected void checkSubclass() {
-		// Disable the check that prevents subclassing of SWT components
-	}
-
-
-	@Override
-	public void dispose() {
-		getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF04);
-		getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF09);
-		getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF12);
-		cpController.finalizarSesion();
-		tcController.finalizarSesion();
-		HibernateUtil.verSesiones();
-		HibernateUtilDelivery.verSesiones();
-		super.dispose();		
+	private void addDisposeListener() {
+		this.addDisposeListener(new DisposeListener() {
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF04);
+				getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF09);
+				getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF12);
+				cpController.finalizarSesion();
+				tcController.finalizarSesion();
+				HibernateUtil.verSesiones();
+				HibernateUtilDelivery.verSesiones();
+			}
+		});
 	}
 	
 	public String checkNull(String valorCampo) {
 		return valorCampo == null ? "" : valorCampo;
+	}
+	
+	@Override
+	protected void checkSubclass() {
+		// Disable the check that prevents subclassing of SWT components
 	}
 }
 

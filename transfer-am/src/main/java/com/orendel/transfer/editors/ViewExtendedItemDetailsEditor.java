@@ -209,7 +209,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		});
 		
 		addDoubleClickListener();		
-//		addDisposeListener();
+		addDisposeListener();
 		
 		txtBarcode.setFocus();
 	}
@@ -340,14 +340,14 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		return valorCampo == null ? "" : valorCampo;
 	}
 	
-//	private void addDisposeListener() {
-//		this.addDisposeListener(new DisposeListener() {
-//			@Override
-//			public void widgetDisposed(DisposeEvent e) {
-//				controller.finalizarSesion();
-//			}
-//		});
-//	}
+	private void addDisposeListener() {
+		this.addDisposeListener(new DisposeListener() {
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				controller.finalizarSesion();
+			}
+		});
+	}
 	
 	@Override
 	protected void checkSubclass() {

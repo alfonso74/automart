@@ -11,6 +11,8 @@ import com.orendel.transfer.controllers.CounterpointController;
 import com.orendel.transfer.services.IImageKeys;
 import com.orendel.transfer.services.ImagesService;
 
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Group;
@@ -207,6 +209,8 @@ public class ItemDetailsComposite extends Composite {
 		gd_txtQtyMax.widthHint = 70;
 		txtQtyMax.setLayoutData(gd_txtQtyMax);
 		
+		addDisposeListener();
+		
 		findItemDetails();
 	}
 	
@@ -241,10 +245,14 @@ public class ItemDetailsComposite extends Composite {
 		txtXferIn.setText(inventory.getQtyXferIn().toString());
 		txtXferOut.setText(inventory.getQtyXferOut().toString());
 	}
-
-	@Override
-	public void dispose() {
-		controller.finalizarSesion();
+	
+	private void addDisposeListener() {
+		this.addDisposeListener(new DisposeListener() {
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				controller.finalizarSesion();
+			}
+		});
 	}
 
 	@Override

@@ -72,7 +72,10 @@ public class MainWindow {
 			e.printStackTrace();
 		} finally {
 			try {
+				HibernateUtil.verSesiones();
+				HibernateUtilDelivery.verSesiones();
 				HibernateUtil.destroy();
+				HibernateUtilDelivery.destroy();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

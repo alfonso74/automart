@@ -12,6 +12,8 @@ import com.orendel.transfer.services.IImageKeys;
 import com.orendel.transfer.services.ImagesService;
 import com.orendel.transfer.util.DateUtil;
 
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Group;
@@ -141,6 +143,8 @@ public class EditBarcodeComposite extends Composite {
 		txtBarcodeUpdated.setEnabled(false);
 		txtBarcodeUpdated.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 
+		addDisposeListener();
+		
 		findItemDetails();
 	}
 	
@@ -180,10 +184,13 @@ public class EditBarcodeComposite extends Composite {
 		return result;
 	}
 	
-	@Override
-	public void dispose() {
-		controller.finalizarSesion();
-		super.dispose();
+	private void addDisposeListener() {
+		this.addDisposeListener(new DisposeListener() {
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				controller.finalizarSesion();
+			}
+		});
 	}
 
 	@Override
