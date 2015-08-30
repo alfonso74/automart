@@ -1,5 +1,7 @@
 package com.orendel.counterpoint.domain;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,6 +38,14 @@ public class BarCode {
 	/** Código de barra */
 	@Column(name = "BARCOD")
 	private String code;
+	
+	/** Fecha de última actualización */
+	@Column(name = "LST_MAINT_DT")
+	private Date updated;
+	
+	/** Usuario que realizó la última actualización */
+	@Column(name = "LST_MAINT_USR_ID")
+	private String userId;
 	
 	/** Item al que está asociado este código de barra */
 	@ManyToOne
@@ -74,6 +84,22 @@ public class BarCode {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+	
+	public Date getUpdated() {
+		return updated;
+	}
+
+	public void setUpdated(Date updated) {
+		this.updated = updated;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public Item getItem() {
