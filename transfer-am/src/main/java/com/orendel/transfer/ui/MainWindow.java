@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 import com.orendel.transfer.config.AppConfig;
 import com.orendel.transfer.dialogs.UpdatePasswordDialog;
@@ -105,6 +106,7 @@ public class MainWindow {
 						(e.getMessage() == null ? e.toString() + '\n' + e.getStackTrace()[0] : e.getMessage()));
 			}
 		}
+		SWTResourceManager.dispose();
 		ImagesService.INSTANCE.disposeImages();
 		display.dispose();
 	}
