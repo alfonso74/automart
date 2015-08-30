@@ -24,7 +24,7 @@ public class ItemDetailsDialog extends Dialog {
 	 */
 	public ItemDetailsDialog(Shell parent, int style, String itemNo, String locationId) {
 		super(parent, style);
-		setText("Ver detalles (Ubicación)");
+		super.setText("Ver detalles por bodega");
 		this.itemNo = itemNo;
 		this.locationId = locationId;
 	}
@@ -51,8 +51,8 @@ public class ItemDetailsDialog extends Dialog {
 	 */
 	private void createContents() {
 		shell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		shell.setSize(600, 450);
-		shell.setText(getText());
+		shell.setSize(450, 350);
+		shell.setText(super.getText());
 		shell.setLocation(DialogUtil.calculateDialogLocation(shell, false));
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 		

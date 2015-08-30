@@ -17,6 +17,8 @@ import com.orendel.transfer.util.MessagesUtil;
 
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -57,7 +59,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		super(parent, style);
 		
 		lightCyan = new Color(getDisplay(), 226, 244, 255);
-		controller = new CounterpointController("ItemDetails" + new Date().getTime());
+		controller = new CounterpointController("ViewItemDetailsEditor" + new Date().getTime());
 		
 		GridLayout gridLayout = new GridLayout(1, false);
 		gridLayout.marginHeight = 0;
@@ -89,6 +91,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		lblDescription.setText("Descripción:");
 		
 		txtItemDescription = new Text(grpConsultarDetallesPor, SWT.BORDER);
+		txtItemDescription.setEnabled(false);
 		txtItemDescription.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
 		txtItemDescription.setEditable(false);
 		txtItemDescription.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
@@ -107,12 +110,12 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		tableItemDetails.setLinesVisible(true);
 		
 		TableColumn tblclmnLocation = new TableColumn(tableItemDetails, SWT.NONE);
-		tblclmnLocation.setWidth(100);
-		tblclmnLocation.setText("Ubicación");
+		tblclmnLocation.setWidth(125);
+		tblclmnLocation.setText("Bodega");
 		
 		TableColumn tblclmnOnhand = new TableColumn(tableItemDetails, SWT.RIGHT);
 		tblclmnOnhand.setWidth(100);
-		tblclmnOnhand.setText("OnHand");
+		tblclmnOnhand.setText("On Hand");
 		
 		TableColumn tblclmnAvailable = new TableColumn(tableItemDetails, SWT.RIGHT);
 		tblclmnAvailable.setWidth(100);
@@ -124,11 +127,11 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		
 		TableColumn tblclmnXferout = new TableColumn(tableItemDetails, SWT.RIGHT);
 		tblclmnXferout.setWidth(100);
-		tblclmnXferout.setText("Saliendo");
+		tblclmnXferout.setText("Xfer Out");
 		
 		TableColumn tblclmnXferin = new TableColumn(tableItemDetails, SWT.RIGHT);
 		tblclmnXferin.setWidth(100);
-		tblclmnXferin.setText("Entrando");
+		tblclmnXferin.setText("Xfer In");
 		
 		TableColumn tblclmnBin01 = new TableColumn(tableItemDetails, SWT.NONE);
 		tblclmnBin01.setWidth(100);
@@ -160,19 +163,19 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		tableBarcodes.setLinesVisible(true);
 		
 		TableColumn tblclmnBarcode = new TableColumn(tableBarcodes, SWT.NONE);
-		tblclmnBarcode.setWidth(100);
-		tblclmnBarcode.setText("Código");
+		tblclmnBarcode.setWidth(125);
+		tblclmnBarcode.setText("Cód. de Barra");
 		
 		TableColumn tblclmnId = new TableColumn(tableBarcodes, SWT.NONE);
 		tblclmnId.setWidth(100);
 		tblclmnId.setText("Tipo");
 		
 		TableColumn tblclmnDescription = new TableColumn(tableBarcodes, SWT.NONE);
-		tblclmnDescription.setWidth(250);
+		tblclmnDescription.setWidth(300);
 		tblclmnDescription.setText("Descripción");
 		
 		TableColumn tblclmnUpdated = new TableColumn(tableBarcodes, SWT.CENTER);
-		tblclmnUpdated.setWidth(175);
+		tblclmnUpdated.setWidth(180);
 		tblclmnUpdated.setText("Actualizado");
 		
 		Button btnEdit = new Button(groupBarcodes, SWT.NONE);
@@ -201,18 +204,16 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		btnEdit.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				BarCode barcode = getSelectedBarcode();
-				EditBarcodeDialog dialog = new EditBarcodeDialog(getShell(), SWT.APPLICATION_MODAL, barcode.getCode());
-				dialog.open();
+				editBarcode();
 			}
 		});
-
-		txtBarcode.setFocus();
 		
-		addDoubleClickListener();
+		addDoubleClickListener();		
+//		addDisposeListener();
+		
+		txtBarcode.setFocus();
 	}
-
-
+	
 	private void addDoubleClickListener() {
 		tableItemDetails.addMouseListener(new MouseAdapter() {
 			@Override
@@ -228,11 +229,25 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		});
 	}
 	
-	private BarCode getSelectedBarcode() {
+	
+	private void editBarcode() {
+		BarCode barcode = getSelectedBarcodeLine();
+		if (barcode != null) {
+			EditBarcodeDialog dialog = new EditBarcodeDialog(getShell(), SWT.APPLICATION_MODAL, barcode.getCode());
+			dialog.open();
+		} else {
+			MessagesUtil.showError("Editar código de barra", "No se ha seleccionado ningún código de barra para ser editado.");
+		}
+	}
+	
+	private BarCode getSelectedBarcodeLine() {
+		BarCode barcode = null;
 		int index = tableBarcodes.getSelectionIndex();
-		TableItem item = tableBarcodes.getItem(index);
-		BarCode barcode = (BarCode) item.getData();
-		logger.info("Barcode: " + item.getText(1) + ", " + barcode);
+		if (index != -1) {
+			TableItem item = tableBarcodes.getItem(index);
+			barcode = (BarCode) item.getData();
+			logger.info("Barcode: " + item.getText(1) + ", " + barcode);
+		}
 		return barcode;
 	}
 	
@@ -264,7 +279,6 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	private void refreshItemLocationDetails(Item item) {
 		txtItemDescription.setText(item.getDescription());
 		
-//		tableItemDetails.clearAll();
 		TableItem itemLine;
 		
 		for (Inventory v : item.getInventory()) {
@@ -277,10 +291,10 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 			itemLine.setText(column++, " " + v.getQtyCommited());
 			itemLine.setText(column++, " " + v.getQtyXferOut());
 			itemLine.setText(column++, " " + v.getQtyXferIn());
-			itemLine.setText(column++, checkNullx(v.getBin01()));
-			itemLine.setText(column++, checkNullx(v.getBin02()));
-			itemLine.setText(column++, checkNullx(v.getBin03()));
-			itemLine.setText(column++, checkNullx(v.getBin04()));
+			itemLine.setText(column++, checkNull(v.getBin01()));
+			itemLine.setText(column++, checkNull(v.getBin02()));
+			itemLine.setText(column++, checkNull(v.getBin03()));
+			itemLine.setText(column++, checkNull(v.getBin04()));
 			if (tableItemDetails.getItemCount() % 2 == 0) {
 				itemLine.setBackground(lightCyan);
 			}
@@ -289,7 +303,6 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	
 	
 	private void refreshBarcodeDetails(Item item) {
-//		tableBarcodes.clearAll();
 		TableItem itemLine;
 		
 		for (BarCode v : item.getBarcodeList()) {
@@ -299,7 +312,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 			itemLine.setText(column++, " " + v.getCode());
 			itemLine.setText(column++, " " + v.getType().getBarCodeId());
 			itemLine.setText(column++, " " + v.getType().getDescription());
-			itemLine.setText(column++, " " + DateUtil.toString(new Date(), DateUtil.formatoFechaHora));
+			itemLine.setText(column++, " " + DateUtil.toString(v.getUpdated(), DateUtil.formatoFechaHora));
 			if (tableBarcodes.getItemCount() % 2 == 0) {
 				itemLine.setBackground(lightCyan);
 			}
@@ -323,10 +336,19 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	}
 	
 	
-	public String checkNullx(String valorCampo) {
+	public String checkNull(String valorCampo) {
 		return valorCampo == null ? "" : valorCampo;
 	}
-
+	
+//	private void addDisposeListener() {
+//		this.addDisposeListener(new DisposeListener() {
+//			@Override
+//			public void widgetDisposed(DisposeEvent e) {
+//				controller.finalizarSesion();
+//			}
+//		});
+//	}
+	
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components

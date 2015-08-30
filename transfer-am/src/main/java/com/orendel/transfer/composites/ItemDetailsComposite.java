@@ -79,8 +79,8 @@ public class ItemDetailsComposite extends Composite {
 		txtHeader.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
 		txtHeader.setForeground(SWTResourceManager.getColor(SWT.COLOR_LINK_FOREGROUND));
 		txtHeader.setEditable(false);
-		txtHeader.setText("Detalles del artículo por ubicación");
-		txtHeader.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
+		txtHeader.setText("Detalles del artículo por bodega");
+		txtHeader.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, true, 1, 1));
 		
 		Group groupGeneralInfo = new Group(this, SWT.NONE);
 		groupGeneralInfo.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
@@ -111,7 +111,7 @@ public class ItemDetailsComposite extends Composite {
 		
 		Label lblLocation = new Label(groupGeneralInfo, SWT.NONE);
 		lblLocation.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblLocation.setText("Ubicación:");
+		lblLocation.setText("Bodega:");
 		
 		txtLocation = new Text(groupGeneralInfo, SWT.BORDER);
 		txtLocation.setEnabled(false);
@@ -141,7 +141,7 @@ public class ItemDetailsComposite extends Composite {
 		GridData gd_lblAvailable = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
 		gd_lblAvailable.horizontalIndent = 40;
 		lblAvailable.setLayoutData(gd_lblAvailable);
-		lblAvailable.setText("Available:");
+		lblAvailable.setText("Disponible:");
 		
 		txtAvailable = new Text(grpQty, SWT.BORDER);
 		txtAvailable.setEnabled(false);
@@ -206,10 +206,6 @@ public class ItemDetailsComposite extends Composite {
 		GridData gd_txtQtyMax = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_txtQtyMax.widthHint = 70;
 		txtQtyMax.setLayoutData(gd_txtQtyMax);
-		
-		Group grpLocation = new Group(this, SWT.NONE);
-		grpLocation.setText("Ubicación");
-		grpLocation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		findItemDetails();
 	}
