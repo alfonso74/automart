@@ -99,7 +99,11 @@ public class BarCode {
 	}
 
 	public void setUserId(String userId) {
-		this.userId = userId;
+		if (userId.length() > 10) {
+			this.userId = userId.substring(0, 10);
+		} else {
+			this.userId = userId;
+		}
 	}
 
 	public Item getItem() {
