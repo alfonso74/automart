@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 import com.orendel.transfer.controllers.UsersController;
 import com.orendel.transfer.domain.User;
 import com.orendel.transfer.exceptions.ApplicationRuntimeException;
-import com.orendel.transfer.ui.login.LoggedUserService;
+import com.orendel.transfer.services.LoggedUserService;
 
 
 public final class AuthenticationUtil {

@@ -1,4 +1,4 @@
-package com.orendel.transfer.ui.login;
+package com.orendel.transfer.services;
 
 import com.orendel.transfer.domain.User;
 

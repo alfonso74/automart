@@ -34,8 +34,8 @@ import com.orendel.transfer.services.HibernateUtil;
 import com.orendel.transfer.services.HibernateUtilDelivery;
 import com.orendel.transfer.services.IImageKeys;
 import com.orendel.transfer.services.ImagesService;
+import com.orendel.transfer.services.LoggedUserService;
 import com.orendel.transfer.services.ShellImagesService;
-import com.orendel.transfer.ui.login.LoggedUserService;
 import com.orendel.transfer.ui.login.LoginWindow;
 import com.orendel.transfer.util.MessagesUtil;
 

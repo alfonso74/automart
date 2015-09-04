@@ -10,12 +10,10 @@ import com.orendel.counterpoint.domain.Item;
 import com.orendel.transfer.controllers.CounterpointController;
 import com.orendel.transfer.services.IImageKeys;
 import com.orendel.transfer.services.ImagesService;
-import com.orendel.transfer.ui.login.LoggedUserService;
+import com.orendel.transfer.services.LoggedUserService;
 import com.orendel.transfer.util.DateUtil;
 import com.orendel.transfer.util.MessagesUtil;
 
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -224,7 +222,7 @@ public class EditBarcodeComposite extends Composite {
 	}
 	
 	/**
-	 * Actualiza los campos con la información contenida en el {@link Item}
+	 * Actualiza los campos del UI con la información contenida en el {@link Item}
 	 */
 	private void refreshFieldsContents() {
 		txtItemCode.setText(item.getItemNo());

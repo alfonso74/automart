@@ -3,6 +3,7 @@ package com.orendel.transfer.ui.login;
 import org.mihalis.opal.login.LoginDialogVerifier;
 
 import com.orendel.transfer.domain.User;
+import com.orendel.transfer.services.LoggedUserService;
 import com.orendel.transfer.util.AuthenticationUtil;
 
 

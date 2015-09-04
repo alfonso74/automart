@@ -20,7 +20,7 @@ import com.orendel.transfer.controllers.UsersController;
 import com.orendel.transfer.domain.User;
 import com.orendel.transfer.services.IImageKeys;
 import com.orendel.transfer.services.ImagesService;
-import com.orendel.transfer.ui.login.LoggedUserService;
+import com.orendel.transfer.services.LoggedUserService;
 import com.orendel.transfer.util.AuthenticationUtil;
 import com.orendel.transfer.util.DialogUtil;
 import com.orendel.transfer.util.MessagesUtil;
