@@ -179,6 +179,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		tblclmnUpdated.setText("Actualizado");
 		
 		Button btnEdit = new Button(groupBarcodes, SWT.NONE);
+		btnEdit.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
 		btnEdit.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
 		btnEdit.setText("Editar...");
 		
@@ -233,8 +234,11 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	private void editBarcode() {
 		BarCode barcode = getSelectedBarcodeLine();
 		if (barcode != null) {
-			EditBarcodeDialog dialog = new EditBarcodeDialog(getShell(), SWT.APPLICATION_MODAL, barcode.getCode());
+			EditBarcodeDialog dialog = new EditBarcodeDialog(getShell(), SWT.APPLICATION_MODAL, controller, barcode.getCode());
 			dialog.open();
+//			showItemDetails(barcode.getItemNo());
+//			Item item = controller.findItemByItemCode(barcode.getItemNo());
+			refreshBarcodeDetails(barcode.getItem());
 		} else {
 			MessagesUtil.showError("Editar código de barra", "No se ha seleccionado ningún código de barra para ser editado.");
 		}
@@ -252,11 +256,10 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	}
 	
 	private void showItemDetails(String code) {
+		resetFields();
 		if (code == null || code.isEmpty()) {
-			resetFields();
 			return;
 		}
-		resetFields();
 		try {
 			Item item = controller.findItem(code);
 			if (item != null) {
@@ -281,6 +284,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		
 		TableItem itemLine;
 		
+		tableItemDetails.removeAll();
 		for (Inventory v : item.getInventory()) {
 			itemLine = new TableItem(tableItemDetails, SWT.NONE);
 			int column = 0;
@@ -305,6 +309,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	private void refreshBarcodeDetails(Item item) {
 		TableItem itemLine;
 		
+		tableBarcodes.removeAll();
 		for (BarCode v : item.getBarcodeList()) {
 			itemLine = new TableItem(tableBarcodes, SWT.NONE);
 			int column = 0;

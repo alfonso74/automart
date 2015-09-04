@@ -10,10 +10,14 @@ import com.orendel.counterpoint.domain.Item;
 import com.orendel.transfer.controllers.CounterpointController;
 import com.orendel.transfer.services.IImageKeys;
 import com.orendel.transfer.services.ImagesService;
+import com.orendel.transfer.ui.login.LoggedUserService;
 import com.orendel.transfer.util.DateUtil;
+import com.orendel.transfer.util.MessagesUtil;
 
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Group;
@@ -22,6 +26,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.widgets.Button;
 
 public class EditBarcodeComposite extends Composite {
 	private static final Logger logger = Logger.getLogger(EditBarcodeComposite.class);
@@ -41,16 +46,17 @@ public class EditBarcodeComposite extends Composite {
 
 	private Image image;
 	
+	
 	/**
 	 * Create the composite.
 	 * @param parent
 	 * @param style
 	 */
-	public EditBarcodeComposite(Composite parent, int style, String barcode) {
+	public EditBarcodeComposite(Composite parent, int style, CounterpointController controller, String barcode) {
 		super(parent, style);
 		
+		this.controller = controller;
 		this.barcode = barcode;
-		this.controller = new CounterpointController("EditBarcode" + new Date().getTime());
 		this.image = ImagesService.INSTANCE.getImage(parent.getDisplay(), IImageKeys.ITEM_24);
 		
 		GridLayout gridLayout = new GridLayout(1, false);
@@ -74,7 +80,7 @@ public class EditBarcodeComposite extends Composite {
 		txtHeader.setForeground(SWTResourceManager.getColor(SWT.COLOR_LINK_FOREGROUND));
 		txtHeader.setEditable(false);
 		txtHeader.setText("Detalles del artículo / código de barra");
-		txtHeader.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
+		txtHeader.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, true, 1, 1));
 		
 		Group groupItem = new Group(this, SWT.NONE);
 		groupItem.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
@@ -101,7 +107,7 @@ public class EditBarcodeComposite extends Composite {
 		
 		Group groupBarcode = new Group(this, SWT.NONE);
 		groupBarcode.setText("Código de barra");
-		GridData gd_groupBarcode = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		GridData gd_groupBarcode = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_groupBarcode.verticalIndent = 10;
 		groupBarcode.setLayoutData(gd_groupBarcode);
 		groupBarcode.setBounds(0, 0, 70, 82);
@@ -142,10 +148,68 @@ public class EditBarcodeComposite extends Composite {
 		txtBarcodeUpdated.setEditable(false);
 		txtBarcodeUpdated.setEnabled(false);
 		txtBarcodeUpdated.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-
-		addDisposeListener();
+		
+		Composite compositeButtons = new Composite(this, SWT.NONE);
+		compositeButtons.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		compositeButtons.setLayout(new GridLayout(2, false));
+		
+		Button btnSave = new Button(compositeButtons, SWT.NONE);
+		GridData gd_btnSave = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnSave.widthHint = 70;
+		btnSave.setLayoutData(gd_btnSave);
+		btnSave.setText("Guardar");
+		
+		Button btnCancel = new Button(compositeButtons, SWT.NONE);
+		GridData gd_btnCancel = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnCancel.widthHint = 70;
+		btnCancel.setLayoutData(gd_btnCancel);
+		btnCancel.setText("Cancelar");
+		
+		btnSave.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (validateFields()) {
+					doSave();
+					MessagesUtil.showInformation("Guardar código de barra", "El código de barra ha sido guardado exitosamente.");
+					getShell().close();
+				};				
+			}
+		});
+		
+		btnCancel.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				getShell().close();
+			}
+		});
 		
 		findItemDetails();
+		
+		getShell().setDefaultButton(btnSave);
+	}
+	
+	private boolean validateFields() {
+		String pCode = txtBarcode.getText();
+		if (pCode.isEmpty()) {
+			MessagesUtil.showInformation("Validación de campos",
+					"El campo 'Código' no puede quedar en blanco.");
+			return false;
+		}
+		if (pCode.length() > 25) {
+			MessagesUtil.showInformation("Validación de campos", 
+					"El código de barra no puede superar los 25 caracteres (actual: " + pCode.length() + ").");
+			return false;
+		}
+		return true;
+	}
+	
+	private void doSave() {
+		String pCode = txtBarcode.getText();
+		BarCode registro = locateBarcode(item, barcode);
+		registro.setCode(pCode);
+		registro.setUserId(LoggedUserService.INSTANCE.getUser().getUserName());
+		registro.setUpdated(new Date());
+		controller.persistBarcode(registro);
 	}
 	
 	/**
@@ -184,15 +248,6 @@ public class EditBarcodeComposite extends Composite {
 		return result;
 	}
 	
-	private void addDisposeListener() {
-		this.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				controller.finalizarSesion();
-			}
-		});
-	}
-
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components

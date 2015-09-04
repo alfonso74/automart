@@ -107,4 +107,9 @@ public class CounterpointController extends AbstractController<TransferIn> {
 		return msg;
 	}
 	
+	public void persistBarcode(BarCode barcode) {
+		BarCodeDAO dao = new BarCodeDAO();
+		dao.setSession(this.getSession());
+		dao.doSave(barcode);
+	}
 }
