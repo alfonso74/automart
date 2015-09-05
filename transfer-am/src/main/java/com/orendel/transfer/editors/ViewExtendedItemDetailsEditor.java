@@ -179,6 +179,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		tblclmnUpdated.setText("Actualizado");
 		
 		Button btnEdit = new Button(groupBarcodes, SWT.NONE);
+		btnEdit.setEnabled(false);
 		btnEdit.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
 		btnEdit.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
 		btnEdit.setText("Editar...");
