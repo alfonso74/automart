@@ -27,7 +27,6 @@ import com.orendel.transfer.dialogs.UserDialog;
 import com.orendel.transfer.domain.User;
 import com.orendel.transfer.editors.CreateTransferInEditor;
 import com.orendel.transfer.editors.ViewExtendedItemDetailsEditor;
-import com.orendel.transfer.editors.ViewItemDetailsEditor;
 import com.orendel.transfer.editors.ViewTransfersEditor;
 import com.orendel.transfer.editors.ViewUsersEditor;
 import com.orendel.transfer.services.HibernateUtil;
@@ -176,11 +175,8 @@ public class MainWindow {
 		
 		new MenuItem(menuAcciones, SWT.SEPARATOR);
 		
-		MenuItem itemConsultarArticulos = new MenuItem(menuAcciones, SWT.NONE);
-		itemConsultarArticulos.setText("Consultar artículos");
-		
 		MenuItem itemConsultarArticulosExtended = new MenuItem(menuAcciones, SWT.NONE);
-		itemConsultarArticulosExtended.setText("Consultar artículos (extended)");
+		itemConsultarArticulosExtended.setText("Consultar artículos");
 
 		final Composite composite = new Composite(shell, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -290,15 +286,6 @@ public class MainWindow {
 			}
 		});
 		
-		itemConsultarArticulos.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				disposeChildrenComposites(composite);
-				openViewItemDetailsEditor(composite);
-				composite.layout();
-			}
-		});
-		
 		itemConsultarArticulosExtended.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -359,13 +346,6 @@ public class MainWindow {
 	
 	private ViewTransfersEditor openViewTransfersEditor(Composite composite) {
 		ViewTransfersEditor editor = new ViewTransfersEditor(composite, SWT.NONE);
-		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		return editor;
-	}
-	
-	
-	private ViewItemDetailsEditor openViewItemDetailsEditor(Composite composite) {
-		ViewItemDetailsEditor editor = new ViewItemDetailsEditor(composite, SWT.NONE);
 		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		return editor;
 	}
