@@ -1,10 +1,14 @@
 package com.orendel.transfer.domain;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.orendel.transfer.services.PermissionResolver;
 
 @Entity
 @Table(name = "AM_USERS")
@@ -31,9 +35,11 @@ public class User {
 	@Column(name = "STATUS")
 	private String status;
 	
-	@Column(name = "ADMIN", columnDefinition="varchar")
-	private Boolean isAdmin;
+//	@Column(name = "ADMIN", columnDefinition="varchar")
+//	private Boolean isAdmin;
 
+	@Column(name = "ADMIN", columnDefinition="varchar")
+	private String permissionsRule;
 	
 	public User() {
 	}
@@ -51,7 +57,24 @@ public class User {
 		String lastName = getLastName() == null ? "" : getLastName();
 		return firstName + " " + lastName;
 	}
-
+	
+	public List<Permission> getPermissions() {
+		PermissionResolver resolver = new PermissionResolver();
+		return resolver.fromRuleValue(permissionsRule);
+	}
+	
+	public void setPermissions(Permission... permissions) {
+		PermissionResolver resolver = new PermissionResolver();
+		this.permissionsRule = resolver.toRuleValue(permissions);
+	}
+	
+	public Boolean isAdmin() {
+		return getPermissions().contains(Permission.ADMIN);
+	}
+	
+	public Boolean canEditBarcodes() {
+		return getPermissions().contains(Permission.EDIT_BARCODE);
+	}
 	
 	// ***************************** Getters and setters ********************************
 	
@@ -115,13 +138,25 @@ public class User {
 	}
 
 
-	public Boolean isAdmin() {
-		return isAdmin;
+	public String getPermissionsRule() {
+		return permissionsRule;
 	}
 
 
-	public void setAdmin(Boolean isAdmin) {
-		this.isAdmin = isAdmin == null ? Boolean.FALSE : isAdmin.booleanValue();
+	public void setPermissionsRule(String permissionsRule) {
+		PermissionResolver resolver = new PermissionResolver();
+		resolver.validateRuleValue(permissionsRule);
+		this.permissionsRule = permissionsRule;
 	}
-
+	
+	
+//	public Boolean isAdmin() {
+//		return isAdmin;
+//	}
+//
+//
+//	public void setAdmin(Boolean isAdmin) {
+//		this.isAdmin = isAdmin == null ? Boolean.FALSE : isAdmin.booleanValue();
+//	}
+	
 }

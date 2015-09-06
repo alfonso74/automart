@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Group;
 
 import com.orendel.transfer.controllers.UsersController;
 import com.orendel.transfer.domain.Condicional;
+import com.orendel.transfer.domain.Permission;
 import com.orendel.transfer.domain.Status;
 import com.orendel.transfer.domain.User;
 import com.orendel.transfer.services.IBaseKeywords;
@@ -328,7 +329,11 @@ public class UserDialog extends Dialog {
 		registro.setUserName(pUserName);
 		registro.setPassword(AuthenticationUtil.encodePassword(pPassword));
 		registro.setStatus(pStatusCode);
-		registro.setAdmin(pIsAdmin);
+		if (pIsAdmin) {
+			registro.setPermissions(Permission.ADMIN);
+		} else {
+			registro.setPermissionsRule("0");
+		}
 
 		controller.doSave(registro);
 	}
