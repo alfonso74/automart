@@ -5,8 +5,7 @@ import java.util.List;
 
 public enum Permission {
 	
-//	NONE(0),				// no bit is set
-	ADMIN("Administrador", 1 << 0),			// 1
+	ADMIN("Administrador", 1 << 0),						// 1
 	EDIT_BARCODE("Editar códigos de barra", 1 << 1),	// 2
 	;
 	

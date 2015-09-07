@@ -12,6 +12,7 @@ import com.orendel.transfer.controllers.CounterpointController;
 import com.orendel.transfer.dialogs.EditBarcodeDialog;
 import com.orendel.transfer.dialogs.ItemDetailsDialog;
 import com.orendel.transfer.services.HibernateUtil;
+import com.orendel.transfer.services.LoggedUserService;
 import com.orendel.transfer.util.DateUtil;
 import com.orendel.transfer.util.MessagesUtil;
 
@@ -184,6 +185,9 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		btnEdit.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
 		btnEdit.setText("Editar...");
 		
+		// Enables the btnEdit Button if the User has the required Permission
+		btnEdit.setEnabled(LoggedUserService.INSTANCE.getUser().canEditBarcodes());
+		
 		txtBarcode.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -237,8 +241,6 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		if (barcode != null) {
 			EditBarcodeDialog dialog = new EditBarcodeDialog(getShell(), SWT.APPLICATION_MODAL, controller, barcode.getCode());
 			dialog.open();
-//			showItemDetails(barcode.getItemNo());
-//			Item item = controller.findItemByItemCode(barcode.getItemNo());
 			refreshBarcodeDetails(barcode.getItem());
 		} else {
 			MessagesUtil.showError("Editar código de barra", "No se ha seleccionado ningún código de barra para ser editado.");
