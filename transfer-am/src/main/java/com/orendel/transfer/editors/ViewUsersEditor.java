@@ -81,8 +81,12 @@ public class ViewUsersEditor extends Composite {
 		tblclmnUser.setText("Usuario");
 		
 		TableColumn tblclmnAdmin = new TableColumn(table, SWT.CENTER);
-		tblclmnAdmin.setWidth(70);
+		tblclmnAdmin.setWidth(75);
 		tblclmnAdmin.setText("Admin");
+		
+		TableColumn tblclmnBarcode = new TableColumn(table, SWT.CENTER);
+		tblclmnBarcode.setWidth(75);
+		tblclmnBarcode.setText("Barcode");
 		
 		TableColumn tblclmnStatus = new TableColumn(table, SWT.NONE);
 		tblclmnStatus.setWidth(100);
@@ -140,7 +144,8 @@ public class ViewUsersEditor extends Composite {
 			item.setText(column++, user.getFirstName());
 			item.setText(column++, user.getLastName());
 			item.setText(column++, user.getUserName());
-			item.setText(column++, user.isAdmin() ? "Y" : "N");
+			item.setText(column++, user.isAdmin() ? "Si" : "No");
+			item.setText(column++, user.canEditBarcodes() ? "Si" : "No");
 			item.setText(column++, Status.fromCode(user.getStatus()).getDescription());
 		}
 	}

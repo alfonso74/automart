@@ -1,5 +1,8 @@
 package com.orendel.transfer.dialogs;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -15,11 +18,11 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.widgets.Group;
 
 import com.orendel.transfer.controllers.UsersController;
-import com.orendel.transfer.domain.Condicional;
 import com.orendel.transfer.domain.Permission;
 import com.orendel.transfer.domain.Status;
 import com.orendel.transfer.domain.User;
@@ -29,6 +32,9 @@ import com.orendel.transfer.services.ImagesService;
 import com.orendel.transfer.util.AuthenticationUtil;
 import com.orendel.transfer.util.DialogUtil;
 import com.orendel.transfer.util.MessagesUtil;
+
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 
 
 public class UserDialog extends Dialog {
@@ -48,11 +54,11 @@ public class UserDialog extends Dialog {
 	private Text txtPassword;
 	
 	private Combo comboStatus;
-	private Combo comboRoles;
 	
 	private UsersController controller;
 	
 	private Image image;
+	private Table tablePermissions;
 
 	/**
 	 * Create the dialog.
@@ -98,7 +104,7 @@ public class UserDialog extends Dialog {
 	 */
 	private void createContents() {
 		shell = new Shell(getParent(), getStyle());
-		shell.setSize(450, 300);
+		shell.setSize(450, 350);
 		shell.setText(getText());
 		shell.setLayout(new GridLayout(1, false));
 		
@@ -198,17 +204,19 @@ public class UserDialog extends Dialog {
 		comboStatus = new Combo(group, SWT.READ_ONLY);
 		comboStatus.setSize(90, 23);
 		comboStatus.setItems(IBaseKeywords.ESTADO);
+		new Label(group, SWT.NONE);
+		new Label(group, SWT.NONE);
 		
-		Label lblRoles = new Label(group, SWT.NONE);
-		GridData gd_lblRoles = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_lblRoles.horizontalIndent = 15;
-		lblRoles.setLayoutData(gd_lblRoles);
-		lblRoles.setSize(79, 15);
-		lblRoles.setText("Admin:");
+		Label lblPermissions = new Label(group, SWT.NONE);
+		lblPermissions.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+		lblPermissions.setText("Permisos:");
 		
-		comboRoles = new Combo(group, SWT.READ_ONLY);
-		comboRoles.setSize(45, 23);
-		comboRoles.setItems(IBaseKeywords.CONDICIONAL);
+		tablePermissions = new Table(group, SWT.BORDER | SWT.CHECK | SWT.FULL_SELECTION | SWT.MULTI);
+		tablePermissions.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+		
+		TableColumn tblclmnPermission = new TableColumn(tablePermissions, SWT.NONE);
+		tblclmnPermission.setWidth(330);
+		tblclmnPermission.setText("permission");
 		
 		Composite compositeButtons = new Composite(shell, SWT.NONE);
 		compositeButtons.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
@@ -251,11 +259,11 @@ public class UserDialog extends Dialog {
 	
 	
 	private void llenarControles() {
+		fillPermissionsTableWithDefaultValues();
 		if (registro == null) {
 			logger.info("Creado nuevo usuario...");
 			registro = new User();
 			comboStatus.setText(Status.ACTIVE.getDescription());
-			comboRoles.setText(Condicional.NO.getDescripcion());
 		} else {
 			logger.info("Cargando usuario existente...");
 			txtCodigo.setText(registro.getId().toString());
@@ -265,7 +273,7 @@ public class UserDialog extends Dialog {
 			txtPassword.setText(registro.getPassword());
 			txtPassword.setEnabled(false);
 			comboStatus.setText(Status.fromCode(registro.getStatus()).getDescription());
-			comboRoles.setText(registro.isAdmin() ? Condicional.SI.getDescripcion() : Condicional.NO.getDescripcion());
+			setSelectedPermissions(registro.getPermissions());
 		}
 		logger.info("Done!");
 	}
@@ -322,20 +330,45 @@ public class UserDialog extends Dialog {
 		String pUserName = txtUserName.getText();
 		String pPassword = txtPassword.getText();
 		String pStatusCode = Status.fromDescription(comboStatus.getText()).getCode();
-		boolean pIsAdmin = comboRoles.getText().equals(Condicional.SI.getDescripcion()) ? true : false;
 		
 		registro.setFirstName(pFirstName);
 		registro.setLastName(pLastName);
 		registro.setUserName(pUserName);
 		registro.setPassword(AuthenticationUtil.encodePassword(pPassword));
 		registro.setStatus(pStatusCode);
-		if (pIsAdmin) {
-			registro.setPermissions(Permission.ADMIN);
-		} else {
-			registro.setPermissionsRule("0");
-		}
+		registro.setPermissions(getSelectedPermissions());
 
 		controller.doSave(registro);
+	}
+	
+	private void fillPermissionsTableWithDefaultValues() {
+		TableItem itemLine;
+		tablePermissions.removeAll();
+		for (Permission v : Permission.values()) {
+			itemLine = new TableItem(tablePermissions, SWT.NONE);
+			itemLine.setData(v);
+			itemLine.setText(0, v.getName());
+		}
+	}
+	
+	private void setSelectedPermissions(List<Permission> permissions) {
+		for (Permission permission : permissions) {
+			for (TableItem item : tablePermissions.getItems()) {
+				if (item.getData() == permission) {
+					item.setChecked(true);
+				}
+			}
+		}
+	}
+	
+	private List<Permission> getSelectedPermissions() {
+		List<Permission> permissions = new ArrayList<Permission>();
+		for (TableItem item : tablePermissions.getItems()) {
+			if (item.getChecked()) {
+				permissions.add((Permission) item.getData());
+			}
+		}
+		return permissions;
 	}
 	
 }
