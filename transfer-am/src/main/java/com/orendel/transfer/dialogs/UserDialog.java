@@ -334,7 +334,9 @@ public class UserDialog extends Dialog {
 		registro.setFirstName(pFirstName);
 		registro.setLastName(pLastName);
 		registro.setUserName(pUserName);
-		registro.setPassword(AuthenticationUtil.encodePassword(pPassword));
+		if (!pPassword.equals(registro.getPassword())) {
+			registro.setPassword(AuthenticationUtil.encodePassword(pPassword));
+		}
 		registro.setStatus(pStatusCode);
 		registro.setPermissions(getSelectedPermissions());
 
