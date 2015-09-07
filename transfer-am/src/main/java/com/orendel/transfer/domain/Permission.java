@@ -6,14 +6,20 @@ import java.util.List;
 public enum Permission {
 	
 //	NONE(0),				// no bit is set
-	ADMIN(1 << 0),			// 1
-	EDIT_BARCODE(1 << 1),	// 2
+	ADMIN("Administrador", 1 << 0),			// 1
+	EDIT_BARCODE("Códigos de barra", 1 << 1),	// 2
 	;
 	
+	private String name;
 	private int value;
 	
-	private Permission(int value) {
+	private Permission(String name, int value) {
+		this.name = name;
 		this.value = value;
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 	public int getValue() {
