@@ -59,7 +59,7 @@ public class PermissionTest {
 	}
 	
 	@Test
-	public void testFromRuleValue_NullValue() {
+	public void testFromRuleValue_NullArgument() {
 		PermissionResolver resolver = new PermissionResolver();
 		List<Permission> permissions = resolver.fromRuleValue(null);
 		assertThat(permissions.isEmpty(), is(true));
@@ -68,21 +68,21 @@ public class PermissionTest {
 	@Test
 	public void testToRuleValue_OnePermissionAssigned() {
 		PermissionResolver resolver = new PermissionResolver();
-		String ruleValue = resolver.toRuleValue(Permission.EDIT_BARCODE);
+		String ruleValue = resolver.toRuleValue(createPermissionList(Permission.EDIT_BARCODE));
 		assertThat(ruleValue, is("2"));
 	}
 	
 	@Test
 	public void testToRuleValue_TwoPermissionsAssigned() {
 		PermissionResolver resolver = new PermissionResolver();
-		String ruleValue = resolver.toRuleValue(Permission.EDIT_BARCODE, Permission.ADMIN);
+		String ruleValue = resolver.toRuleValue(createPermissionList(Permission.EDIT_BARCODE, Permission.ADMIN));
 		assertThat(ruleValue, is("3"));
 	}
 	
 	@Test
-	public void testToRuleValue_NoPermissionsAssigned() {
+	public void testToRuleValue_NullArgumentGiven() {
 		PermissionResolver resolver = new PermissionResolver();
-		String ruleValue = resolver.toRuleValue();
+		String ruleValue = resolver.toRuleValue(null);
 		assertThat(ruleValue, is("0"));
 	}
 	
@@ -90,8 +90,7 @@ public class PermissionTest {
 	public void testToRuleValue_NoPermissionsAssigned_EmptyArrayList() {
 		PermissionResolver resolver = new PermissionResolver();
 		List<Permission> permissions = new ArrayList<Permission>();
-		Permission[] p = permissions.toArray(new Permission[permissions.size()]);
-		String ruleValue = resolver.toRuleValue(p);
+		String ruleValue = resolver.toRuleValue(permissions);
 		assertThat(ruleValue, is("0"));
 	}
 	

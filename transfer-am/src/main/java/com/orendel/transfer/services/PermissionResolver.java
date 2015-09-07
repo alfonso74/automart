@@ -34,14 +34,17 @@ public class PermissionResolver {
 	}
 	
 	/**
-	 * Transforms a group of "permissions" into a rule {@link String} value. 
-	 * @param permissions the {@link Permission} group to be transformed
-	 * @return a rule {@link String} value representing the selected permissions.
+	 * Transforms a group of "permissions" into a rule {@link String} value.
+	 * @param permissions a {@link Permission} {@link List} to be transformed
+	 * @return a {@link String} value representing the selected permissions (called "a rule").  If the 
+	 * permissions {@link List} is <code>null</code> or empty, returns the {@link String} value "0".
 	 */
-	public String toRuleValue(Permission... permissions) {
+	public String toRuleValue(List<Permission> permissions) {
 		int ruleValue = 0;
-		for (Permission v : permissions) {
-			ruleValue = ruleValue | v.getValue();
+		if (permissions != null && !permissions.isEmpty()) {
+			for (Permission v : permissions) {
+				ruleValue = ruleValue | v.getValue();
+			}
 		}
 		return String.valueOf(ruleValue);
 	}

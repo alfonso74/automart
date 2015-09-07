@@ -63,14 +63,9 @@ public class User {
 		return resolver.fromRuleValue(permissionsRule);
 	}
 	
-	public void setPermissions(Permission... permissions) {
-		PermissionResolver resolver = new PermissionResolver();
-		this.permissionsRule = resolver.toRuleValue(permissions);
-	}
-	
 	public void setPermissions(List<Permission> permissions) {
 		PermissionResolver resolver = new PermissionResolver();
-		this.permissionsRule = resolver.toRuleValue(permissions.toArray(new Permission[permissions.size()]));
+		this.permissionsRule = resolver.toRuleValue(permissions);
 	}
 	
 	public Boolean isAdmin() {
