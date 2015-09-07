@@ -1,5 +1,6 @@
 package com.orendel.transfer.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -65,23 +66,32 @@ public class PermissionTest {
 	}
 	
 	@Test
-	public void testAsRuleValue_OnePermissionAssigned() {
+	public void testToRuleValue_OnePermissionAssigned() {
 		PermissionResolver resolver = new PermissionResolver();
 		String ruleValue = resolver.toRuleValue(Permission.EDIT_BARCODE);
 		assertThat(ruleValue, is("2"));
 	}
 	
 	@Test
-	public void testAsRuleValue_TwoPermissionsAssigned() {
+	public void testToRuleValue_TwoPermissionsAssigned() {
 		PermissionResolver resolver = new PermissionResolver();
 		String ruleValue = resolver.toRuleValue(Permission.EDIT_BARCODE, Permission.ADMIN);
 		assertThat(ruleValue, is("3"));
 	}
 	
 	@Test
-	public void testAsRuleValue_NoPermissionsAssigned() {
+	public void testToRuleValue_NoPermissionsAssigned() {
 		PermissionResolver resolver = new PermissionResolver();
 		String ruleValue = resolver.toRuleValue();
+		assertThat(ruleValue, is("0"));
+	}
+	
+	@Test
+	public void testToRuleValue_NoPermissionsAssigned_EmptyArrayList() {
+		PermissionResolver resolver = new PermissionResolver();
+		List<Permission> permissions = new ArrayList<Permission>();
+		Permission[] p = permissions.toArray(new Permission[permissions.size()]);
+		String ruleValue = resolver.toRuleValue(p);
 		assertThat(ruleValue, is("0"));
 	}
 	
@@ -96,5 +106,13 @@ public class PermissionTest {
 		PermissionResolver resolver = new PermissionResolver();
 		String maxRuleValue = resolver.validateRuleValue("0");
 		assertThat(maxRuleValue, is("3"));
+	}
+	
+	private List<Permission> createPermissionList(Permission... permissions) {
+		List<Permission> permissionsList = new ArrayList<Permission>();
+		for (Permission v : permissions) {
+			permissionsList.add(v);
+		}
+		return permissionsList;
 	}
 }
