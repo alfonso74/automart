@@ -36,11 +36,14 @@ import com.orendel.counterpoint.domain.Item;
 import com.orendel.counterpoint.domain.TransferIn;
 import com.orendel.transfer.controllers.TransferControlController;
 import com.orendel.transfer.controllers.CounterpointController;
+import com.orendel.transfer.dialogs.ItemLocationDialog;
 import com.orendel.transfer.domain.TransferControl;
 import com.orendel.transfer.domain.TransferControlLine;
 import com.orendel.transfer.domain.TransferControlStatus;
 import com.orendel.transfer.services.HibernateUtil;
 import com.orendel.transfer.services.HibernateUtilDelivery;
+import com.orendel.transfer.services.IImageKeys;
+import com.orendel.transfer.services.ImagesService;
 import com.orendel.transfer.services.LoggedUserService;
 import com.orendel.transfer.util.MessagesUtil;
 import com.orendel.transfer.util.TransferMapper;
@@ -299,6 +302,10 @@ public class CreateTransferInEditor extends Composite {
 		TableColumn tblclmnComentarios = new TableColumn(tableTransferLines, SWT.NONE);
 		tblclmnComentarios.setWidth(300);
 		tblclmnComentarios.setText("Comentario");
+		
+		TableColumn tblclmnInventory = new TableColumn(tableTransferLines, SWT.NONE);
+		tblclmnInventory.setWidth(25);
+		tblclmnInventory.setText("");
 		
 		Composite grpTotales = new Composite(this, SWT.NONE);
 		grpTotales.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.NORMAL));
@@ -634,6 +641,7 @@ public class CreateTransferInEditor extends Composite {
 			
 			item = new TableItem(tableTransferLines, SWT.NONE);
 			item.setData("lineNumber", lineNumber++);
+			item.setData("itemNo", v.getItemNumber());
 			int column = 0;
 			item.setText(column++, " " + v.getQtyPrevExpected().setScale(0).toString());
 			item.setText(column++, v.getQtyReceived().setScale(0).toString());
@@ -641,6 +649,7 @@ public class CreateTransferInEditor extends Composite {
 			item.setText(column++, v.getItemNumber());
 			item.setText(column++, v.getItemDescription());
 			item.setText(column++, v.getComments().getComment1() == null ? "" : v.getComments().getComment1());
+			item.setImage(column, ImagesService.INSTANCE.getImage(getDisplay(), IImageKeys.ITEM_24));
 			logger.info("EXPECTED: " + v.getQtyPrevExpected() + ", RECEIVED: " + v.getQtyReceived() + ", PENDING: " + v.getQtyNewExpected());
 			if (v.getQtyPrevExpected().intValue() == v.getQtyReceived().intValue()) {
 				// marcar verde
@@ -725,6 +734,11 @@ public class CreateTransferInEditor extends Composite {
 						text.setFocus();
 						return;
 					}
+					Rectangle rect6 = item.getBounds(EDITABLECOLUMN + 1);
+					if (rect6.contains(pt)) {
+						logger.info("Image click!... showing location details for item number: " + item.getData("itemNo"));
+						openLocationDetailsDialog((String) item.getData("itemNo"));
+					}
 					if (!visible && rect.intersects(clientArea)) {
 						visible = true;
 					}
@@ -734,6 +748,14 @@ public class CreateTransferInEditor extends Composite {
 				}
 			}
 		});
+	}
+	
+	private void openLocationDetailsDialog(String itemNo) {
+		Item item = cpController.findItemByItemCode(itemNo);
+		if (item != null) {
+			ItemLocationDialog dialog = new ItemLocationDialog(this.getShell(), SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL, item);
+			dialog.open();
+		}
 	}
 	
 	/**
