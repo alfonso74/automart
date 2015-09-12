@@ -26,6 +26,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.wb.swt.SWTResourceManager;
@@ -84,6 +85,7 @@ public class CreateTransferInEditor extends Composite {
 	private Listener listenerF09;
 	private Listener listenerF12;
 	
+	private final Cursor handCursor = new Cursor(getDisplay(), SWT.CURSOR_HAND);
 	
 	
 
@@ -306,6 +308,7 @@ public class CreateTransferInEditor extends Composite {
 		TableColumn tblclmnInventory = new TableColumn(tableTransferLines, SWT.NONE);
 		tblclmnInventory.setWidth(25);
 		tblclmnInventory.setText("");
+		tblclmnInventory.setToolTipText("Permite ver el inventario de un artículo al hacer clic en el ícono");
 		
 		Composite grpTotales = new Composite(this, SWT.NONE);
 		grpTotales.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.NORMAL));
@@ -674,8 +677,48 @@ public class CreateTransferInEditor extends Composite {
 		}
 		
 		addEditorControl2();
+		addHandCursorListener();
 	}
 	
+	
+	private void addHandCursorListener() {
+		final int HAND_CURSOR_COLUMN = 6;
+		tableTransferLines.addListener(SWT.MouseMove, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				boolean showHandCursor = false;
+				Rectangle clientArea = tableTransferLines.getClientArea();
+				Point pt = new Point(event.x, event.y);
+				int index = tableTransferLines.getTopIndex();
+				while (index < tableTransferLines.getItemCount()) {
+					boolean visible = false;
+					final TableItem item = tableTransferLines.getItem(index);
+					Rectangle rect6 = item.getBounds(HAND_CURSOR_COLUMN);
+					if (rect6.contains(pt)) {
+						showHandCursor = true;
+						logger.debug("MouseMove over item code: " + item.getData("itemNo"));
+					}
+					if (!visible && rect6.intersects(clientArea)) {
+						visible = true;
+					}
+					if (!visible)
+						return;
+					index++;
+				}
+				if (showHandCursor) {
+					if (getShell().getCursor() == null || !getShell().getCursor().equals(handCursor)) {
+						getShell().setCursor(handCursor);
+						logger.debug("Changing to hand cursor!");
+					}
+				} else {
+					if (getShell().getCursor() != null) {
+						getShell().setCursor(null);
+						logger.debug("Removing hand cursor!");
+					}
+				}
+			}
+		});
+	}
 	
 	private void addEditorControl2() {
 		editor = new TableEditor(tableTransferLines);
@@ -874,6 +917,7 @@ public class CreateTransferInEditor extends Composite {
 				getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF04);
 				getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF09);
 				getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF12);
+				handCursor.dispose();
 				cpController.finalizarSesion();
 				tcController.finalizarSesion();
 				HibernateUtil.verSesiones();
