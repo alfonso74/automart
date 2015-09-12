@@ -780,6 +780,7 @@ public class CreateTransferInEditor extends Composite {
 					Rectangle rect6 = item.getBounds(EDITABLECOLUMN + 1);
 					if (rect6.contains(pt)) {
 						logger.info("Image click!... showing location details for item number: " + item.getData("itemNo"));
+						getShell().setCursor(null);   // making sure to show the default cursor
 						openLocationDetailsDialog((String) item.getData("itemNo"));
 					}
 					if (!visible && rect.intersects(clientArea)) {
