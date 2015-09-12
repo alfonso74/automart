@@ -13,6 +13,8 @@ import com.orendel.transfer.services.ImagesService;
 
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Group;
@@ -21,8 +23,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.widgets.Button;
 
 public class ItemDetailsComposite extends Composite {
+	
 	private static final Logger logger = Logger.getLogger(ItemDetailsComposite.class);
 	
 	private CounterpointController controller;
@@ -208,6 +212,23 @@ public class ItemDetailsComposite extends Composite {
 		GridData gd_txtQtyMax = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_txtQtyMax.widthHint = 70;
 		txtQtyMax.setLayoutData(gd_txtQtyMax);
+		
+		Composite compositeButtons = new Composite(this, SWT.NONE);
+		compositeButtons.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
+		compositeButtons.setLayout(new GridLayout(1, false));
+		
+		Button btnOk = new Button(compositeButtons, SWT.NONE);
+		GridData gd_btnOk = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		gd_btnOk.widthHint = 70;
+		btnOk.setLayoutData(gd_btnOk);
+		btnOk.setBounds(0, 0, 75, 25);
+		btnOk.setText("OK");
+		btnOk.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				getShell().close();
+			}
+		});
 		
 		addDisposeListener();
 		
