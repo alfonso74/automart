@@ -179,6 +179,10 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		tblclmnUpdated.setWidth(180);
 		tblclmnUpdated.setText("Actualizado");
 		
+		TableColumn tblclmnUpdatedBy = new TableColumn(tableBarcodes, SWT.LEFT);
+		tblclmnUpdatedBy.setWidth(100);
+		tblclmnUpdatedBy.setText("Usuario");
+		
 		Button btnEdit = new Button(groupBarcodes, SWT.NONE);
 		btnEdit.setEnabled(false);
 		btnEdit.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
@@ -321,6 +325,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 			itemLine.setText(column++, " " + v.getType().getBarCodeId());
 			itemLine.setText(column++, " " + v.getType().getDescription());
 			itemLine.setText(column++, " " + DateUtil.toString(v.getUpdated(), DateUtil.formatoFechaHora));
+			itemLine.setText(column++, " " + v.getUserId());
 			if (tableBarcodes.getItemCount() % 2 == 0) {
 				itemLine.setBackground(lightCyan);
 			}

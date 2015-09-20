@@ -41,8 +41,9 @@ public class EditBarcodeComposite extends Composite {
 	private Text txtBarcodeType;
 	private Text txtBarcodeDescription;
 	private Text txtBarcodeUpdated;
+	private Text txtBarcodeUpdatedBy;
 
-	private Image image;
+	private Image image;	
 	
 	
 	/**
@@ -109,7 +110,8 @@ public class EditBarcodeComposite extends Composite {
 		gd_groupBarcode.verticalIndent = 10;
 		groupBarcode.setLayoutData(gd_groupBarcode);
 		groupBarcode.setBounds(0, 0, 70, 82);
-		groupBarcode.setLayout(new GridLayout(2, false));
+		GridLayout gl_groupBarcode = new GridLayout(2, false);
+		groupBarcode.setLayout(gl_groupBarcode);
 		
 		Label lblBarcode = new Label(groupBarcode, SWT.NONE);
 		lblBarcode.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -117,7 +119,7 @@ public class EditBarcodeComposite extends Composite {
 		
 		txtBarcode = new Text(groupBarcode, SWT.BORDER);
 		GridData gd_txtBarcode = new GridData(SWT.LEFT, SWT.TOP, true, false, 1, 1);
-		gd_txtBarcode.widthHint = 100;
+		gd_txtBarcode.widthHint = 120;
 		txtBarcode.setLayoutData(gd_txtBarcode);
 		
 		Label lblBarcodeType = new Label(groupBarcode, SWT.NONE);
@@ -127,7 +129,9 @@ public class EditBarcodeComposite extends Composite {
 		txtBarcodeType = new Text(groupBarcode, SWT.BORDER);
 		txtBarcodeType.setEnabled(false);
 		txtBarcodeType.setEditable(false);
-		txtBarcodeType.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		GridData gd_txtBarcodeType = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		gd_txtBarcodeType.widthHint = 80;
+		txtBarcodeType.setLayoutData(gd_txtBarcodeType);
 		
 		Label lblBarcodeDescription = new Label(groupBarcode, SWT.NONE);
 		lblBarcodeDescription.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -142,10 +146,32 @@ public class EditBarcodeComposite extends Composite {
 		lblUpdated.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblUpdated.setText("Actualizado:");
 		
-		txtBarcodeUpdated = new Text(groupBarcode, SWT.BORDER);
+		Composite composite = new Composite(groupBarcode, SWT.NONE);
+		GridLayout gl_composite = new GridLayout(3, false);
+		gl_composite.marginHeight = 0;
+		gl_composite.marginWidth = 0;
+		composite.setLayout(gl_composite);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		
+		txtBarcodeUpdated = new Text(composite, SWT.BORDER);
+		GridData gd_txtBarcodeUpdated = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_txtBarcodeUpdated.widthHint = 120;
+		txtBarcodeUpdated.setLayoutData(gd_txtBarcodeUpdated);
 		txtBarcodeUpdated.setEditable(false);
 		txtBarcodeUpdated.setEnabled(false);
-		txtBarcodeUpdated.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		
+		Label lblUpdatedBy = new Label(composite, SWT.NONE);
+		GridData gd_lblUpdatedBy = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		gd_lblUpdatedBy.horizontalIndent = 30;
+		lblUpdatedBy.setLayoutData(gd_lblUpdatedBy);
+		lblUpdatedBy.setText("Usuario:");
+		
+		txtBarcodeUpdatedBy = new Text(composite, SWT.BORDER);
+		txtBarcodeUpdatedBy.setEnabled(false);
+		txtBarcodeUpdatedBy.setEditable(false);
+		GridData gd_txtUpdatedBy = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_txtUpdatedBy.widthHint = 100;
+		txtBarcodeUpdatedBy.setLayoutData(gd_txtUpdatedBy);
 		
 		Composite compositeButtons = new Composite(this, SWT.NONE);
 		compositeButtons.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -233,6 +259,7 @@ public class EditBarcodeComposite extends Composite {
 		txtBarcodeType.setText(barcodeItem.getType().getBarCodeId());
 		txtBarcodeDescription.setText(barcodeItem.getType().getDescription());
 		txtBarcodeUpdated.setText(DateUtil.toString(new Date(), DateUtil.formatoFechaHora));
+		txtBarcodeUpdatedBy.setText(barcodeItem.getUserId());
 	}
 	
 	private BarCode locateBarcode(Item item, String barcode) {
