@@ -39,14 +39,14 @@ public class Label {
 		return x;
 	}
 	
-	public String getEpl() {
+	public String getEpl(int numberOfLabelsToPrint) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\nN\n");            
 	    sb.append("q" + width + "\n");
 	    for (LabelElement element : elements) {
 	    	sb.append(element.getEpl());
 	    }
-	    sb.append("\nP1,1\n");
+	    sb.append("\nP" + numberOfLabelsToPrint + ",1\n");
 		return sb.toString();
 	}
 }
