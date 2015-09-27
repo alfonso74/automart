@@ -217,11 +217,13 @@ public class EditBarcodeComposite extends Composite {
 		if (pCode.isEmpty()) {
 			MessagesUtil.showInformation("Validación de campos",
 					"El campo 'Código' no puede quedar en blanco.");
+			txtBarcode.setFocus();
 			return false;
 		}
 		if (pCode.length() > 25) {
 			MessagesUtil.showInformation("Validación de campos", 
 					"El código de barra no puede superar los 25 caracteres (actual: " + pCode.length() + ").");
+			txtBarcode.setFocus();
 			return false;
 		}
 		return true;

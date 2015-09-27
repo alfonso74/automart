@@ -11,6 +11,7 @@ import com.orendel.counterpoint.domain.Item;
 import com.orendel.transfer.controllers.CounterpointController;
 import com.orendel.transfer.dialogs.EditBarcodeDialog;
 import com.orendel.transfer.dialogs.ItemDetailsDialog;
+import com.orendel.transfer.dialogs.PrintLabelDialog;
 import com.orendel.transfer.services.HibernateUtil;
 import com.orendel.transfer.services.LoggedUserService;
 import com.orendel.transfer.util.DateUtil;
@@ -183,14 +184,44 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		tblclmnUpdatedBy.setWidth(100);
 		tblclmnUpdatedBy.setText("Usuario");
 		
-		Button btnEdit = new Button(groupBarcodes, SWT.NONE);
+		Composite compositeButtons = new Composite(groupBarcodes, SWT.NONE);
+		compositeButtons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		GridLayout gl_compositeButtons = new GridLayout(1, false);
+		gl_compositeButtons.marginHeight = 0;
+		gl_compositeButtons.marginWidth = 0;
+		compositeButtons.setLayout(gl_compositeButtons);
+		
+		Button btnPrint = new Button(compositeButtons, SWT.NONE);
+		GridData gd_btnPrint = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnPrint.widthHint = 70;
+		btnPrint.setLayoutData(gd_btnPrint);
+		btnPrint.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
+		btnPrint.setText("Imprimir...");
+		
+		Button btnEdit = new Button(compositeButtons, SWT.NONE);
+		GridData gd_btnEdit = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnEdit.widthHint = 70;
+		btnEdit.setLayoutData(gd_btnEdit);
 		btnEdit.setEnabled(false);
 		btnEdit.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
-		btnEdit.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
 		btnEdit.setText("Editar...");
 		
 		// Enables the btnEdit Button if the User has the required Permission
 		btnEdit.setEnabled(LoggedUserService.INSTANCE.getUser().canEditBarcodes());
+		
+		btnEdit.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				editBarcode();
+			}
+		});
+		
+		btnPrint.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				printBarcode();
+			}
+		});
 		
 		txtBarcode.addKeyListener(new KeyAdapter() {
 			@Override
@@ -208,13 +239,6 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 				showItemDetails(txtBarcode.getText());
 				txtBarcode.setFocus();
 				txtBarcode.selectAll();
-			}
-		});
-		
-		btnEdit.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				editBarcode();
 			}
 		});
 		
@@ -248,6 +272,16 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 			refreshBarcodeDetails(barcode.getItem());
 		} else {
 			MessagesUtil.showError("Editar código de barra", "No se ha seleccionado ningún código de barra para ser editado.");
+		}
+	}
+	
+	private void printBarcode() {
+		BarCode barcode = getSelectedBarcodeLine();
+		if (barcode != null) {
+			PrintLabelDialog dialog = new PrintLabelDialog(getShell(), SWT.APPLICATION_MODAL, controller, barcode.getCode());
+			dialog.open();
+		} else {
+			MessagesUtil.showError("Imprimir código de barra", "No se ha seleccionado ningún código de barra para imprimir.");
 		}
 	}
 	

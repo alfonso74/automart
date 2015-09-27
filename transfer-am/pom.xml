@@ -205,5 +205,10 @@
 			<artifactId>am-counterpoint</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.orendel</groupId>
+			<artifactId>epl-generator</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 </project>
