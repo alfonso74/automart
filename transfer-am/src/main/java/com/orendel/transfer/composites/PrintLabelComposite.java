@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Text;
 import com.orendel.counterpoint.domain.BarCode;
 import com.orendel.counterpoint.domain.Item;
 import com.orendel.transfer.controllers.CounterpointController;
+import com.orendel.transfer.services.EplPrintService;
 import com.orendel.transfer.services.IImageKeys;
 import com.orendel.transfer.services.ImagesService;
 import com.orendel.transfer.util.MessagesUtil;
@@ -155,7 +156,7 @@ public class PrintLabelComposite extends Composite {
 		}
 		if (pCode.length() > 3) {
 			MessagesUtil.showInformation("Validación de campos", 
-					"La cantidad de etiquetas a imprimir no puede ser mayor a 999 (actual: " + pCode.length() + ").");
+					"La cantidad de etiquetas a imprimir no puede ser mayor a 999.");
 			txtPrintQty.setFocus();
 			return false;
 		}
@@ -164,7 +165,14 @@ public class PrintLabelComposite extends Composite {
 	
 	
 	private void doPrint() {
+		EplPrintService printService = new EplPrintService();
 		
+		int labelWidth = 450;
+		String barcode = txtBarcode.getText();
+		String description = txtItemDescription.getText();
+		int cantidad = Integer.parseInt(txtPrintQty.getText());
+		
+		printService.printAutomartLabel(labelWidth, barcode, description, "Línea adicional", cantidad);
 	}
 	
 	
@@ -187,6 +195,7 @@ public class PrintLabelComposite extends Composite {
 		
 		BarCode barcodeItem = locateBarcode(item, barcode);
 		txtBarcode.setText(barcodeItem.getCode());
+		txtPrintQty.setText("1");
 	}
 	
 	private BarCode locateBarcode(Item item, String barcode) {
