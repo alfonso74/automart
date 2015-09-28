@@ -56,7 +56,7 @@ public class EditBarcodeComposite extends Composite {
 		
 		this.controller = controller;
 		this.barcode = barcode;
-		this.image = ImagesService.INSTANCE.getImage(parent.getDisplay(), IImageKeys.ITEM_24);
+		this.image = ImagesService.INSTANCE.getImage(parent.getDisplay(), IImageKeys.BARCODE_EDIT_24);
 		
 		GridLayout gridLayout = new GridLayout(1, false);
 		setLayout(gridLayout);

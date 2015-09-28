@@ -54,7 +54,7 @@ public class PrintLabelComposite extends Composite {
 		
 		this.controller = controller;
 		this.barcode = barcode;
-		this.image = ImagesService.INSTANCE.getImage(parent.getDisplay(), IImageKeys.ITEM_24);
+		this.image = ImagesService.INSTANCE.getImage(parent.getDisplay(), IImageKeys.PRINT_24);
 		setLayout(new GridLayout(1, false));
 		
 		Composite compositeTop = new Composite(this, SWT.NONE);

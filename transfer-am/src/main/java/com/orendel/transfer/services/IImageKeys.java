@@ -12,6 +12,10 @@ public interface IImageKeys {
 	
 	final String ITEM_24 = "icons/item_24.png";
 	
+	final String BARCODE_EDIT_24 = "icons/barcodeEdit_24.png";
+	
+	final String PRINT_24 = "icons/print_24.png";
+	
 	final String USER_24 = "icons/user_24.png";
 	
 	final String BAR_CHART_16 = "icons/bar_chart_16.png";
