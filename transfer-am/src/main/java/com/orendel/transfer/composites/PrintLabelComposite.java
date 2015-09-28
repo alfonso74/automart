@@ -1,8 +1,11 @@
 package com.orendel.transfer.composites;
 
 import org.apache.log4j.Logger;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -37,6 +40,8 @@ public class PrintLabelComposite extends Composite {
 	private Text txtItemDescription;
 	private Text txtBarcode;
 	private Text txtPrintQty;
+	
+	private final Cursor waitCursor = new Cursor(getDisplay(), SWT.CURSOR_WAIT);
 	
 
 	/**
@@ -140,8 +145,8 @@ public class PrintLabelComposite extends Composite {
 			}
 		});
 		
+		addDisposeListener();
 		findItemDetails();
-		
 		getShell().setDefaultButton(btnPrint);
 	}
 	
@@ -172,7 +177,16 @@ public class PrintLabelComposite extends Composite {
 		String description = txtItemDescription.getText();
 		int cantidad = Integer.parseInt(txtPrintQty.getText());
 		
-		printService.printAutomartLabel(labelWidth, barcode, description, "Línea adicional", cantidad);
+		// set the "waiting" cursor
+		getShell().setCursor(waitCursor);
+		try {
+			printService.printAutomartLabel(labelWidth, barcode, description, "Línea adicional", cantidad);
+		} catch (Exception e) {
+			getShell().setCursor(null);   // making sure to show the default cursor
+			throw e;
+		}
+		// reset icon to the default one
+		getShell().setCursor(null);
 	}
 	
 	
@@ -196,6 +210,7 @@ public class PrintLabelComposite extends Composite {
 		BarCode barcodeItem = locateBarcode(item, barcode);
 		txtBarcode.setText(barcodeItem.getCode());
 		txtPrintQty.setText("1");
+		txtPrintQty.selectAll();
 	}
 	
 	private BarCode locateBarcode(Item item, String barcode) {
@@ -209,7 +224,17 @@ public class PrintLabelComposite extends Composite {
 		return result;
 	}
 	
-
+	private void addDisposeListener() {
+		this.addDisposeListener(new DisposeListener() {
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				logger.info("Dispose listener called!");
+				waitCursor.dispose();
+			}
+		});
+	}
+				
+				
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components

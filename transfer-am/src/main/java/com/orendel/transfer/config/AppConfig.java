@@ -73,7 +73,7 @@ public enum AppConfig implements IAppConfig {
     public <T> T getValue(String propertyName) {
 		String result = properties.getProperty(propertyName);
 		if (result == null) {
-			throw new ApplicationPropertiesException("Propiedad no encontrada: '" + propertyName + "'");
+			throw new ApplicationPropertiesException("Propiedad no encontrada: '" + propertyName + "'.");
 		}
 		return (T) result;
 	}
