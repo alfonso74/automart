@@ -155,7 +155,7 @@ public class EditBarcodeComposite extends Composite {
 		
 		txtBarcodeUpdated = new Text(composite, SWT.BORDER);
 		GridData gd_txtBarcodeUpdated = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_txtBarcodeUpdated.widthHint = 120;
+		gd_txtBarcodeUpdated.widthHint = 130;
 		txtBarcodeUpdated.setLayoutData(gd_txtBarcodeUpdated);
 		txtBarcodeUpdated.setEditable(false);
 		txtBarcodeUpdated.setEnabled(false);

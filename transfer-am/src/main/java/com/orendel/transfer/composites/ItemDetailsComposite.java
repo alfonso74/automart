@@ -214,7 +214,7 @@ public class ItemDetailsComposite extends Composite {
 		txtQtyMax.setLayoutData(gd_txtQtyMax);
 		
 		Composite compositeButtons = new Composite(this, SWT.NONE);
-		compositeButtons.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
+		compositeButtons.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, true, true, 1, 1));
 		compositeButtons.setLayout(new GridLayout(1, false));
 		
 		Button btnOk = new Button(compositeButtons, SWT.NONE);

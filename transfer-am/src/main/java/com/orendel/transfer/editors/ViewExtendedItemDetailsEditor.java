@@ -177,7 +177,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		tblclmnDescription.setText("Descripción");
 		
 		TableColumn tblclmnUpdated = new TableColumn(tableBarcodes, SWT.CENTER);
-		tblclmnUpdated.setWidth(180);
+		tblclmnUpdated.setWidth(185);
 		tblclmnUpdated.setText("Actualizado");
 		
 		TableColumn tblclmnUpdatedBy = new TableColumn(tableBarcodes, SWT.LEFT);
@@ -193,14 +193,14 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		
 		Button btnPrint = new Button(compositeButtons, SWT.NONE);
 		GridData gd_btnPrint = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_btnPrint.widthHint = 70;
+		gd_btnPrint.widthHint = 80;
 		btnPrint.setLayoutData(gd_btnPrint);
 		btnPrint.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
 		btnPrint.setText("Imprimir...");
 		
 		Button btnEdit = new Button(compositeButtons, SWT.NONE);
 		GridData gd_btnEdit = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_btnEdit.widthHint = 70;
+		gd_btnEdit.widthHint = 80;
 		btnEdit.setLayoutData(gd_btnEdit);
 		btnEdit.setEnabled(false);
 		btnEdit.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
