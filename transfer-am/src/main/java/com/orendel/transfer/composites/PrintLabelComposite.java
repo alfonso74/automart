@@ -181,7 +181,7 @@ public class PrintLabelComposite extends Composite {
 		getShell().setCursor(waitCursor);
 		try {
 			printService.printAutomartLabel(labelWidth, barcode, description, "Línea adicional", cantidad);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			getShell().setCursor(null);   // making sure to show the default cursor
 			throw e;
 		}
