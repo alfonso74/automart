@@ -1,6 +1,9 @@
 package com.orendel.counterpoint.domain;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -24,6 +27,10 @@ public class Item {
 	/** Nombre o descripción del item */
 	@Column(name = "DESCR")
 	private String description;
+	
+	/** Fecha de última actualización */
+	@Column(name = "LST_MAINT_DT", updatable=false)
+	private Date updated;
 
 	/** Listado de códigos de barra asociados a este item */
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "item", fetch = FetchType.LAZY)
@@ -34,6 +41,20 @@ public class Item {
 	private List<Inventory> inventory;
 	
 	
+	// ******************************* Helper methods ********************************
+	
+	public String getUpdatedDateLabel() {
+		String label = "";
+		if (getUpdated() != null) {
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(getUpdated());
+			String yy = Integer.toString(calendar.get(Calendar.YEAR));
+			String mm = '0' + Integer.toString(calendar.get(Calendar.MONTH) + 1);
+			String dd = '0' + Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
+			label = "A" + yy.substring(yy.length() - 2) + "H" + mm.substring(mm.length() - 2) + "T" + dd.substring(dd.length() - 2);
+		}
+		return label;
+	}
 	
 	// ***************************** Getters and setters *****************************
 	
@@ -51,6 +72,14 @@ public class Item {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public Date getUpdated() {
+		return updated;
+	}
+
+	public void setUpdated(Date updated) {
+		this.updated = updated;
 	}
 
 	public List<BarCode> getBarcodeList() {
