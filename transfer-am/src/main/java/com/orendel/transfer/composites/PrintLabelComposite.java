@@ -132,7 +132,7 @@ public class PrintLabelComposite extends Composite {
 			public void widgetSelected(SelectionEvent arg0) {
 				if (validateFields()) {
 					doPrint();
-					MessagesUtil.showInformation("Imprimir etiqueta", "El proceso de impresión ha sido realizado exitosamente.");
+					MessagesUtil.showInformation("Imprimir etiqueta", "Etiqueta enviada correctamente a la impresora.");
 					getShell().close();
 				};				
 			}
@@ -175,12 +175,13 @@ public class PrintLabelComposite extends Composite {
 		int labelWidth = 450;
 		String barcode = txtBarcode.getText();
 		String description = txtItemDescription.getText();
+		String timeStampLabel = item.getUpdatedDateLabel();
 		int cantidad = Integer.parseInt(txtPrintQty.getText());
 		
 		// set the "waiting" cursor
 		getShell().setCursor(waitCursor);
 		try {
-			printService.printAutomartLabel(labelWidth, barcode, description, "Línea adicional", cantidad);
+			printService.printAutomartLabel(labelWidth, barcode, description, timeStampLabel, cantidad);
 		} catch (RuntimeException e) {
 			getShell().setCursor(null);   // making sure to show the default cursor
 			throw e;
