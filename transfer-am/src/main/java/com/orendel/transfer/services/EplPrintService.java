@@ -51,10 +51,10 @@ public class EplPrintService {
 		LabelElement barcode = new Barcode(BarcodeType.Code128, 2, 65, barCode);
 		LabelElement line03 = TextLine.create(FontSize.THREE, description);
 		LabelElement line04 = TextLine.create(FontSize.THREE, additionalText);
-		label.addElementCentered(line01, 35);
-		label.addElementCentered(barcode, 100);
-		label.addElementCentered(line03, 175);
-		label.addElementCentered(line04, 210);
+		label.addElementCentered(line01, 30);
+		label.addElementCentered(barcode, 95);
+		label.addElementCentered(line03, 170);
+		label.addElementCentered(line04, 215);
 		String epl = label.getEpl(labelsToPrint);
 		return epl;
 	}
