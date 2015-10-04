@@ -173,9 +173,9 @@ public class PrintLabelComposite extends Composite {
 		EplPrintService printService = new EplPrintService();
 		
 		int labelWidth = 450;
-		String barcode = txtBarcode.getText();
+		String barcode = item.getItemNo();
 		String description = txtItemDescription.getText();
-		String timeStampLabel = item.getUpdatedDateLabel();
+		String timeStampLabel = item.getDateFormattedForLabel(item.getLastReceived());
 		int cantidad = Integer.parseInt(txtPrintQty.getText());
 		
 		// set the "waiting" cursor

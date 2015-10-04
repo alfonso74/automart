@@ -18,8 +18,7 @@ public class ItemTest {
 		calendar.clear();
 		calendar.set(2014, Calendar.MAY, 22);
 		Item item = new Item();
-		item.setUpdated(calendar.getTime());
-		String labelForPrinter = item.getUpdatedDateLabel();
+		String labelForPrinter = item.getDateFormattedForLabel(calendar.getTime());
 		assertTrue(labelForPrinter.equalsIgnoreCase("A14H05T22"));		
 	}
 

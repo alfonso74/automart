@@ -31,6 +31,10 @@ public class Item {
 	/** Fecha de última actualización */
 	@Column(name = "LST_MAINT_DT", updatable=false)
 	private Date updated;
+	
+	/** Fecha de última recepción */
+	@Column(name = "LST_RECV_DAT", updatable=false)
+	private Date lastReceived;
 
 	/** Listado de códigos de barra asociados a este item */
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "item", fetch = FetchType.LAZY)
@@ -43,11 +47,11 @@ public class Item {
 	
 	// ******************************* Helper methods ********************************
 	
-	public String getUpdatedDateLabel() {
-		String label = "";
-		if (getUpdated() != null) {
+	public String getDateFormattedForLabel(Date date) {
+		String label = "NO DISPONIBLE";
+		if (date != null) {
 			Calendar calendar = new GregorianCalendar();
-			calendar.setTime(getUpdated());
+			calendar.setTime(date);
 			String yy = Integer.toString(calendar.get(Calendar.YEAR));
 			String mm = '0' + Integer.toString(calendar.get(Calendar.MONTH) + 1);
 			String dd = '0' + Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
@@ -80,6 +84,14 @@ public class Item {
 
 	public void setUpdated(Date updated) {
 		this.updated = updated;
+	}
+
+	public Date getLastReceived() {
+		return lastReceived;
+	}
+
+	public void setLastReceived(Date lastReceived) {
+		this.lastReceived = lastReceived;
 	}
 
 	public List<BarCode> getBarcodeList() {
