@@ -43,6 +43,7 @@ public class TextLine implements LabelElement {
 		return fontSize;
 	}
 
+	@Override
 	public String getContent() {
 		return content;
 	}
@@ -71,6 +72,11 @@ public class TextLine implements LabelElement {
 	@Override
 	public void setyPosition(int yPosition) {
 		this.yPosition = yPosition;
+	}
+
+	@Override
+	public boolean canBeSplitted() {
+		return true;
 	}
 	
 }

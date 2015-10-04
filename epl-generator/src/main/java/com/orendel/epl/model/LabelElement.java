@@ -1,5 +1,6 @@
 package com.orendel.epl.model;
 
+
 public interface LabelElement {
 
 	int getWidthForDpi(int dpi);
@@ -11,6 +12,10 @@ public interface LabelElement {
 	int getyPosition();
 
 	void setyPosition(int yPosition);
+	
+	boolean canBeSplitted();
+	
+	String getContent();
 	
 	String getEpl();
 

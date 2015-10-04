@@ -5,18 +5,18 @@ public class Barcode implements LabelElement {
 	private BarcodeType type;
 	private int narrowBarWidth;
 	private int height;
-	private String code;
+	private String content;
 	
 	private int xPosition;
 	private int yPosition;
 //	private int width;
 	
 	
-	public Barcode(BarcodeType type, int narrowBarWidth, int height, String code) {
+	public Barcode(BarcodeType type, int narrowBarWidth, int height, String content) {
 		this.type = type;
 		this.narrowBarWidth = narrowBarWidth;
 		this.height = height;
-		this.code = code;
+		this.content = content;
 	}
 	
 	// helper methods
@@ -31,7 +31,7 @@ public class Barcode implements LabelElement {
 		sb.append("0,");
 		sb.append(height + ",");
 		sb.append("N,\"");
-		sb.append(code + "\"\n");
+		sb.append(content + "\"\n");
 		return sb.toString();
 	}
 	
@@ -48,25 +48,25 @@ public class Barcode implements LabelElement {
 	}
 	
 	public String getCode() {
-		return code;
+		return content;
 	}
 	
 	public int getDataCharsCount() {
 		boolean isNumeric = true;
-		for (int n = 0; n < code.length(); n++) {
-			if (code.charAt(n) < '0' || code.charAt(n) > '9') {
+		for (int n = 0; n < content.length(); n++) {
+			if (content.charAt(n) < '0' || content.charAt(n) > '9') {
 				isNumeric = false;
 				break;
 			}
 		}
 		int charCount = 0;
-		if (isNumeric && code.length() > 3) {
-			charCount = code.length() / 2;
-			if (code.length() % 2 != 0) {
+		if (isNumeric && content.length() > 3) {
+			charCount = content.length() / 2;
+			if (content.length() % 2 != 0) {
 				charCount += 2;
 			}
 		} else {
-			charCount = code.length();
+			charCount = content.length();
 		}
 		return charCount;
 	}
@@ -96,6 +96,16 @@ public class Barcode implements LabelElement {
 	@Override
 	public void setyPosition(int yPosition) {
 		this.yPosition = yPosition;
+	}
+
+	@Override
+	public boolean canBeSplitted() {
+		return false;
+	}
+
+	@Override
+	public String getContent() {
+		return content;
 	}
 
 }
