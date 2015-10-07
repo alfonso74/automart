@@ -10,6 +10,7 @@ import com.orendel.epl.model.BarcodeType;
 import com.orendel.epl.model.FontSize;
 import com.orendel.epl.model.Label;
 import com.orendel.epl.model.LabelElement;
+import com.orendel.epl.model.OverflowMode;
 import com.orendel.epl.model.TextLine;
 import com.orendel.transfer.config.AppConfig;
 import com.orendel.transfer.exceptions.ApplicationRuntimeException;
@@ -51,7 +52,7 @@ public class EplPrintService {
 		LabelElement barcode = new Barcode(BarcodeType.Code128, 2, 65, barCode);
 		LabelElement line03 = TextLine.create(FontSize.THREE, description);
 		LabelElement line04 = TextLine.create(FontSize.THREE, additionalText);
-		label.addElementCentered(line01, 30);
+		label.addElementCentered(line01, 30, OverflowMode.RESIZE);
 		label.addElementCentered(barcode, 95);
 		label.addElementCentered(line03, 170);
 		label.addElementCentered(line04, 215);

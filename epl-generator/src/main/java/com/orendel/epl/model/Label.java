@@ -27,27 +27,57 @@ public class Label {
 	}
 	
 
-	public void addElementCentered(LabelElement element, int yPosition) {
+	public void addElementCentered(LabelElement element, int yPosition, OverflowMode mode) {
 		if (element == null) {
 			throw new IllegalArgumentException("The 'element' argument can't be null");
 		}
 		int xPosition = centerHorizontally(element.getWidthForDpi(dpi));
-		System.out.println("X: " + xPosition);
 		if (xPosition < 5 && element.canBeSplitted()) {
-			List<LabelElement> lines = splitTextElement((TextLine) element);
-			System.out.println("Splitted lines: " + lines.size());
-			xPosition = centerHorizontally(lines.get(0).getWidthForDpi(dpi));
-			for (LabelElement e : lines) {
-				e.setxPosition(xPosition);
-				e.setyPosition(yPosition);
-				yPosition += 20;
+			if (mode == OverflowMode.SPLIT) {
+				List<LabelElement> lines = splitTextElement((TextLine) element);
+				System.out.println("Splitted lines: " + lines.size());
+				xPosition = centerHorizontally(lines.get(0).getWidthForDpi(dpi));
+				for (LabelElement e : lines) {
+					e.setxPosition(xPosition);
+					e.setyPosition(yPosition);
+					yPosition += 20;
+				}
+				elements.addAll(lines);
+			} else if (mode == OverflowMode.RESIZE) {
+				TextLine textElement = (TextLine) element;
+				adjustFontSize(textElement);
+				xPosition = centerHorizontally(element.getWidthForDpi(dpi));
+				textElement.setxPosition(xPosition);
+				textElement.setyPosition(yPosition);
+				elements.add(textElement);
 			}
-			elements.addAll(lines);
 		} else {
 			element.setxPosition(xPosition);
 			element.setyPosition(yPosition);
 			elements.add(element);
 		}
+	}
+	
+	public void adjustFontSize(TextLine textElement) {
+		String content = textElement.getContent();
+		double minRequiredCPI = content.length() / (width / dpi);
+		
+		FontSize newFontSize = null;
+		for (FontSize v : FontSize.values()) {
+			if (v.getCPI() > minRequiredCPI) {
+				if (newFontSize == null || v.getCPI() < newFontSize.getCPI()) {
+					newFontSize = v;
+				}
+			}
+		}
+		if (newFontSize == null) {
+			throw new IllegalArgumentException("El texto '" + content + "' es demasiado largo para la etiqueta configurada.");
+		}
+		textElement.setFontSize(newFontSize);
+	}
+	
+	public void addElementCentered(LabelElement element, int yPosition) {
+		addElementCentered(element, yPosition, OverflowMode.SPLIT);
 	}
 	
 	
@@ -66,7 +96,7 @@ public class Label {
 		String content = textElement.getContent();
 		double cpi = textElement.getFontSize().getCPI();
 		
-		int maxContentLength = (int) (width / cpi);
+		int maxContentLength = (int) ((width / dpi) * cpi);
 		
 		lines = splitContent(content, textElement.getFontSize(), maxContentLength);
 		return lines;

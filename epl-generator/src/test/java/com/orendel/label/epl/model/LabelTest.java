@@ -10,6 +10,7 @@ import org.junit.Test;
 import com.orendel.epl.model.FontSize;
 import com.orendel.epl.model.Label;
 import com.orendel.epl.model.LabelElement;
+import com.orendel.epl.model.OverflowMode;
 import com.orendel.epl.model.TextLine;
 
 public class LabelTest {
@@ -38,6 +39,18 @@ public class LabelTest {
 		List<LabelElement> elements = label.getElements();
 		assertThat("La cantidad de líneas generadas no coincide con la esperada", 
 				elements.size(), CoreMatchers.is(1));
+	}
+	
+	@Test
+	public void test_AddElementCentered_Overflow() {
+		Label label = new Label(450, 250);
+		LabelElement textLine = TextLine.create(FontSize.FIVE, "SANDWICHCOMBO");
+		label.addElementCentered(textLine, 10, OverflowMode.RESIZE);
+		List<LabelElement> elements = label.getElements();
+		assertThat("La cantidad de líneas generadas no coincide con la esperada", 
+				elements.size(), CoreMatchers.is(1));
+		assertThat("El tamaño de fuente auto-seleccionado es incorrecto", 
+				((TextLine) textLine).getFontSize(), CoreMatchers.is(FontSize.FOUR));
 	}
 	
 	@Test
@@ -106,5 +119,28 @@ public class LabelTest {
 		assertThat(lines.get(0).getContent(), CoreMatchers.is("Otorrinol"));
 		assertThat(lines.get(1).getContent(), CoreMatchers.is("aringolog"));
 		assertThat(lines.get(2).getContent(), CoreMatchers.is("ía tres"));
+	}
+	
+	@Test
+	public void testAdjustFontSize_FontSizeOne() {
+		Label label = new Label(450, 250);
+		TextLine textLine = (TextLine) TextLine.create(FontSize.FIVE, "SANDWICHCOMBOSANDWICHCOMBOSANDWICHCOMBO");
+		label.adjustFontSize(textLine);
+		assertThat(textLine.getFontSize(), CoreMatchers.is(FontSize.ONE));
+	}
+	
+	@Test
+	public void testAdjustFontSize_FontSizeFour() {
+		Label label = new Label(450, 250);
+		TextLine textLine = (TextLine) TextLine.create(FontSize.FIVE, "SANDWICHCOMBO");
+		label.adjustFontSize(textLine);
+		assertThat(textLine.getFontSize(), CoreMatchers.is(FontSize.FOUR));
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testAdjustFontSize_TextTooLongForLabel() {
+		Label label = new Label(450, 250);
+		TextLine textLine = (TextLine) TextLine.create(FontSize.FIVE, "SANDWICHCOMBOSANDWICHCOMBOSANDWICHCOMBOSANDWICHCOMBO");
+		label.adjustFontSize(textLine);
 	}
 }

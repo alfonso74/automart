@@ -42,6 +42,10 @@ public class TextLine implements LabelElement {
 	public FontSize getFontSize() {
 		return fontSize;
 	}
+	
+	public void setFontSize(FontSize fontSize) {
+		this.fontSize = fontSize;
+	}
 
 	@Override
 	public String getContent() {
