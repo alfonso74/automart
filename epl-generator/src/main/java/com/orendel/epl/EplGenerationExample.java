@@ -1,6 +1,7 @@
 package com.orendel.epl;
 
 import com.orendel.epl.model.Barcode;
+import com.orendel.epl.model.BarcodeNarrowBarWidth;
 import com.orendel.epl.model.BarcodeType;
 import com.orendel.epl.model.FontSize;
 import com.orendel.epl.model.Label;
@@ -59,7 +60,7 @@ public class EplGenerationExample {
 	public String getDynamicEpl(int width, String barCode, String description, String additionalText, int labelsToPrint) {
 		Label label = new Label(width, 250);
 		LabelElement line01 = TextLine.create(FontSize.FIVE, barCode);
-		LabelElement barcode = new Barcode(BarcodeType.Code128, 2, 65, barCode);
+		LabelElement barcode = new Barcode(BarcodeType.Code128, BarcodeNarrowBarWidth.TWO, 65, barCode);
 		LabelElement line03 = TextLine.create(FontSize.THREE, description);
 		LabelElement line04 = TextLine.create(FontSize.THREE, additionalText);
 		label.addElementCentered(line01, 35);

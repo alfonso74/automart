@@ -9,12 +9,11 @@ public class Barcode implements LabelElement {
 	
 	private int xPosition;
 	private int yPosition;
-//	private int width;
 	
 	
-	public Barcode(BarcodeType type, int narrowBarWidth, int height, String content) {
+	public Barcode(BarcodeType type, BarcodeNarrowBarWidth narrowBarWidth, int height, String content) {
 		this.type = type;
-		this.narrowBarWidth = narrowBarWidth;
+		this.narrowBarWidth = narrowBarWidth.getWidth();
 		this.height = height;
 		this.content = content;
 	}
