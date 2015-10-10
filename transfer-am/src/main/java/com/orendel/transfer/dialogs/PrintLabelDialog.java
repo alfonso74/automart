@@ -52,7 +52,7 @@ public class PrintLabelDialog extends Dialog {
 	 */
 	private void createContents() {
 		shell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		shell.setSize(425, 250);
+		shell.setSize(400, 275);
 		shell.setText(getText());
 		shell.setLocation(DialogUtil.calculateDialogLocation(shell, false));
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
