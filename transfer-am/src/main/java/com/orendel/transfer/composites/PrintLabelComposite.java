@@ -27,7 +27,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.widgets.Group;
 
 public class PrintLabelComposite extends Composite {
-	private static final Logger logger = Logger.getLogger(EditBarcodeComposite.class);
+	private static final Logger logger = Logger.getLogger(PrintLabelComposite.class);
 	
 	private CounterpointController controller;
 	
@@ -40,6 +40,7 @@ public class PrintLabelComposite extends Composite {
 	private Text txtItemDescription;
 	private Text txtBarcode;
 	private Text txtPrintQty;
+	private Button btnCompressBarcode;
 	
 	private final Cursor waitCursor = new Cursor(getDisplay(), SWT.CURSOR_WAIT);
 	
@@ -111,6 +112,14 @@ public class PrintLabelComposite extends Composite {
 		gd_txtPrintQty.widthHint = 45;
 		txtPrintQty.setLayoutData(gd_txtPrintQty);
 		
+		btnCompressBarcode = new Button(groupLabelInfo, SWT.CHECK);
+		GridData gd_btnCompressBarcode = new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1);
+		gd_btnCompressBarcode.verticalIndent = 10;
+		btnCompressBarcode.setLayoutData(gd_btnCompressBarcode);
+		btnCompressBarcode.setText("Reducir ancho del código de barra");
+		new Label(groupLabelInfo, SWT.NONE);
+		new Label(groupLabelInfo, SWT.NONE);
+		
 		Composite compositeButtons = new Composite(this, SWT.NONE);
 		compositeButtons.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		compositeButtons.setLayout(new GridLayout(2, false));
@@ -174,6 +183,7 @@ public class PrintLabelComposite extends Composite {
 		
 		int labelWidth = 450;
 		String barcode = item.getItemNo();
+		boolean reduceBarcodeBarsWidth = btnCompressBarcode.getSelection() ? true : false;
 		String description = txtItemDescription.getText();
 		String timeStampLabel = item.getDateFormattedForLabel(item.getLastReceived());
 		int cantidad = Integer.parseInt(txtPrintQty.getText());
@@ -181,7 +191,7 @@ public class PrintLabelComposite extends Composite {
 		// set the "waiting" cursor
 		getShell().setCursor(waitCursor);
 		try {
-			printService.printAutomartLabel(labelWidth, barcode, description, timeStampLabel, cantidad);
+			printService.printAutomartLabel(labelWidth, barcode, reduceBarcodeBarsWidth, description, timeStampLabel, cantidad);
 		} catch (RuntimeException e) {
 			getShell().setCursor(null);   // making sure to show the default cursor
 			throw e;
@@ -196,7 +206,7 @@ public class PrintLabelComposite extends Composite {
 	 */
 	private void findItemDetails() {
 		item = controller.findItemByBarCode(barcode);
-		logger.info("Barcode " + barcode + ", item: " + item);
+		logger.info("Barcode " + barcode + ", item number: " + item.getItemNo());
 		if (item != null) {
 			refreshFieldsContents();
 		}
@@ -229,7 +239,7 @@ public class PrintLabelComposite extends Composite {
 		this.addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
-				logger.info("Dispose listener called!");
+				logger.debug("Dispose listener called!");
 				waitCursor.dispose();
 			}
 		});

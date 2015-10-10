@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.nio.charset.Charset;
 
 import com.orendel.epl.model.Barcode;
+import com.orendel.epl.model.BarcodeNarrowBarWidth;
 import com.orendel.epl.model.BarcodeType;
 import com.orendel.epl.model.FontSize;
 import com.orendel.epl.model.Label;
@@ -18,7 +19,7 @@ import com.orendel.transfer.exceptions.ApplicationRuntimeException;
 
 public class EplPrintService {	
 	
-	public void printAutomartLabel(int width, String barCode, String description, String additionalText, int labelsToPrint) {
+	public void printAutomartLabel(int width, String barCode, boolean reduceBarcodeBarsWidth, String description, String additionalText, int labelsToPrint) {
 		String printerIpAddress = AppConfig.INSTANCE.getValue("label.printer.ipaddress");
 		String printerPort = AppConfig.INSTANCE.getValue("label.printer.port");
 		
@@ -26,7 +27,9 @@ public class EplPrintService {
 			Socket clientSocket=new Socket(printerIpAddress, Integer.parseInt(printerPort));
 			DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
 
-			String eplCommands = getDynamicEpl(width, barCode, description, additionalText, labelsToPrint);
+			
+			BarcodeNarrowBarWidth nbWidth = reduceBarcodeBarsWidth ? BarcodeNarrowBarWidth.ONE : BarcodeNarrowBarWidth.TWO;
+			String eplCommands = getDynamicEpl(width, barCode,  nbWidth, description, additionalText, labelsToPrint);
 			outToServer.write(eplCommands.getBytes(Charset.forName("437")));  // la Eltron utiliza el codepage 437
 
 			outToServer.close();	    
@@ -41,15 +44,16 @@ public class EplPrintService {
 	 * Creates an EPL command sequence using the epl-generator objects (and using some parameters).
 	 * @param width the label width (in points per inches)
 	 * @param barCode the barcode to be printed
+	 * @param nbWidth
 	 * @param description the barcode description
 	 * @param additionalText some additional text
 	 * @param labelsToPrint number of label sets to print
 	 * @return the EPL command sequence for raw printing
 	 */
-	public String getDynamicEpl(int width, String barCode, String description, String additionalText, int labelsToPrint) {
+	public String getDynamicEpl(int width, String barCode, BarcodeNarrowBarWidth nbWidth, String description, String additionalText, int labelsToPrint) {
 		Label label = new Label(width, 250);
 		LabelElement line01 = TextLine.create(FontSize.FIVE, barCode);
-		LabelElement barcode = new Barcode(BarcodeType.Code128, 2, 65, barCode);
+		LabelElement barcode = new Barcode(BarcodeType.Code128, nbWidth, 65, barCode);
 		LabelElement line03 = TextLine.create(FontSize.THREE, description);
 		LabelElement line04 = TextLine.create(FontSize.THREE, additionalText);
 		label.addElementCentered(line01, 30, OverflowMode.RESIZE);
