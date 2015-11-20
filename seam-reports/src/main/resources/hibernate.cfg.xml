@@ -16,7 +16,7 @@
          -->
          
         <property name="connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
-        <property name="connection.url">jdbc:sqlserver://192.168.222.128\SQLEXPRESS:1433;databaseName=DemoGolf</property>
+        <property name="connection.url">jdbc:sqlserver://192.168.3.104\SQLEXPRESS:1433;databaseName=DemoGolf</property>
         <property name="connection.username">sa</property>
         <property name="connection.password">lotusnotes</property>
 

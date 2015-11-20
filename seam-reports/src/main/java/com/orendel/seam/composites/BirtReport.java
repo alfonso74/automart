@@ -33,7 +33,7 @@ public class BirtReport extends Composite {
 	private String reportDirectory = "/reports/";
 	private String reportFileName = "entregas.rptdesign";
 	
-	private String dbURL = "jdbc:sqlserver://192.168.222.128\\SQLEXPRESS:1433;databaseName=DemoGolf";
+	private String dbURL = "jdbc:sqlserver://192.168.3.104\\SQLEXPRESS:1433;databaseName=Delivery";
 	private Date initialDate;
 	private Date endDate;
 	
