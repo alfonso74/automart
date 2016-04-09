@@ -208,10 +208,10 @@ public class CreateTransferInEditor extends Composite {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
 				logger.info("Key: " + arg0.keyCode);
-				if (arg0.keyCode == 13) {
+				if (arg0.keyCode == 13 || arg0.keyCode == 16777296) {
 					if (!txtBarcode.getText().isEmpty()) {
-						accountForItemWithBarCodeOrItemCode(txtBarcode.getText());
-						refreshFormDetails();
+						Item itemAccounted = accountForItemWithBarCodeOrItemCode(txtBarcode.getText());
+						refreshFormDetails(itemAccounted);
 						txtBarcode.setText("");
 						txtQty.setFocus();
 						txtQty.setText("1");
@@ -554,7 +554,7 @@ public class CreateTransferInEditor extends Composite {
 		}
 		if (tc != null) {
 			tcControl = tc;
-			refreshFormDetails();
+			refreshFormDetails(null);
 			result = true;
 		} else {
 			MessagesUtil.showWarning("Buscar transferencia", "No se encontró la transferencia número " + transferNo + ".");
@@ -593,7 +593,7 @@ public class CreateTransferInEditor extends Composite {
 	}
 	
 	
-	private void accountForItemWithBarCodeOrItemCode(String barcode) {
+	private Item accountForItemWithBarCodeOrItemCode(String barcode) {
 		Item item = cpController.findItemByBarCode(barcode);
 		if (item == null) {
 			item = cpController.findItemByItemCode(barcode);
@@ -611,10 +611,11 @@ public class CreateTransferInEditor extends Composite {
 		} else {
 			MessagesUtil.showError("Búsqueda por código", "No se encontró ningún artículo con el código de barra suministrado: " + barcode + ".");
 		}
+		return item;
 	}
 
 	
-	private void refreshFormDetails() {
+	private void refreshFormDetails(Item itemAccounted) {
 		if (tcControl == null) {
 			logger.warn("TransferControl object is null!");
 			return;
@@ -638,6 +639,7 @@ public class CreateTransferInEditor extends Composite {
 		
 		System.out.println("TTT: " + tcControl.getLines());
 		
+		int updatedItemIndex = 0;
 		int lineNumber = 0;
 		for (TransferControlLine v : tcControl.getLines()) {
 			Color transferOK = new Color(getDisplay(), 200, 255, 190);
@@ -645,6 +647,9 @@ public class CreateTransferInEditor extends Composite {
 			item = new TableItem(tableTransferLines, SWT.NONE);
 			item.setData("lineNumber", lineNumber++);
 			item.setData("itemNo", v.getItemNumber());
+			if (itemAccounted != null && v.getItemNumber().equals(itemAccounted.getItemNo())) {
+				updatedItemIndex = lineNumber - 1;
+			}
 			int column = 0;
 			item.setText(column++, " " + v.getQtyPrevExpected().setScale(0).toString());
 			item.setText(column++, v.getQtyReceived().setScale(0).toString());
@@ -674,6 +679,12 @@ public class CreateTransferInEditor extends Composite {
 			if (!item.getBackground().equals(transferOK)) {
 				allItemsAccountedFor = false;
 			}
+		}
+		
+		if (tableTransferLines.getTopIndex() != updatedItemIndex) {
+			System.out.println("Top: " + tableTransferLines.getTopIndex() + ", updated: " + updatedItemIndex);
+			tableTransferLines.setTopIndex(updatedItemIndex);
+			tableTransferLines.select(updatedItemIndex);
 		}
 		
 		addEditorControl2();
