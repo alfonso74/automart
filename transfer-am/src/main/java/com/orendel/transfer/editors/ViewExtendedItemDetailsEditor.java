@@ -30,6 +30,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
@@ -51,6 +54,8 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	private Table tableItemDetails;
 	private Text txtItemDescription;
 	private Table tableBarcodes;
+	
+	private Listener listenerESC;
 
 	/**
 	 * Create the composite.
@@ -226,7 +231,8 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		txtBarcode.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == 13) {
+				logger.info("Keyx: " + e.keyCode);
+				if (!txtBarcode.getText().isEmpty() && (e.keyCode == 13 || e.keyCode == 16777296)) {
 					showItemDetails(txtBarcode.getText());
 					txtBarcode.selectAll();
 				}
@@ -242,11 +248,14 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 			}
 		});
 		
-		addDoubleClickListener();		
+		addDoubleClickListener();
+		
+		addGlobalListeners();
 		addDisposeListener();
 		
 		txtBarcode.setFocus();
 	}
+	
 	
 	private void addDoubleClickListener() {
 		tableItemDetails.addMouseListener(new MouseAdapter() {
@@ -308,7 +317,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 				refreshItemLocationDetails(item);
 				refreshBarcodeDetails(item);
 			} else {
-				MessagesUtil.showWarning("Búsqueda por código", "No se encontró ningún artículo con el código de barra o código de item suministrado: " + code + ".");
+				MessagesUtil.showWarning("Búsqueda por código", "No se encontró ningún artículo con el código de barra o código de item suministrado: '" + code + "'.");
 			}	
 		} catch (HibernateException e) {
 			resetHibernateConnection(e);
@@ -385,6 +394,24 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	
 	public String checkNull(String valorCampo) {
 		return valorCampo == null ? "" : valorCampo;
+	}
+	
+	/**
+	 * Listeners for global shortcuts like F10 (reset form) and F12 (save form). 
+	 */
+	private void addGlobalListeners() {
+		Display display = getShell().getDisplay();
+		listenerESC = new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				if (event.keyCode == SWT.ESC) {
+					System.out.println("Escape button pressed!");
+					txtBarcode.setText("");
+					resetFields();
+				}
+			}
+		};
+		display.addFilter(SWT.KeyDown, listenerESC);
 	}
 	
 	private void addDisposeListener() {
