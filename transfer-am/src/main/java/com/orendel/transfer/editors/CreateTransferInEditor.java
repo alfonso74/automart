@@ -124,7 +124,7 @@ public class CreateTransferInEditor extends Composite {
 		txtTransferNo.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == 13) {
+				if (e.keyCode == 13 || e.keyCode == 16777296) {
 					resetFields();
 					toggleEditableFields(false);
 					if (existsRegister(txtTransferNo.getText())) {
@@ -187,7 +187,7 @@ public class CreateTransferInEditor extends Composite {
 		txtQty.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == 13) {
+				if (e.keyCode == 13 || e.keyCode == 16777296) {
 					txtBarcode.setFocus();
 				}
 			}
