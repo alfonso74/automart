@@ -203,6 +203,14 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		btnPrint.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
 		btnPrint.setText("Imprimir...");
 		
+		Button btnAdd = new Button(compositeButtons, SWT.NONE);
+		GridData gd_btnAdd = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnAdd.widthHint = 80;
+		btnAdd.setLayoutData(gd_btnAdd);
+		btnAdd.setEnabled(false);
+		btnAdd.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
+		btnAdd.setText("Agregar...");
+		
 		Button btnEdit = new Button(compositeButtons, SWT.NONE);
 		GridData gd_btnEdit = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_btnEdit.widthHint = 80;
@@ -211,8 +219,16 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		btnEdit.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
 		btnEdit.setText("Editar...");
 		
-		// Enables the btnEdit Button if the User has the required Permission
+		// Enables the btnAdd and btnEdit Buttons if the User has the required Permission
+		btnAdd.setEnabled(LoggedUserService.INSTANCE.getUser().canEditBarcodes());
 		btnEdit.setEnabled(LoggedUserService.INSTANCE.getUser().canEditBarcodes());
+		
+		btnAdd.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				addBarcode();
+			}			
+		});
 		
 		btnEdit.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -272,6 +288,9 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		});
 	}
 	
+	private void addBarcode() {
+		System.out.println("Called addBarcode() function!");
+	}
 	
 	private void editBarcode() {
 		BarCode barcode = getSelectedBarcodeLine();
