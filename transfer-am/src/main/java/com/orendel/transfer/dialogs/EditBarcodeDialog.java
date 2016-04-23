@@ -16,18 +16,18 @@ public class EditBarcodeDialog extends Dialog {
 	protected Object result;
 	protected Shell shell;
 	private CounterpointController controller;
-	private String itemNo;
+	private String barcode;
 
 	/**
 	 * Create the dialog.
 	 * @param parent
 	 * @param style
 	 */
-	public EditBarcodeDialog(Shell parent, int style, CounterpointController controller, String itemNo) {
+	public EditBarcodeDialog(Shell parent, int style, CounterpointController controller, String barcode) {
 		super(parent, style);
 		setText("Editar código de barra");
 		this.controller = controller;
-		this.itemNo = itemNo;
+		this.barcode = barcode;
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class EditBarcodeDialog extends Dialog {
 		shell.setLocation(DialogUtil.calculateDialogLocation(shell, false));
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
-		EditBarcodeComposite composite = new EditBarcodeComposite(shell, SWT.None, controller, itemNo);
+		EditBarcodeComposite composite = new EditBarcodeComposite(shell, SWT.None, controller, barcode);
 		composite.layout();
 	}
 

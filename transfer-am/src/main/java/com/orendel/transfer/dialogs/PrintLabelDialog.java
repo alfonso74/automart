@@ -16,18 +16,18 @@ public class PrintLabelDialog extends Dialog {
 	protected Object result;
 	protected Shell shell;
 	private CounterpointController controller;
-	private String itemNo;
+	private String barcode;
 
 	/**
 	 * Create the dialog.
 	 * @param parent
 	 * @param style
 	 */
-	public PrintLabelDialog(Shell parent, int style, CounterpointController controller, String itemNo) {
+	public PrintLabelDialog(Shell parent, int style, CounterpointController controller, String barcode) {
 		super(parent, style);
 		setText("Imprimir etiqueta");
 		this.controller = controller;
-		this.itemNo = itemNo;
+		this.barcode = barcode;
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class PrintLabelDialog extends Dialog {
 		shell.setLocation(DialogUtil.calculateDialogLocation(shell, false));
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
-		PrintLabelComposite composite = new PrintLabelComposite(shell, SWT.None, controller, itemNo);
+		PrintLabelComposite composite = new PrintLabelComposite(shell, SWT.None, controller, barcode);
 		composite.layout();
 	}
 
