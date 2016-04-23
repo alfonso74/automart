@@ -9,6 +9,7 @@ import com.orendel.counterpoint.domain.BarCode;
 import com.orendel.counterpoint.domain.Inventory;
 import com.orendel.counterpoint.domain.Item;
 import com.orendel.transfer.controllers.CounterpointController;
+import com.orendel.transfer.dialogs.AddBarcodeDialog;
 import com.orendel.transfer.dialogs.EditBarcodeDialog;
 import com.orendel.transfer.dialogs.ItemDetailsDialog;
 import com.orendel.transfer.dialogs.PrintLabelDialog;
@@ -50,6 +51,9 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	private static Color lightCyan = null;
 	
 	private CounterpointController controller;
+	
+	private Item currentItem;
+	
 	private Text txtBarcode;
 	private Table tableItemDetails;
 	private Text txtItemDescription;
@@ -290,6 +294,16 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	
 	private void addBarcode() {
 		System.out.println("Called addBarcode() function!");
+		if (currentItem != null) {
+			String itemCode = txtBarcode.getText();
+			System.out.println("Current item: " + currentItem.getItemNo());
+			AddBarcodeDialog dialog = new AddBarcodeDialog(getShell(), SWT.APPLICATION_MODAL, controller, itemCode);
+			dialog.open();
+			controller.getSession().refresh(currentItem);
+			refreshItemBarcodesDetails(currentItem);
+		} else {
+			MessagesUtil.showError("Agregar código de barra", "Debe buscar un artículo para poder agregar un código de barra.");
+		}
 	}
 	
 	private void editBarcode() {
@@ -297,7 +311,8 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		if (barcode != null) {
 			EditBarcodeDialog dialog = new EditBarcodeDialog(getShell(), SWT.APPLICATION_MODAL, controller, barcode.getCode());
 			dialog.open();
-			refreshBarcodeDetails(barcode.getItem());
+			controller.getSession().refresh(currentItem);
+			refreshItemBarcodesDetails(barcode.getItem());
 		} else {
 			MessagesUtil.showError("Editar código de barra", "No se ha seleccionado ningún código de barra para ser editado.");
 		}
@@ -333,8 +348,9 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 			Item item = controller.findItem(code);
 			if (item != null) {
 				logger.info("Artículo encontrado en DB: " + item.getDescription());
+				this.currentItem = item;
 				refreshItemLocationDetails(item);
-				refreshBarcodeDetails(item);
+				refreshItemBarcodesDetails(item);
 			} else {
 				MessagesUtil.showWarning("Búsqueda por código", "No se encontró ningún artículo con el código de barra o código de item suministrado: '" + code + "'.");
 			}	
@@ -375,7 +391,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	}
 	
 	
-	private void refreshBarcodeDetails(Item item) {
+	private void refreshItemBarcodesDetails(Item item) {
 		TableItem itemLine;
 		
 		tableBarcodes.removeAll();
@@ -396,6 +412,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	
 	
 	private void resetFields() {
+		this.currentItem = null;
 		txtItemDescription.setText(EMPTY_STRING);
 		tableItemDetails.removeAll();
 		tableBarcodes.removeAll();
@@ -407,7 +424,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		logger.info("Reloading sessions after HibernateException...");
 		controller.finalizarSesion();
 		HibernateUtil.verSesiones();
-		controller = new CounterpointController("ItemDetails" + new Date().getTime());
+		controller = new CounterpointController("ViewItemDetailsEditor" + new Date().getTime());
 	}
 	
 	

@@ -5,9 +5,11 @@ import java.util.List;
 import org.hibernate.HibernateException;
 
 import com.orendel.counterpoint.domain.BarCode;
+import com.orendel.counterpoint.domain.BarCodeType;
 import com.orendel.counterpoint.domain.Item;
 import com.orendel.counterpoint.domain.TransferIn;
 import com.orendel.transfer.dao.BarCodeDAO;
+import com.orendel.transfer.dao.BarcodeTypeDAO;
 import com.orendel.transfer.dao.GenericDAOImpl;
 import com.orendel.transfer.dao.ItemDAO;
 import com.orendel.transfer.dao.TransferInDAO;
@@ -111,5 +113,11 @@ public class CounterpointController extends AbstractController<TransferIn> {
 		BarCodeDAO dao = new BarCodeDAO();
 		dao.setSession(this.getSession());
 		dao.doSave(barcode);
+	}
+	
+	public List<BarCodeType> getBarcodeTypes() {
+		BarcodeTypeDAO dao = new BarcodeTypeDAO();
+		List<BarCodeType> barcodeTypes = dao.findAll();
+		return barcodeTypes;
 	}
 }
