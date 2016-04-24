@@ -85,7 +85,7 @@ public class HibernateUtil {
 	
 	public static void verSesiones() {
 //		LOGGER.debug("Total de sesiones de hibernate: " + sessionMap.size());
-		System.out.println("Total de sesiones registradas: " + sessionMap.size());
+		System.out.println("Total de sesiones registradas (" + HibernateUtil.class.getSimpleName() + "): " + sessionMap.size());
 		for (String s : sessionMap.keySet()) {
 			System.out.println("- Sesión: " + s);
 		}

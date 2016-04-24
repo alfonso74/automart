@@ -125,17 +125,24 @@ public class CreateTransferInEditor extends Composite {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == 13 || e.keyCode == 16777296) {
-					resetFields();
-					toggleEditableFields(false);
-					if (existsRegister(txtTransferNo.getText())) {
-//						getParent().setData("txtTransferNo", txtTransferNo.getText());
-						txtQty.setFocus();
-						txtQty.selectAll();
-					} else {
-						txtTransferNo.setFocus();
-						txtTransferNo.selectAll();
-					}
-					
+					try {
+						resetFields();
+						toggleEditableFields(false);
+						if (existsRegister(txtTransferNo.getText())) {
+//							getParent().setData("txtTransferNo", txtTransferNo.getText());
+							txtQty.setFocus();
+							txtQty.selectAll();
+						} else {
+							txtTransferNo.setFocus();
+							txtTransferNo.selectAll();
+						}
+					} catch (HibernateException ex) {
+						resetHibernateConnection(ex);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+						MessagesUtil.showError("Error de aplicación", 
+								(ex.getMessage() == null ? e.toString() + '\n' + ex.getStackTrace()[0] : ex.getMessage()));
+					}					
 				}
 			}
 		});
@@ -157,13 +164,7 @@ public class CreateTransferInEditor extends Composite {
 						txtTransferNo.selectAll();
 					}
 				} catch (HibernateException ex) {
-					ex.printStackTrace();
-					logger.info("Reloading sessions after HibernateException...");
-					cpController.finalizarSesion();
-					tcController.finalizarSesion();
-					HibernateUtil.verSesiones();
-					cpController = new CounterpointController("TransferIn" + new Date().getTime());
-					tcController = new TransferControlController("TransferControl" + new Date().getTime());
+					resetHibernateConnection(ex);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					MessagesUtil.showError("Error de aplicación", 
@@ -419,53 +420,6 @@ public class CreateTransferInEditor extends Composite {
 		btnCounterPoint.setEnabled(newStatus);
 	}
 	
-	
-	/**
-	 * Listeners for global shortcuts like F10 (reset form) and F12 (save form). 
-	 */
-	private void addGlobalListeners() {
-		Display display = getShell().getDisplay();
-		
-		listenerF12 = new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if (event.keyCode == SWT.F12) {
-					System.out.println("Update CounterPoint transfer button pressed!");
-					if (btnCounterPoint.getEnabled()) {
-						createTransfer();
-					}
-				}
-			}
-		};
-		
-		listenerF09 = new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if (event.keyCode == SWT.F9) {
-					System.out.println("Save partial transfer button pressed!");
-					if (btnSaveDraft.getEnabled()) {
-						createPartialTransfer();
-					}
-				}
-			}
-		};
-		
-		listenerF04 = new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if (event.keyCode == SWT.F4) {
-					System.out.println("F4 (init transfer) pressed!");
-					if (btnInitTransfer.getEnabled()) {
-						initTransfer();
-					}
-				}
-			}
-		};
-		
-		display.addFilter(SWT.KeyDown, listenerF04);
-		display.addFilter(SWT.KeyDown, listenerF12);		
-		display.addFilter(SWT.KeyDown, listenerF09);		
-	}
 	
 	private void createTransfer() {
 		if (!allItemsAccountedFor) {
@@ -922,6 +876,65 @@ public class CreateTransferInEditor extends Composite {
 		parent.layout();
 	}
 	
+	private void resetHibernateConnection(HibernateException ex) {
+		logger.error(ex.getMessage(), ex);
+		logger.info("Reloading sessions after HibernateException...");
+		cpController.finalizarSesion();
+		tcController.finalizarSesion();
+		HibernateUtil.verSesiones();
+		cpController = new CounterpointController("TransferIn" + new Date().getTime());
+		tcController = new TransferControlController("TransferControl" + new Date().getTime());
+	}
+	
+	
+	/**
+	 * Listeners for global shortcuts like F10 (reset form) and F12 (save form). 
+	 */
+	private void addGlobalListeners() {
+		Display display = getShell().getDisplay();
+		
+		listenerF12 = new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				if (event.keyCode == SWT.F12) {
+					System.out.println("Update CounterPoint transfer button pressed!");
+					if (btnCounterPoint.getEnabled()) {
+						createTransfer();
+					}
+				}
+			}
+		};
+		
+		listenerF09 = new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				if (event.keyCode == SWT.F9) {
+					System.out.println("Save partial transfer button pressed!");
+					if (btnSaveDraft.getEnabled()) {
+						createPartialTransfer();
+					}
+				}
+			}
+		};
+		
+		listenerF04 = new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				if (event.keyCode == SWT.F4) {
+					System.out.println("F4 (init transfer) pressed!");
+					if (btnInitTransfer.getEnabled()) {
+						initTransfer();
+					}
+				}
+			}
+		};
+		
+		display.addFilter(SWT.KeyDown, listenerF04);
+		display.addFilter(SWT.KeyDown, listenerF12);		
+		display.addFilter(SWT.KeyDown, listenerF09);		
+	}
+
+
 	private void addDisposeListener() {
 		this.addDisposeListener(new DisposeListener() {
 			@Override

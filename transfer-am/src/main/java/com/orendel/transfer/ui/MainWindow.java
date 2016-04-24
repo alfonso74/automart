@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.hibernate.HibernateException;
 
 import com.orendel.transfer.config.AppConfig;
 import com.orendel.transfer.dialogs.UpdatePasswordDialog;
@@ -69,7 +70,7 @@ public class MainWindow {
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		} finally {
 			try {
 				HibernateUtil.verSesiones();
@@ -77,7 +78,7 @@ public class MainWindow {
 				HibernateUtil.destroy();
 				HibernateUtilDelivery.destroy();
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 		}
 	}
@@ -94,20 +95,29 @@ public class MainWindow {
 		shell.open();
 		shell.layout();
 		shell.setImages(imageService.getShellImages());
-		while (!shell.isDisposed()) {
-			try {
-				if (!display.readAndDispatch()) {
-					display.sleep();
+		try {
+			while (!shell.isDisposed()) {
+				try {
+					if (!display.readAndDispatch()) {
+						display.sleep();
+					}
+				} catch (HibernateException e) {
+					// una HibernateException cierra el cliente, ya que no sabemos en qué estado están las sesiones/txs
+					MessagesUtil.showError("Error de aplicación / base de datos", 
+							"Error grave durante interacción con la base de datos.  Debe reiniciar la aplicación.");
+					throw e;
+				} catch (Exception e) {
+					// otras excepciones muestran su mensaje, pero permiten seguir utilizando el sistema
+					logger.error(e.getMessage(), e);
+					MessagesUtil.showError("Error de aplicación", 
+							(e.getMessage() == null ? e.toString() + '\n' + e.getStackTrace()[0] : e.getMessage()));
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				MessagesUtil.showError("Error de aplicación", 
-						(e.getMessage() == null ? e.toString() + '\n' + e.getStackTrace()[0] : e.getMessage()));
 			}
+		} finally {
+			SWTResourceManager.dispose();
+			ImagesService.INSTANCE.disposeImages();
+			display.dispose();
 		}
-		SWTResourceManager.dispose();
-		ImagesService.INSTANCE.disposeImages();
-		display.dispose();
 	}
 
 	

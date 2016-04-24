@@ -70,7 +70,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		super(parent, style);
 		
 		lightCyan = new Color(getDisplay(), 226, 244, 255);
-		controller = new CounterpointController("ViewItemDetailsEditor" + new Date().getTime());
+		controller = new CounterpointController("S-" + getClass().getSimpleName() + new Date().getTime());
 		
 		GridLayout gridLayout = new GridLayout(1, false);
 		gridLayout.marginHeight = 0;
@@ -454,6 +454,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		this.addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
+				getShell().getDisplay().removeFilter(SWT.KeyDown, listenerESC);
 				controller.finalizarSesion();
 			}
 		});

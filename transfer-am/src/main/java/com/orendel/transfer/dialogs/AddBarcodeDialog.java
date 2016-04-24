@@ -25,7 +25,7 @@ public class AddBarcodeDialog extends Dialog {
 	 */
 	public AddBarcodeDialog(Shell parent, int style, CounterpointController controller, String itemNo) {
 		super(parent, style);
-		setText("Editar código de barra");
+		setText("Agregar código de barra");
 		this.controller = controller;
 		this.itemNo = itemNo;
 	}
