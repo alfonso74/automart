@@ -198,6 +198,7 @@ public class AddBarcodeComposite extends Composite {
 	
 	private boolean validateFields() {
 		String pCode = txtBarcode.getText();
+		int pBarcodeTypeSelectedEntry = comboBarcodeType.getSelectionIndex();
 		if (pCode.isEmpty()) {
 			MessagesUtil.showInformation("Validación de campos",
 					"El campo 'Código' no puede quedar en blanco.");
@@ -208,6 +209,12 @@ public class AddBarcodeComposite extends Composite {
 			MessagesUtil.showInformation("Validación de campos", 
 					"El código de barra no puede superar los 25 caracteres (actual: " + pCode.length() + ").");
 			txtBarcode.setFocus();
+			return false;
+		}
+		if (pBarcodeTypeSelectedEntry == -1) {
+			MessagesUtil.showInformation("Validación de campos", 
+					"Debe indicar el tipo de código de barra que se está creando.");
+			comboBarcodeType.setFocus();
 			return false;
 		}
 		return true;

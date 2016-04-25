@@ -11,6 +11,13 @@ public class BarCodeDAO extends GenericDAOImpl<BarCode, Long> {
 	
 	@Override
 	public void doSave(BarCode entity) {
+		if (entity.getItem() == null) {
+			throw new IllegalArgumentException("Para persistir un código de barra, el mismo debe estar asociado a un artículo.");
+		}
+		if (entity.getType() == null) {
+			throw new IllegalArgumentException("Para persistir un código de barra, el mismo debe asociarse a un tipo.");
+		}
+				
 		getSession().beginTransaction();
 		if (entity.getSequence() == null) {
 			// creating a new barcode entity
