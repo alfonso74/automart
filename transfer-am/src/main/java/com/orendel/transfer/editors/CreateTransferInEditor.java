@@ -278,6 +278,7 @@ public class CreateTransferInEditor extends Composite {
 		tableTransferLines.setLayoutData(gd_tableInvoiceLines);
 		tableTransferLines.setHeaderVisible(true);
 		tableTransferLines.setLinesVisible(true);
+		tableTransferLines.setData("lastTopIndex", 0);
 		
 		TableColumn tblclmnCant = new TableColumn(tableTransferLines, SWT.CENTER);
 		tblclmnCant.setToolTipText("Cantidad total esperada");
@@ -398,6 +399,9 @@ public class CreateTransferInEditor extends Composite {
 		
 		addGlobalListeners();
 		addDisposeListener();
+		
+		addEditorControl2();
+		addHandCursorListener();
 		
 		toggleEditableFields(false);
 		
@@ -587,7 +591,7 @@ public class CreateTransferInEditor extends Composite {
 		txtPending.setText("" + (tcControl.getTotalExpectedItems() - tcControl.getTotalReceivedItems()));
 		
 		tableTransferLines.removeAll();
-		TableItem item;
+		TableItem item = null;
 		
 		allItemsAccountedFor = true;
 		
@@ -635,14 +639,43 @@ public class CreateTransferInEditor extends Composite {
 			}
 		}
 		
-		if (tableTransferLines.getTopIndex() != updatedItemIndex) {
-			System.out.println("Top: " + tableTransferLines.getTopIndex() + ", updated: " + updatedItemIndex);
+		scrollToUpdatedItem(updatedItemIndex);
+	}
+
+
+	private void scrollToUpdatedItem(int updatedItemIndex) {
+		boolean itemIsVisible = isVisibleTheUpdatedItem(updatedItemIndex);
+		
+		if (!itemIsVisible) {
 			tableTransferLines.setTopIndex(updatedItemIndex);
-			tableTransferLines.select(updatedItemIndex);
+			tableTransferLines.setData("lastTopIndex", updatedItemIndex);
+		} else {
+			// we need to re-set the top index every time, since the table is always repopulated
+			// with data from the controller (every time an item is updated).
+			int lastTopIndex = (Integer) tableTransferLines.getData("lastTopIndex");
+			tableTransferLines.setTopIndex(lastTopIndex);
+		}
+	}
+
+
+	private boolean isVisibleTheUpdatedItem(int updatedItemIndex) {
+		int tableHeight = tableTransferLines.getBounds().height;
+		int rowHeight = tableTransferLines.getItemHeight();
+		
+		int lastTopIndex = (Integer) tableTransferLines.getData("lastTopIndex");
+		
+		int visibleItems = tableHeight / rowHeight - 1;
+		
+		int nn = updatedItemIndex - lastTopIndex;
+		
+		boolean isVisibleSelectedItem = false;
+		if (nn > 0 && nn < visibleItems) {
+			isVisibleSelectedItem = true;
 		}
 		
-		addEditorControl2();
-		addHandCursorListener();
+		System.out.println("TH: " + tableHeight + ", RH: " + rowHeight + ", visible items: " + visibleItems + ", last index: "
+				+ lastTopIndex + ", current index: " + updatedItemIndex + ", visible: " + isVisibleSelectedItem);
+		return isVisibleSelectedItem;
 	}
 	
 	
