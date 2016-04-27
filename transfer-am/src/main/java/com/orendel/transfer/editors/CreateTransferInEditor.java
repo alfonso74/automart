@@ -124,18 +124,25 @@ public class CreateTransferInEditor extends Composite {
 		txtTransferNo.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == 13) {
-					resetFields();
-					toggleEditableFields(false);
-					if (existsRegister(txtTransferNo.getText())) {
-//						getParent().setData("txtTransferNo", txtTransferNo.getText());
-						txtQty.setFocus();
-						txtQty.selectAll();
-					} else {
-						txtTransferNo.setFocus();
-						txtTransferNo.selectAll();
-					}
-					
+				if (e.keyCode == 13 || e.keyCode == 16777296) {
+					try {
+						resetFields();
+						toggleEditableFields(false);
+						if (existsRegister(txtTransferNo.getText())) {
+//							getParent().setData("txtTransferNo", txtTransferNo.getText());
+							txtQty.setFocus();
+							txtQty.selectAll();
+						} else {
+							txtTransferNo.setFocus();
+							txtTransferNo.selectAll();
+						}
+					} catch (HibernateException ex) {
+						resetHibernateConnection(ex);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+						MessagesUtil.showError("Error de aplicación", 
+								(ex.getMessage() == null ? e.toString() + '\n' + ex.getStackTrace()[0] : ex.getMessage()));
+					}					
 				}
 			}
 		});
@@ -157,13 +164,7 @@ public class CreateTransferInEditor extends Composite {
 						txtTransferNo.selectAll();
 					}
 				} catch (HibernateException ex) {
-					ex.printStackTrace();
-					logger.info("Reloading sessions after HibernateException...");
-					cpController.finalizarSesion();
-					tcController.finalizarSesion();
-					HibernateUtil.verSesiones();
-					cpController = new CounterpointController("TransferIn" + new Date().getTime());
-					tcController = new TransferControlController("TransferControl" + new Date().getTime());
+					resetHibernateConnection(ex);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					MessagesUtil.showError("Error de aplicación", 
@@ -187,7 +188,7 @@ public class CreateTransferInEditor extends Composite {
 		txtQty.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == 13) {
+				if (e.keyCode == 13 || e.keyCode == 16777296) {
 					txtBarcode.setFocus();
 				}
 			}
@@ -208,10 +209,10 @@ public class CreateTransferInEditor extends Composite {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
 				logger.info("Key: " + arg0.keyCode);
-				if (arg0.keyCode == 13) {
+				if (arg0.keyCode == 13 || arg0.keyCode == 16777296) {
 					if (!txtBarcode.getText().isEmpty()) {
-						accountForItemWithBarCodeOrItemCode(txtBarcode.getText());
-						refreshFormDetails();
+						Item itemAccounted = accountForItemWithBarCodeOrItemCode(txtBarcode.getText());
+						refreshFormDetails(itemAccounted);
 						txtBarcode.setText("");
 						txtQty.setFocus();
 						txtQty.setText("1");
@@ -277,6 +278,7 @@ public class CreateTransferInEditor extends Composite {
 		tableTransferLines.setLayoutData(gd_tableInvoiceLines);
 		tableTransferLines.setHeaderVisible(true);
 		tableTransferLines.setLinesVisible(true);
+		tableTransferLines.setData("lastTopIndex", 0);
 		
 		TableColumn tblclmnCant = new TableColumn(tableTransferLines, SWT.CENTER);
 		tblclmnCant.setToolTipText("Cantidad total esperada");
@@ -398,6 +400,9 @@ public class CreateTransferInEditor extends Composite {
 		addGlobalListeners();
 		addDisposeListener();
 		
+		addEditorControl2();
+		addHandCursorListener();
+		
 		toggleEditableFields(false);
 		
 		txtTransferNo.setFocus();
@@ -419,53 +424,6 @@ public class CreateTransferInEditor extends Composite {
 		btnCounterPoint.setEnabled(newStatus);
 	}
 	
-	
-	/**
-	 * Listeners for global shortcuts like F10 (reset form) and F12 (save form). 
-	 */
-	private void addGlobalListeners() {
-		Display display = getShell().getDisplay();
-		
-		listenerF12 = new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if (event.keyCode == SWT.F12) {
-					System.out.println("Update CounterPoint transfer button pressed!");
-					if (btnCounterPoint.getEnabled()) {
-						createTransfer();
-					}
-				}
-			}
-		};
-		
-		listenerF09 = new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if (event.keyCode == SWT.F9) {
-					System.out.println("Save partial transfer button pressed!");
-					if (btnSaveDraft.getEnabled()) {
-						createPartialTransfer();
-					}
-				}
-			}
-		};
-		
-		listenerF04 = new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if (event.keyCode == SWT.F4) {
-					System.out.println("F4 (init transfer) pressed!");
-					if (btnInitTransfer.getEnabled()) {
-						initTransfer();
-					}
-				}
-			}
-		};
-		
-		display.addFilter(SWT.KeyDown, listenerF04);
-		display.addFilter(SWT.KeyDown, listenerF12);		
-		display.addFilter(SWT.KeyDown, listenerF09);		
-	}
 	
 	private void createTransfer() {
 		if (!allItemsAccountedFor) {
@@ -554,7 +512,7 @@ public class CreateTransferInEditor extends Composite {
 		}
 		if (tc != null) {
 			tcControl = tc;
-			refreshFormDetails();
+			refreshFormDetails(null);
 			result = true;
 		} else {
 			MessagesUtil.showWarning("Buscar transferencia", "No se encontró la transferencia número " + transferNo + ".");
@@ -593,7 +551,7 @@ public class CreateTransferInEditor extends Composite {
 	}
 	
 	
-	private void accountForItemWithBarCodeOrItemCode(String barcode) {
+	private Item accountForItemWithBarCodeOrItemCode(String barcode) {
 		Item item = cpController.findItemByBarCode(barcode);
 		if (item == null) {
 			item = cpController.findItemByItemCode(barcode);
@@ -611,10 +569,11 @@ public class CreateTransferInEditor extends Composite {
 		} else {
 			MessagesUtil.showError("Búsqueda por código", "No se encontró ningún artículo con el código de barra suministrado: " + barcode + ".");
 		}
+		return item;
 	}
 
 	
-	private void refreshFormDetails() {
+	private void refreshFormDetails(Item itemAccounted) {
 		if (tcControl == null) {
 			logger.warn("TransferControl object is null!");
 			return;
@@ -632,12 +591,13 @@ public class CreateTransferInEditor extends Composite {
 		txtPending.setText("" + (tcControl.getTotalExpectedItems() - tcControl.getTotalReceivedItems()));
 		
 		tableTransferLines.removeAll();
-		TableItem item;
+		TableItem item = null;
 		
 		allItemsAccountedFor = true;
 		
 		System.out.println("TTT: " + tcControl.getLines());
 		
+		int updatedItemIndex = 0;
 		int lineNumber = 0;
 		for (TransferControlLine v : tcControl.getLines()) {
 			Color transferOK = new Color(getDisplay(), 200, 255, 190);
@@ -645,6 +605,9 @@ public class CreateTransferInEditor extends Composite {
 			item = new TableItem(tableTransferLines, SWT.NONE);
 			item.setData("lineNumber", lineNumber++);
 			item.setData("itemNo", v.getItemNumber());
+			if (itemAccounted != null && v.getItemNumber().equals(itemAccounted.getItemNo())) {
+				updatedItemIndex = lineNumber - 1;
+			}
 			int column = 0;
 			item.setText(column++, " " + v.getQtyPrevExpected().setScale(0).toString());
 			item.setText(column++, v.getQtyReceived().setScale(0).toString());
@@ -676,8 +639,43 @@ public class CreateTransferInEditor extends Composite {
 			}
 		}
 		
-		addEditorControl2();
-		addHandCursorListener();
+		scrollToUpdatedItem(updatedItemIndex);
+	}
+
+
+	private void scrollToUpdatedItem(int updatedItemIndex) {
+		boolean itemIsVisible = isVisibleTheUpdatedItem(updatedItemIndex);
+		
+		if (!itemIsVisible) {
+			tableTransferLines.setTopIndex(updatedItemIndex);
+			tableTransferLines.setData("lastTopIndex", updatedItemIndex);
+		} else {
+			// we need to re-set the top index every time, since the table is always repopulated
+			// with data from the controller (every time an item is updated).
+			int lastTopIndex = (Integer) tableTransferLines.getData("lastTopIndex");
+			tableTransferLines.setTopIndex(lastTopIndex);
+		}
+	}
+
+
+	private boolean isVisibleTheUpdatedItem(int updatedItemIndex) {
+		int tableHeight = tableTransferLines.getBounds().height;
+		int rowHeight = tableTransferLines.getItemHeight();
+		
+		int lastTopIndex = (Integer) tableTransferLines.getData("lastTopIndex");
+		
+		int visibleItems = tableHeight / rowHeight - 1;
+		
+		int nn = updatedItemIndex - lastTopIndex;
+		
+		boolean isVisibleSelectedItem = false;
+		if (nn > 0 && nn < visibleItems) {
+			isVisibleSelectedItem = true;
+		}
+		
+		System.out.println("TH: " + tableHeight + ", RH: " + rowHeight + ", visible items: " + visibleItems + ", last index: "
+				+ lastTopIndex + ", current index: " + updatedItemIndex + ", visible: " + isVisibleSelectedItem);
+		return isVisibleSelectedItem;
 	}
 	
 	
@@ -911,6 +909,65 @@ public class CreateTransferInEditor extends Composite {
 		parent.layout();
 	}
 	
+	private void resetHibernateConnection(HibernateException ex) {
+		logger.error(ex.getMessage(), ex);
+		logger.info("Reloading sessions after HibernateException...");
+		cpController.finalizarSesion();
+		tcController.finalizarSesion();
+		HibernateUtil.verSesiones();
+		cpController = new CounterpointController("TransferIn" + new Date().getTime());
+		tcController = new TransferControlController("TransferControl" + new Date().getTime());
+	}
+	
+	
+	/**
+	 * Listeners for global shortcuts like F10 (reset form) and F12 (save form). 
+	 */
+	private void addGlobalListeners() {
+		Display display = getShell().getDisplay();
+		
+		listenerF12 = new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				if (event.keyCode == SWT.F12) {
+					System.out.println("Update CounterPoint transfer button pressed!");
+					if (btnCounterPoint.getEnabled()) {
+						createTransfer();
+					}
+				}
+			}
+		};
+		
+		listenerF09 = new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				if (event.keyCode == SWT.F9) {
+					System.out.println("Save partial transfer button pressed!");
+					if (btnSaveDraft.getEnabled()) {
+						createPartialTransfer();
+					}
+				}
+			}
+		};
+		
+		listenerF04 = new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				if (event.keyCode == SWT.F4) {
+					System.out.println("F4 (init transfer) pressed!");
+					if (btnInitTransfer.getEnabled()) {
+						initTransfer();
+					}
+				}
+			}
+		};
+		
+		display.addFilter(SWT.KeyDown, listenerF04);
+		display.addFilter(SWT.KeyDown, listenerF12);		
+		display.addFilter(SWT.KeyDown, listenerF09);		
+	}
+
+
 	private void addDisposeListener() {
 		this.addDisposeListener(new DisposeListener() {
 			@Override

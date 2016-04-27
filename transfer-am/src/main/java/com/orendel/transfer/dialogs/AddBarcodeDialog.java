@@ -6,28 +6,28 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.SWT;
 
-import com.orendel.transfer.composites.EditBarcodeComposite;
+import com.orendel.transfer.composites.AddBarcodeComposite;
 import com.orendel.transfer.controllers.CounterpointController;
 import com.orendel.transfer.util.DialogUtil;
 
 
-public class EditBarcodeDialog extends Dialog {
+public class AddBarcodeDialog extends Dialog {
 
 	protected Object result;
 	protected Shell shell;
 	private CounterpointController controller;
-	private String barcode;
+	private String itemNo;
 
 	/**
 	 * Create the dialog.
 	 * @param parent
 	 * @param style
 	 */
-	public EditBarcodeDialog(Shell parent, int style, CounterpointController controller, String barcode) {
+	public AddBarcodeDialog(Shell parent, int style, CounterpointController controller, String itemNo) {
 		super(parent, style);
-		setText("Editar código de barra");
+		setText("Agregar código de barra");
 		this.controller = controller;
-		this.barcode = barcode;
+		this.itemNo = itemNo;
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class EditBarcodeDialog extends Dialog {
 		shell.setLocation(DialogUtil.calculateDialogLocation(shell, false));
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
 		
-		EditBarcodeComposite composite = new EditBarcodeComposite(shell, SWT.None, controller, barcode);
+		AddBarcodeComposite composite = new AddBarcodeComposite(shell, SWT.None, controller, itemNo);
 		composite.layout();
 	}
 

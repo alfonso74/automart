@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -31,7 +30,6 @@ public class BarCode {
 
 	/** Secuencial del código de barra (PK).  Parte de la llave compuesta. */
 	@Id
-	@GeneratedValue
 	@Column(name = "SEQ_NO")
 	private Integer sequence;
 	

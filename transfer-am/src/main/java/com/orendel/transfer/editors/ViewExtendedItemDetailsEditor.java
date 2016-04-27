@@ -9,6 +9,7 @@ import com.orendel.counterpoint.domain.BarCode;
 import com.orendel.counterpoint.domain.Inventory;
 import com.orendel.counterpoint.domain.Item;
 import com.orendel.transfer.controllers.CounterpointController;
+import com.orendel.transfer.dialogs.AddBarcodeDialog;
 import com.orendel.transfer.dialogs.EditBarcodeDialog;
 import com.orendel.transfer.dialogs.ItemDetailsDialog;
 import com.orendel.transfer.dialogs.PrintLabelDialog;
@@ -30,6 +31,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
@@ -47,10 +51,15 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	private static Color lightCyan = null;
 	
 	private CounterpointController controller;
+	
+	private Item currentItem;
+	
 	private Text txtBarcode;
 	private Table tableItemDetails;
 	private Text txtItemDescription;
 	private Table tableBarcodes;
+	
+	private Listener listenerESC;
 
 	/**
 	 * Create the composite.
@@ -61,7 +70,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		super(parent, style);
 		
 		lightCyan = new Color(getDisplay(), 226, 244, 255);
-		controller = new CounterpointController("ViewItemDetailsEditor" + new Date().getTime());
+		controller = new CounterpointController("S-" + getClass().getSimpleName() + new Date().getTime());
 		
 		GridLayout gridLayout = new GridLayout(1, false);
 		gridLayout.marginHeight = 0;
@@ -198,6 +207,14 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		btnPrint.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
 		btnPrint.setText("Imprimir...");
 		
+		Button btnAdd = new Button(compositeButtons, SWT.NONE);
+		GridData gd_btnAdd = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnAdd.widthHint = 80;
+		btnAdd.setLayoutData(gd_btnAdd);
+		btnAdd.setEnabled(false);
+		btnAdd.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
+		btnAdd.setText("Agregar...");
+		
 		Button btnEdit = new Button(compositeButtons, SWT.NONE);
 		GridData gd_btnEdit = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_btnEdit.widthHint = 80;
@@ -206,8 +223,16 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		btnEdit.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
 		btnEdit.setText("Editar...");
 		
-		// Enables the btnEdit Button if the User has the required Permission
+		// Enables the btnAdd and btnEdit Buttons if the User has the required Permission
+		btnAdd.setEnabled(LoggedUserService.INSTANCE.getUser().canEditBarcodes());
 		btnEdit.setEnabled(LoggedUserService.INSTANCE.getUser().canEditBarcodes());
+		
+		btnAdd.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				addBarcode();
+			}			
+		});
 		
 		btnEdit.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -226,7 +251,8 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		txtBarcode.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == 13) {
+				logger.info("Keyx: " + e.keyCode);
+				if (!txtBarcode.getText().isEmpty() && (e.keyCode == 13 || e.keyCode == 16777296)) {
 					showItemDetails(txtBarcode.getText());
 					txtBarcode.selectAll();
 				}
@@ -242,11 +268,14 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 			}
 		});
 		
-		addDoubleClickListener();		
+		addDoubleClickListener();
+		
+		addGlobalListeners();
 		addDisposeListener();
 		
 		txtBarcode.setFocus();
 	}
+	
 	
 	private void addDoubleClickListener() {
 		tableItemDetails.addMouseListener(new MouseAdapter() {
@@ -263,13 +292,27 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		});
 	}
 	
+	private void addBarcode() {
+		System.out.println("Called addBarcode() function!");
+		if (currentItem != null) {
+			String itemCode = txtBarcode.getText();
+			System.out.println("Current item: " + currentItem.getItemNo());
+			AddBarcodeDialog dialog = new AddBarcodeDialog(getShell(), SWT.APPLICATION_MODAL, controller, itemCode);
+			dialog.open();
+			controller.getSession().refresh(currentItem);
+			refreshItemBarcodesDetails(currentItem);
+		} else {
+			MessagesUtil.showError("Agregar código de barra", "Debe buscar un artículo para poder agregar un código de barra.");
+		}
+	}
 	
 	private void editBarcode() {
 		BarCode barcode = getSelectedBarcodeLine();
 		if (barcode != null) {
 			EditBarcodeDialog dialog = new EditBarcodeDialog(getShell(), SWT.APPLICATION_MODAL, controller, barcode.getCode());
 			dialog.open();
-			refreshBarcodeDetails(barcode.getItem());
+			controller.getSession().refresh(currentItem);
+			refreshItemBarcodesDetails(barcode.getItem());
 		} else {
 			MessagesUtil.showError("Editar código de barra", "No se ha seleccionado ningún código de barra para ser editado.");
 		}
@@ -305,10 +348,11 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 			Item item = controller.findItem(code);
 			if (item != null) {
 				logger.info("Artículo encontrado en DB: " + item.getDescription());
+				this.currentItem = item;
 				refreshItemLocationDetails(item);
-				refreshBarcodeDetails(item);
+				refreshItemBarcodesDetails(item);
 			} else {
-				MessagesUtil.showWarning("Búsqueda por código", "No se encontró ningún artículo con el código de barra o código de item suministrado: " + code + ".");
+				MessagesUtil.showWarning("Búsqueda por código", "No se encontró ningún artículo con el código de barra o código de item suministrado: '" + code + "'.");
 			}	
 		} catch (HibernateException e) {
 			resetHibernateConnection(e);
@@ -347,7 +391,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	}
 	
 	
-	private void refreshBarcodeDetails(Item item) {
+	private void refreshItemBarcodesDetails(Item item) {
 		TableItem itemLine;
 		
 		tableBarcodes.removeAll();
@@ -368,6 +412,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	
 	
 	private void resetFields() {
+		this.currentItem = null;
 		txtItemDescription.setText(EMPTY_STRING);
 		tableItemDetails.removeAll();
 		tableBarcodes.removeAll();
@@ -379,7 +424,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		logger.info("Reloading sessions after HibernateException...");
 		controller.finalizarSesion();
 		HibernateUtil.verSesiones();
-		controller = new CounterpointController("ItemDetails" + new Date().getTime());
+		controller = new CounterpointController("ViewItemDetailsEditor" + new Date().getTime());
 	}
 	
 	
@@ -387,10 +432,29 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		return valorCampo == null ? "" : valorCampo;
 	}
 	
+	/**
+	 * Listeners for global shortcuts like F10 (reset form) and F12 (save form). 
+	 */
+	private void addGlobalListeners() {
+		Display display = getShell().getDisplay();
+		listenerESC = new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				if (event.keyCode == SWT.ESC) {
+					System.out.println("Escape button pressed!");
+					txtBarcode.setText("");
+					resetFields();
+				}
+			}
+		};
+		display.addFilter(SWT.KeyDown, listenerESC);
+	}
+	
 	private void addDisposeListener() {
 		this.addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
+				getShell().getDisplay().removeFilter(SWT.KeyDown, listenerESC);
 				controller.finalizarSesion();
 			}
 		});
