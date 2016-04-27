@@ -118,7 +118,7 @@ public class MainWindow {
 		shell = new Shell();
 //		shell.setSize(800, 600);
 		shell.setMaximized(true);
-		shell.setText("AutoMart - Control de Entrada (Transferencias)");
+		shell.setText("AutoMart - Control de Entrada (Transferencias) - v1.0.8");
 		shell.setLayout(new GridLayout(1, false));
 		
 		Menu menuMainBar = new Menu(shell, SWT.BAR);
