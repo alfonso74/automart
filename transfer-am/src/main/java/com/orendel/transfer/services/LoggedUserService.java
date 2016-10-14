@@ -1,6 +1,6 @@
 package com.orendel.transfer.services;
 
-import com.orendel.transfer.domain.User;
+import com.orendel.delivery.domain.User;
 
 public enum LoggedUserService {
 	

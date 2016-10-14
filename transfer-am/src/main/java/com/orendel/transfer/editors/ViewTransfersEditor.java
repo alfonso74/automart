@@ -22,9 +22,9 @@ import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import com.orendel.delivery.domain.TransferControl;
+import com.orendel.delivery.domain.TransferControlStatus;
 import com.orendel.transfer.controllers.TransferControlController;
-import com.orendel.transfer.domain.TransferControl;
-import com.orendel.transfer.domain.TransferControlStatus;
 import com.orendel.transfer.util.DateUtil;
 import com.orendel.transfer.util.MessagesUtil;
 

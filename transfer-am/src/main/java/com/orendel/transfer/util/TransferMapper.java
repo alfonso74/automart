@@ -4,9 +4,9 @@ import java.util.Date;
 
 import com.orendel.counterpoint.domain.TransferIn;
 import com.orendel.counterpoint.domain.TransferInLine;
-import com.orendel.transfer.domain.TransferControl;
-import com.orendel.transfer.domain.TransferControlLine;
-import com.orendel.transfer.domain.TransferControlStatus;
+import com.orendel.delivery.domain.TransferControl;
+import com.orendel.delivery.domain.TransferControlLine;
+import com.orendel.delivery.domain.TransferControlStatus;
 
 public final class TransferMapper {
 	
@@ -20,7 +20,9 @@ public final class TransferMapper {
 		
 		control.setTransferNo(transferIn.getId());
 		control.setReference(transferIn.getReference());
-		control.setComments(transferIn.getComments());
+		control.setComments(transferIn.getComments().getComment1(), 
+				transferIn.getComments().getComment2(),
+				transferIn.getComments().getComment3());
 		control.setCreated(new Date());
 		control.setStatus(TransferControlStatus.PARTIAL.getCode());
 		for (TransferInLine line : transferIn.getLines()) {
@@ -40,7 +42,9 @@ public final class TransferMapper {
 		tcLine.setPositionId(transferInLine.getPositionId());
 		System.out.println("Selected: " + transferInLine.getSelected());
 		tcLine.setSelected("Y");
-		tcLine.setComments(transferInLine.getComments());
+		tcLine.setComments(transferInLine.getComments().getComment1(), 
+				transferInLine.getComments().getComment2(), 
+				transferInLine.getComments().getComment3());
 		tcLine.setQtyPrevExpected(transferInLine.getQtyPrevExpected());
 		tcLine.setQtyReceived(transferInLine.getQtyReceived());
 		tcLine.setQtyNewExpected(transferInLine.getQtyNewExpected());

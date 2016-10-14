@@ -1,4 +1,4 @@
-package com.orendel.transfer.domain;
+package com.orendel.delivery.domain;
 
 import java.math.BigDecimal;
 
@@ -11,8 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import com.orendel.counterpoint.domain.Comments;
 
 
 @Entity
@@ -88,6 +86,13 @@ public class TransferControlLine {
 		this.setEstExtCost(this.getQtyReceived().multiply(this.getEstUnitCost()));
 	}
 
+	public void setComments(String comment1, String comment2, String comment3) {
+		Comments comments = new Comments();
+		comments.setComment1(comment1);
+		comments.setComment2(comment2);
+		comments.setComment3(comment3);
+		setComments(comments);
+	}
 	
 	
 	// ***************************** Getters and Setters ************************************

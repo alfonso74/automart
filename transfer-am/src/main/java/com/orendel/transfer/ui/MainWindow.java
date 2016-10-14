@@ -22,10 +22,10 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.hibernate.HibernateException;
 
+import com.orendel.delivery.domain.User;
 import com.orendel.transfer.config.AppConfig;
 import com.orendel.transfer.dialogs.UpdatePasswordDialog;
 import com.orendel.transfer.dialogs.UserDialog;
-import com.orendel.transfer.domain.User;
 import com.orendel.transfer.editors.CreateTransferInEditor;
 import com.orendel.transfer.editors.ViewExtendedItemDetailsEditor;
 import com.orendel.transfer.editors.ViewTransfersEditor;

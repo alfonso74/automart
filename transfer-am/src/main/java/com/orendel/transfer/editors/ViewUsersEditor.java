@@ -17,10 +17,10 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.widgets.Label;
 
+import com.orendel.delivery.domain.Status;
+import com.orendel.delivery.domain.User;
 import com.orendel.transfer.controllers.UsersController;
 import com.orendel.transfer.dialogs.UserDialog;
-import com.orendel.transfer.domain.Status;
-import com.orendel.transfer.domain.User;
 import com.orendel.transfer.services.IImageKeys;
 import com.orendel.transfer.services.ImagesService;
 

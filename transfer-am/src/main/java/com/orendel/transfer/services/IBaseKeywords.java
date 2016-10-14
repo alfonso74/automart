@@ -1,7 +1,7 @@
 package com.orendel.transfer.services;
 
-import com.orendel.transfer.domain.Condicional;
-import com.orendel.transfer.domain.Status;
+import com.orendel.delivery.domain.Condicional;
+import com.orendel.delivery.domain.Status;
 
 public interface IBaseKeywords {
 	

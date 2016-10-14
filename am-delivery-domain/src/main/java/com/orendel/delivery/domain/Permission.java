@@ -1,4 +1,4 @@
-package com.orendel.transfer.domain;
+package com.orendel.delivery.domain;
 
 import java.util.Collections;
 import java.util.List;

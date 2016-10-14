@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.hibernate.Query;
 
+import com.orendel.delivery.domain.TransferControl;
 import com.orendel.transfer.config.Datasource;
-import com.orendel.transfer.domain.TransferControl;
 
 
 public class TransferControlDAO extends GenericDAOImpl<TransferControl, Long> {

@@ -1,4 +1,4 @@
-package com.orendel.transfer.domain;
+package com.orendel.delivery.domain;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -17,8 +17,6 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-
-import com.orendel.counterpoint.domain.Comments;
 
 
 @Entity

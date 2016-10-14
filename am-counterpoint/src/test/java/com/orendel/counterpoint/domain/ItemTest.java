@@ -1,4 +1,4 @@
-package com.orendel.counterpoint;
+package com.orendel.counterpoint.domain;
 
 import static org.junit.Assert.*;
 

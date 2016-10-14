@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.orendel.delivery.domain.TransferControl;
+import com.orendel.delivery.domain.TransferControlStatus;
 import com.orendel.transfer.dao.GenericDAOImpl;
 import com.orendel.transfer.dao.TransferControlDAO;
-import com.orendel.transfer.domain.TransferControl;
-import com.orendel.transfer.domain.TransferControlStatus;
 
 
 public class TransferControlController extends AbstractControllerDelivery<TransferControl> {

@@ -1,8 +1,7 @@
-package com.orendel.transfer.domain;
+package com.orendel.delivery.domain;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
-//import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,9 +11,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.orendel.transfer.domain.TransferControl;
-import com.orendel.transfer.domain.TransferControlLine;
-import com.orendel.transfer.domain.TransferControlStatus;
+import com.orendel.delivery.domain.TransferControl;
+import com.orendel.delivery.domain.TransferControlLine;
+import com.orendel.delivery.domain.TransferControlStatus;
 
 
 public class TransferControlTest {
