@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.hibernate.Query;
 
+import com.orendel.delivery.domain.User;
 import com.orendel.transfer.config.Datasource;
-import com.orendel.transfer.domain.User;
 
 
 public class UserDAO extends GenericDAOImpl<User, Long> {

@@ -1,4 +1,4 @@
-package com.orendel.transfer.domain;
+package com.orendel.delivery.domain;
 
 public enum Status {
 	/** Active user */

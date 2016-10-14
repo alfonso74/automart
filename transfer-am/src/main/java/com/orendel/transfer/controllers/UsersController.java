@@ -2,8 +2,8 @@ package com.orendel.transfer.controllers;
 
 import java.util.List;
 
+import com.orendel.delivery.domain.User;
 import com.orendel.transfer.dao.UserDAO;
-import com.orendel.transfer.domain.User;
 
 
 public class UsersController extends AbstractControllerDelivery<User> {

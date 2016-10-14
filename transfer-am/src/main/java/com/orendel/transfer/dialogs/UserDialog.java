@@ -22,10 +22,10 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.widgets.Group;
 
+import com.orendel.delivery.domain.Permission;
+import com.orendel.delivery.domain.Status;
+import com.orendel.delivery.domain.User;
 import com.orendel.transfer.controllers.UsersController;
-import com.orendel.transfer.domain.Permission;
-import com.orendel.transfer.domain.Status;
-import com.orendel.transfer.domain.User;
 import com.orendel.transfer.services.IBaseKeywords;
 import com.orendel.transfer.services.IImageKeys;
 import com.orendel.transfer.services.ImagesService;

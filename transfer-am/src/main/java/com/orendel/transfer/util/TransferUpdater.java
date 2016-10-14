@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 
 import com.orendel.counterpoint.domain.TransferIn;
 import com.orendel.counterpoint.domain.TransferInLine;
-import com.orendel.transfer.domain.TransferControl;
-import com.orendel.transfer.domain.TransferControlLine;
+import com.orendel.delivery.domain.TransferControl;
+import com.orendel.delivery.domain.TransferControlLine;
 
 public class TransferUpdater {
 	

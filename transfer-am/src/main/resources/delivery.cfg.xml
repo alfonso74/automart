@@ -41,14 +41,14 @@
         <!-- Drop and re-create the database schema on startup -->
         <property name="hbm2ddl.auto">validate</property>
         
-        <mapping class="com.orendel.transfer.domain.TransferControl"></mapping>
-        <mapping class="com.orendel.transfer.domain.TransferControlLine"></mapping>
+        <mapping class="com.orendel.delivery.domain.TransferControl"></mapping>
+        <mapping class="com.orendel.delivery.domain.TransferControlLine"></mapping>
         
  <!-- 
         <mapping class="com.orendel.seam.domain.delivery.Delivery"></mapping>
         <mapping class="com.orendel.seam.domain.delivery.DeliveryLine"></mapping>
          -->
-        <mapping class="com.orendel.transfer.domain.User"></mapping>
+        <mapping class="com.orendel.delivery.domain.User"></mapping>
   
     </session-factory>
  

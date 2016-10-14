@@ -1,4 +1,4 @@
-package com.orendel.transfer.domain;
+package com.orendel.delivery.domain;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.orendel.transfer.services.PermissionResolver;
+import com.orendel.delivery.domain.helper.PermissionResolver;
 
 @Entity
 @Table(name = "AM_USERS")

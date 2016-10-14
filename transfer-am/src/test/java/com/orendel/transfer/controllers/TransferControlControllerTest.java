@@ -11,9 +11,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.orendel.delivery.domain.TransferControl;
+import com.orendel.delivery.domain.TransferControlStatus;
 import com.orendel.transfer.dao.TransferControlDAO;
-import com.orendel.transfer.domain.TransferControl;
-import com.orendel.transfer.domain.TransferControlStatus;
 
 
 public class TransferControlControllerTest {

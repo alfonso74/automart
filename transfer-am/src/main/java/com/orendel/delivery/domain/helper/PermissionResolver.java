@@ -1,10 +1,10 @@
-package com.orendel.transfer.services;
+package com.orendel.delivery.domain.helper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.orendel.transfer.domain.Permission;
+import com.orendel.delivery.domain.Permission;
 
 
 public class PermissionResolver {

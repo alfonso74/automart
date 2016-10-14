@@ -35,12 +35,12 @@ import org.hibernate.HibernateException;
 
 import com.orendel.counterpoint.domain.Item;
 import com.orendel.counterpoint.domain.TransferIn;
+import com.orendel.delivery.domain.TransferControl;
+import com.orendel.delivery.domain.TransferControlLine;
+import com.orendel.delivery.domain.TransferControlStatus;
 import com.orendel.transfer.controllers.TransferControlController;
 import com.orendel.transfer.controllers.CounterpointController;
 import com.orendel.transfer.dialogs.ItemLocationDialog;
-import com.orendel.transfer.domain.TransferControl;
-import com.orendel.transfer.domain.TransferControlLine;
-import com.orendel.transfer.domain.TransferControlStatus;
 import com.orendel.transfer.services.HibernateUtil;
 import com.orendel.transfer.services.HibernateUtilDelivery;
 import com.orendel.transfer.services.IImageKeys;

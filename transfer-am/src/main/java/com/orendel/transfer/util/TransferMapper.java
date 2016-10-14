@@ -4,9 +4,9 @@ import java.util.Date;
 
 import com.orendel.counterpoint.domain.TransferIn;
 import com.orendel.counterpoint.domain.TransferInLine;
-import com.orendel.transfer.domain.TransferControl;
-import com.orendel.transfer.domain.TransferControlLine;
-import com.orendel.transfer.domain.TransferControlStatus;
+import com.orendel.delivery.domain.TransferControl;
+import com.orendel.delivery.domain.TransferControlLine;
+import com.orendel.delivery.domain.TransferControlStatus;
 
 public final class TransferMapper {
 	

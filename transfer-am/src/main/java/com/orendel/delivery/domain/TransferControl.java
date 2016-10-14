@@ -1,4 +1,4 @@
-package com.orendel.transfer.domain;
+package com.orendel.delivery.domain;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
