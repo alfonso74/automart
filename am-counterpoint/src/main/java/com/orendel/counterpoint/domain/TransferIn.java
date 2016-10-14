@@ -74,6 +74,14 @@ public class TransferIn {
 		return line;
 	}
 	
+	public void setComments(String comment1, String comment2, String comment3) {
+		Comments comments = new Comments();
+		comments.setComment1(comment1);
+		comments.setComment2(comment2);
+		comments.setComment3(comment3);
+		setComments(comments);
+	}
+	
 	// ******************************** Getters y setters ***********************************
 	
 	public String getId() {
