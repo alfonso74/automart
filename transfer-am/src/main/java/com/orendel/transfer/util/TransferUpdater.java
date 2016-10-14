@@ -19,7 +19,9 @@ public class TransferUpdater {
 		}
 		in.setTotalSelectedLines(tc.getTotalSelectedLines());
 		in.setReference(tc.getReference());
-		in.setComments(tc.getComments());
+		in.setComments(tc.getComments().getComment1(), 
+				tc.getComments().getComment2(), 
+				tc.getComments().getComment3());
 		in.setQtyReceived(new BigDecimal(tc.getTotalReceivedItems()));
 		in.setSubTotal(tc.getTotalReceivedItemsValue());
 		in.setTotal(tc.getTotalReceivedItemsValue());
@@ -31,7 +33,9 @@ public class TransferUpdater {
 	
 	private void updateLine(TransferInLine inLine, TransferControlLine tcLine) {
 		inLine.setSelected(tcLine.getSelected());
-		inLine.setComments(tcLine.getComments());
+		inLine.setComments(tcLine.getComments().getComment1(), 
+				tcLine.getComments().getComment2(), 
+				tcLine.getComments().getComment3());
 		inLine.setQtyPrevExpected(tcLine.getQtyPrevExpected());
 		inLine.setQtyReceived(tcLine.getQtyReceived());
 		inLine.setQtyNewExpected(tcLine.getQtyNewExpected());
