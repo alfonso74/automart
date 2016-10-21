@@ -19,7 +19,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
@@ -27,27 +26,21 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.hibernate.HibernateException;
 
 
-public class ViewExtendedItemDetailsEditor extends Composite {
-	private static final Logger logger = Logger.getLogger(ViewExtendedItemDetailsEditor.class);
+public class ViewItemLocationEditor extends Composite {
+	private static final Logger logger = Logger.getLogger(ViewItemLocationEditor.class);
 	
 	private static final String EMPTY_STRING = "";
-	
-	private static Color lightCyan = null;
 	
 	private CounterpointController controller;
 	
 	private String lastSearchedCode;
 	
 	private Text txtBarcode;
-	private Table tableItemDetails;
 	private Text txtItemDescription;
 
 	
@@ -56,19 +49,24 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	private final int baseFontSize = 9 + 9;
 	private final int labelFontSize = 3;
 	private final int buttonFontSize = 2;
+	private Text txtCantidad;
+	private Text txtBin01;
+	private Text txtBin02;
+	private Text txtBin03;
+	private Text txtBin04;
 
 	/**
 	 * Create the composite.
 	 * @param parent
 	 * @param style
 	 */
-	public ViewExtendedItemDetailsEditor(Composite parent, int style) {
+	public ViewItemLocationEditor(Composite parent, int style) {
 		super(parent, style);
 		
-		lightCyan = new Color(getDisplay(), 226, 244, 255);
 		controller = new CounterpointController("S-" + getClass().getSimpleName() + new Date().getTime());
 		
 		GridLayout gridLayout = new GridLayout(1, false);
+		gridLayout.marginBottom = 10;
 		gridLayout.marginHeight = 0;
 		setLayout(gridLayout);
 		
@@ -76,9 +74,10 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		grpConsultarDetallesPor.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize, SWT.NORMAL));
 		grpConsultarDetallesPor.setText(" Consultar detalles por artículo ");
 		GridData gd_grpConsultarDetallesPor = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
-		gd_grpConsultarDetallesPor.verticalIndent = 20;
+		gd_grpConsultarDetallesPor.verticalIndent = 25;
 		grpConsultarDetallesPor.setLayoutData(gd_grpConsultarDetallesPor);
 		GridLayout gl_grpConsultarDetallesPor = new GridLayout(3, false);
+		gl_grpConsultarDetallesPor.horizontalSpacing = 10;
 		gl_grpConsultarDetallesPor.marginHeight = 15;
 		gl_grpConsultarDetallesPor.verticalSpacing = 10;
 		grpConsultarDetallesPor.setLayout(gl_grpConsultarDetallesPor);
@@ -111,14 +110,74 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		
 		Group groupInventory = new Group(this, SWT.NONE);
 		groupInventory.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize, SWT.NORMAL));
-		groupInventory.setText("Detalles de inventario (Bodega MAIN)");
+		groupInventory.setText(" Ubicación del artículo (Bodega MAIN) ");
 		GridData gd_groupInventory = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_groupInventory.verticalIndent = 25;
 		groupInventory.setLayoutData(gd_groupInventory);
-		GridLayout gl_groupInventory = new GridLayout(1, false);
-		gl_groupInventory.marginHeight = 10;
+		GridLayout gl_groupInventory = new GridLayout(2, false);
+		gl_groupInventory.horizontalSpacing = 10;
+		gl_groupInventory.verticalSpacing = 10;
+		gl_groupInventory.marginHeight = 15;
 		groupInventory.setLayout(gl_groupInventory);
 		
+		Label lblCantidad = new Label(groupInventory, SWT.NONE);
+		lblCantidad.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblCantidad.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
+		lblCantidad.setText("Cantidad:");
+		
+		txtCantidad = new Text(groupInventory, SWT.BORDER);
+		txtCantidad.setEnabled(false);
+		txtCantidad.setEditable(false);
+		txtCantidad.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
+		GridData gd_txtCantidad = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_txtCantidad.widthHint = 100;
+		txtCantidad.setLayoutData(gd_txtCantidad);
+		
+		Label lblBin01 = new Label(groupInventory, SWT.NONE);
+		lblBin01.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblBin01.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
+		lblBin01.setText("Bin01:");
+		
+		txtBin01 = new Text(groupInventory, SWT.BORDER);
+		txtBin01.setEnabled(false);
+		txtBin01.setEditable(false);
+		txtBin01.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtBin01.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
+		
+		Label lblBin02 = new Label(groupInventory, SWT.NONE);
+		lblBin02.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblBin02.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
+		lblBin02.setText("Bin02:");
+		
+		txtBin02 = new Text(groupInventory, SWT.BORDER);
+		txtBin02.setEnabled(false);
+		txtBin02.setEditable(false);
+		txtBin02.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtBin02.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
+		
+		Label lblBin03 = new Label(groupInventory, SWT.NONE);
+		lblBin03.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblBin03.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
+		lblBin03.setText("Bin03:");
+		
+		txtBin03 = new Text(groupInventory, SWT.BORDER);
+		txtBin03.setEnabled(false);
+		txtBin03.setEditable(false);
+		txtBin03.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtBin03.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
+		
+		Label lblBin04 = new Label(groupInventory, SWT.NONE);
+		lblBin04.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblBin04.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
+		lblBin04.setText("Bin04:");
+		
+		txtBin04 = new Text(groupInventory, SWT.BORDER);
+		txtBin04.setEnabled(false);
+		txtBin04.setEditable(false);
+		txtBin04.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtBin04.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
+		
+		/*
 		tableItemDetails = new Table(groupInventory, SWT.BORDER | SWT.FULL_SELECTION);
 		tableItemDetails.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		tableItemDetails.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
@@ -126,7 +185,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		tableItemDetails.setLinesVisible(true);
 		
 		TableColumn tblclmnAvailable = new TableColumn(tableItemDetails, SWT.RIGHT);
-		tblclmnAvailable.setWidth(150);
+		tblclmnAvailable.setWidth(140);
 		tblclmnAvailable.setText("Disponible");
 		
 		TableColumn tblclmnBin01 = new TableColumn(tableItemDetails, SWT.NONE);
@@ -144,12 +203,13 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 		TableColumn tblclmnBin04 = new TableColumn(tableItemDetails, SWT.NONE);
 		tblclmnBin04.setWidth(250);
 		tblclmnBin04.setText("Bin04");
-
+*/
+		
 		txtBarcode.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				logger.info("Keyx: " + e.keyCode);
-				if (!txtBarcode.getText().isEmpty()
+				if (!txtBarcode.getText().isEmpty() 
 						&& !txtBarcode.getText().equalsIgnoreCase(lastSearchedCode) 
 						&& (e.keyCode == 13 || e.keyCode == 16777296)) {
 					showItemDetails(txtBarcode.getText());
@@ -201,6 +261,16 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	private void refreshItemLocationDetails(Item item) {
 		txtItemDescription.setText(item.getDescription());
 		
+		for (Inventory v : item.getInventory()) {
+			txtCantidad.setText(" " + v.getQtyAvailable());
+			txtBin01.setText(checkNull(v.getBin01()));
+			txtBin01.setText(checkNull(v.getBin02()));
+			txtBin01.setText(checkNull(v.getBin03()));
+			txtBin01.setText(checkNull(v.getBin04()));
+		}
+		
+		
+		/*
 		TableItem itemLine;
 		
 		tableItemDetails.removeAll();
@@ -217,12 +287,23 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 				itemLine.setBackground(lightCyan);
 			}
 		}		
+		*/
+		
 	}
 	
 	
 	private void resetFields() {
 		txtItemDescription.setText(EMPTY_STRING);
+		
+		txtCantidad.setText(EMPTY_STRING);
+		txtBin01.setText(EMPTY_STRING);
+		txtBin02.setText(EMPTY_STRING);
+		txtBin03.setText(EMPTY_STRING);
+		txtBin04.setText(EMPTY_STRING);
+		
+		/*
 		tableItemDetails.removeAll();
+		*/
 	}
 	
 	

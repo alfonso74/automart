@@ -6,6 +6,7 @@ import org.hibernate.HibernateException;
 
 import com.orendel.counterpoint.domain.BarCode;
 import com.orendel.counterpoint.domain.BarCodeType;
+import com.orendel.counterpoint.domain.Inventory;
 import com.orendel.counterpoint.domain.Item;
 import com.orendel.counterpoint.domain.TransferIn;
 import com.orendel.locator.dao.BarCodeDAO;
@@ -49,6 +50,27 @@ public class CounterpointController extends AbstractController<TransferIn> {
 		Item item = findItemByBarCode(code);
 		if (item == null) {
 			item = findItemByItemCode(code);
+		}
+		return item;
+	}
+	
+	public Item findItemInMainWarehouse(String code) {
+		Item item = this.findItem(code);
+		if (item != null) {
+			Inventory mainLocation = null;
+			for (Inventory v : item.getInventory()) {
+				LOGGER.info("Found item in location: " + v.getLocationId());
+				if (v.getLocationId().equals("MAIN")) {
+					mainLocation = v;
+					break;
+				}
+			}
+			if (mainLocation == null) {
+				item = null;
+			} else {
+				item.getInventory().clear();
+				item.getInventory().add(mainLocation);
+			}
 		}
 		return item;
 	}

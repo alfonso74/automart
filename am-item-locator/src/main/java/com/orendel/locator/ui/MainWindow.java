@@ -17,6 +17,7 @@ import org.hibernate.HibernateException;
 
 import com.orendel.common.config.AppConfig;
 import com.orendel.locator.editors.ViewExtendedItemDetailsEditor;
+import com.orendel.locator.editors.ViewItemLocationEditor;
 import com.orendel.locator.services.HibernateUtil;
 import com.orendel.locator.services.HibernateUtilDelivery;
 import com.orendel.locator.util.MessagesUtil;
@@ -130,7 +131,7 @@ public class MainWindow {
 		
 		fillFooterInfo();
 		
-		openItemLocatorEditor(composite);
+		openItemLocatorEditor2(composite);
 	}
 	
 	
@@ -139,8 +140,14 @@ public class MainWindow {
 		txtDatetime.setText(getDateAsString(new Date()));
 	}
 	
-	private ViewExtendedItemDetailsEditor openItemLocatorEditor(Composite composite) {
+	private ViewExtendedItemDetailsEditor openItemLocatorEditor2(Composite composite) {
 		ViewExtendedItemDetailsEditor editor = new ViewExtendedItemDetailsEditor(composite, SWT.NONE);
+		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		return editor;
+	}
+	
+	private ViewItemLocationEditor openItemLocatorEditor(Composite composite) {
+		ViewItemLocationEditor editor = new ViewItemLocationEditor(composite, SWT.NONE);
 		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		return editor;
 	}
