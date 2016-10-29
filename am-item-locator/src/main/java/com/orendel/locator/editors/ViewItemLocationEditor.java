@@ -5,6 +5,7 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Composite;
 
+import com.orendel.common.config.AppConfig;
 import com.orendel.counterpoint.domain.Inventory;
 import com.orendel.counterpoint.domain.Item;
 import com.orendel.locator.controllers.CounterpointController;
@@ -17,8 +18,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
@@ -27,7 +26,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Button;
 import org.hibernate.HibernateException;
 
 
@@ -46,7 +44,7 @@ public class ViewItemLocationEditor extends Composite {
 	
 	private Listener listenerESC;
 	
-	private final int baseFontSize = 9 + 9;
+	private int baseFontSize = 9 + 9;
 	private final int labelFontSize = 3;
 	private final int buttonFontSize = 2;
 	private Text txtCantidad;
@@ -62,6 +60,10 @@ public class ViewItemLocationEditor extends Composite {
 	 */
 	public ViewItemLocationEditor(Composite parent, int style) {
 		super(parent, style);
+		
+		String fontSizeTxt = AppConfig.INSTANCE.getValue("item.locator.baseFontSize");
+		baseFontSize = Integer.parseInt(fontSizeTxt);
+		logger.info("FUENTE: " + baseFontSize);
 		
 		controller = new CounterpointController("S-" + getClass().getSimpleName() + new Date().getTime());
 		
@@ -92,10 +94,7 @@ public class ViewItemLocationEditor extends Composite {
 		GridData gd_txtBarcode = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd_txtBarcode.widthHint = 200;
 		txtBarcode.setLayoutData(gd_txtBarcode);
-		
-		Button btnSearch = new Button(grpConsultarDetallesPor, SWT.NONE);
-		btnSearch.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + buttonFontSize, SWT.NORMAL));
-		btnSearch.setText("Buscar");
+		new Label(grpConsultarDetallesPor, SWT.NONE);
 		
 		Label lblDescription = new Label(grpConsultarDetallesPor, SWT.NONE);
 		lblDescription.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -103,7 +102,6 @@ public class ViewItemLocationEditor extends Composite {
 		lblDescription.setText("Descripción:");
 		
 		txtItemDescription = new Text(grpConsultarDetallesPor, SWT.BORDER);
-		txtItemDescription.setEnabled(false);
 		txtItemDescription.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
 		txtItemDescription.setEditable(false);
 		txtItemDescription.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
@@ -126,7 +124,6 @@ public class ViewItemLocationEditor extends Composite {
 		lblCantidad.setText("Cantidad:");
 		
 		txtCantidad = new Text(groupInventory, SWT.BORDER);
-		txtCantidad.setEnabled(false);
 		txtCantidad.setEditable(false);
 		txtCantidad.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
 		GridData gd_txtCantidad = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
@@ -139,7 +136,6 @@ public class ViewItemLocationEditor extends Composite {
 		lblBin01.setText("Bin01:");
 		
 		txtBin01 = new Text(groupInventory, SWT.BORDER);
-		txtBin01.setEnabled(false);
 		txtBin01.setEditable(false);
 		txtBin01.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtBin01.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
@@ -150,7 +146,6 @@ public class ViewItemLocationEditor extends Composite {
 		lblBin02.setText("Bin02:");
 		
 		txtBin02 = new Text(groupInventory, SWT.BORDER);
-		txtBin02.setEnabled(false);
 		txtBin02.setEditable(false);
 		txtBin02.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtBin02.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
@@ -161,7 +156,6 @@ public class ViewItemLocationEditor extends Composite {
 		lblBin03.setText("Bin03:");
 		
 		txtBin03 = new Text(groupInventory, SWT.BORDER);
-		txtBin03.setEnabled(false);
 		txtBin03.setEditable(false);
 		txtBin03.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtBin03.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
@@ -172,58 +166,20 @@ public class ViewItemLocationEditor extends Composite {
 		lblBin04.setText("Bin04:");
 		
 		txtBin04 = new Text(groupInventory, SWT.BORDER);
-		txtBin04.setEnabled(false);
 		txtBin04.setEditable(false);
 		txtBin04.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtBin04.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
-		
-		/*
-		tableItemDetails = new Table(groupInventory, SWT.BORDER | SWT.FULL_SELECTION);
-		tableItemDetails.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		tableItemDetails.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
-		tableItemDetails.setHeaderVisible(true);
-		tableItemDetails.setLinesVisible(true);
-		
-		TableColumn tblclmnAvailable = new TableColumn(tableItemDetails, SWT.RIGHT);
-		tblclmnAvailable.setWidth(140);
-		tblclmnAvailable.setText("Disponible");
-		
-		TableColumn tblclmnBin01 = new TableColumn(tableItemDetails, SWT.NONE);
-		tblclmnBin01.setWidth(250);
-		tblclmnBin01.setText("Bin01");
-		
-		TableColumn tblclmnBin02 = new TableColumn(tableItemDetails, SWT.NONE);
-		tblclmnBin02.setWidth(250);
-		tblclmnBin02.setText("Bin02");
-		
-		TableColumn tblclmnBin03 = new TableColumn(tableItemDetails, SWT.NONE);
-		tblclmnBin03.setWidth(250);
-		tblclmnBin03.setText("Bin03");
-		
-		TableColumn tblclmnBin04 = new TableColumn(tableItemDetails, SWT.NONE);
-		tblclmnBin04.setWidth(250);
-		tblclmnBin04.setText("Bin04");
-*/
 		
 		txtBarcode.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				logger.info("Keyx: " + e.keyCode);
-				if (!txtBarcode.getText().isEmpty() 
-						&& !txtBarcode.getText().equalsIgnoreCase(lastSearchedCode) 
-						&& (e.keyCode == 13 || e.keyCode == 16777296)) {
-					showItemDetails(txtBarcode.getText());
+				if (!txtBarcode.getText().isEmpty() && (e.keyCode == 13 || e.keyCode == 16777296)) {
+					if (!txtBarcode.getText().equalsIgnoreCase(lastSearchedCode)) {
+						showItemDetails(txtBarcode.getText());
+					}
 					txtBarcode.selectAll();
 				}
-			}
-		});
-		
-		btnSearch.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				showItemDetails(txtBarcode.getText());
-				txtBarcode.setFocus();
-				txtBarcode.selectAll();
 			}
 		});
 		
@@ -264,30 +220,10 @@ public class ViewItemLocationEditor extends Composite {
 		for (Inventory v : item.getInventory()) {
 			txtCantidad.setText(" " + v.getQtyAvailable());
 			txtBin01.setText(checkNull(v.getBin01()));
-			txtBin01.setText(checkNull(v.getBin02()));
-			txtBin01.setText(checkNull(v.getBin03()));
-			txtBin01.setText(checkNull(v.getBin04()));
+			txtBin02.setText(checkNull(v.getBin02()));
+			txtBin03.setText(checkNull(v.getBin03()));
+			txtBin04.setText(checkNull(v.getBin04()));
 		}
-		
-		
-		/*
-		TableItem itemLine;
-		
-		tableItemDetails.removeAll();
-		for (Inventory v : item.getInventory()) {
-			itemLine = new TableItem(tableItemDetails, SWT.NONE);
-			int column = 0;
-			itemLine.setData(v);
-			itemLine.setText(column++, " " + v.getQtyAvailable());
-			itemLine.setText(column++, checkNull(v.getBin01()));
-			itemLine.setText(column++, checkNull(v.getBin02()));
-			itemLine.setText(column++, checkNull(v.getBin03()));
-			itemLine.setText(column++, checkNull(v.getBin04()));
-			if (tableItemDetails.getItemCount() % 2 == 0) {
-				itemLine.setBackground(lightCyan);
-			}
-		}		
-		*/
 		
 	}
 	
@@ -301,9 +237,6 @@ public class ViewItemLocationEditor extends Composite {
 		txtBin03.setText(EMPTY_STRING);
 		txtBin04.setText(EMPTY_STRING);
 		
-		/*
-		tableItemDetails.removeAll();
-		*/
 	}
 	
 	

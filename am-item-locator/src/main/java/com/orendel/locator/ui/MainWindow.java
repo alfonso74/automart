@@ -13,13 +13,15 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.wb.swt.SWTResourceManager;
 import org.hibernate.HibernateException;
 
 import com.orendel.common.config.AppConfig;
-import com.orendel.locator.editors.ViewExtendedItemDetailsEditor;
+import com.orendel.common.services.ImagesService;
 import com.orendel.locator.editors.ViewItemLocationEditor;
 import com.orendel.locator.services.HibernateUtil;
 import com.orendel.locator.services.HibernateUtilDelivery;
+import com.orendel.locator.services.ShellImagesService;
 import com.orendel.locator.util.MessagesUtil;
 
 
@@ -66,12 +68,12 @@ public class MainWindow {
 	public void open() {
 		Display display = Display.getDefault();
 //		int x = Window.WIDTH;
-//		ShellImagesService imageService = new ShellImagesService(display);
+		ShellImagesService imageService = new ShellImagesService(display);
 		createContents();
 		createDateTimeThread(display);
 		shell.open();
 		shell.layout();
-//		shell.setImages(imageService.getShellImages());
+		shell.setImages(imageService.getShellImages());
 		try {
 			while (!shell.isDisposed()) {
 				try {
@@ -91,8 +93,8 @@ public class MainWindow {
 				}
 			}
 		} finally {
-//			SWTResourceManager.dispose();
-//			ImagesService.INSTANCE.disposeImages();
+			SWTResourceManager.dispose();
+			ImagesService.INSTANCE.disposeImages();
 			display.dispose();
 		}
 	}
@@ -131,19 +133,13 @@ public class MainWindow {
 		
 		fillFooterInfo();
 		
-		openItemLocatorEditor2(composite);
+		openItemLocatorEditor(composite);
 	}
 	
 	
 	private void fillFooterInfo() {
 		txtUser.setText("No user");
 		txtDatetime.setText(getDateAsString(new Date()));
-	}
-	
-	private ViewExtendedItemDetailsEditor openItemLocatorEditor2(Composite composite) {
-		ViewExtendedItemDetailsEditor editor = new ViewExtendedItemDetailsEditor(composite, SWT.NONE);
-		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		return editor;
 	}
 	
 	private ViewItemLocationEditor openItemLocatorEditor(Composite composite) {
