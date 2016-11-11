@@ -105,7 +105,6 @@ public class MainWindow {
 	 */
 	protected void createContents() {
 		shell = new Shell();
-//		shell.setSize(800, 600);
 		shell.setMaximized(true);
 		shell.setText("AutoMart - Localizador - v1.0.9");
 		shell.setLayout(new GridLayout(1, false));
