@@ -3,6 +3,8 @@ package com.orendel.transfer.services;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
+import com.orendel.common.services.ImagesService;
+
 public class ShellImagesService {
 	
 	private Image[] shellImages = new Image[3];

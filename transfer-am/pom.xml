@@ -216,13 +216,18 @@
 		</dependency>
 		<dependency>
 			<groupId>com.orendel</groupId>
-			<artifactId>epl-generator</artifactId>
-			<version>1.0.1</version>
+			<artifactId>am-delivery-domain</artifactId>
+			<version>1.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.orendel</groupId>
-			<artifactId>am-delivery-domain</artifactId>
+			<artifactId>am-common</artifactId>
 			<version>1.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.orendel</groupId>
+			<artifactId>epl-generator</artifactId>
+			<version>1.0.1</version>
 		</dependency>
 	</dependencies>
 </project>

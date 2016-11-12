@@ -22,8 +22,9 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.hibernate.HibernateException;
 
+import com.orendel.common.config.AppConfig;
+import com.orendel.common.services.ImagesService;
 import com.orendel.delivery.domain.User;
-import com.orendel.transfer.config.AppConfig;
 import com.orendel.transfer.dialogs.UpdatePasswordDialog;
 import com.orendel.transfer.dialogs.UserDialog;
 import com.orendel.transfer.editors.CreateTransferInEditor;
@@ -33,7 +34,6 @@ import com.orendel.transfer.editors.ViewUsersEditor;
 import com.orendel.transfer.services.HibernateUtil;
 import com.orendel.transfer.services.HibernateUtilDelivery;
 import com.orendel.transfer.services.IImageKeys;
-import com.orendel.transfer.services.ImagesService;
 import com.orendel.transfer.services.LoggedUserService;
 import com.orendel.transfer.services.ShellImagesService;
 import com.orendel.transfer.ui.login.LoginWindow;

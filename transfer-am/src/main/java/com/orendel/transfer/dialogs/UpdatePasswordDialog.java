@@ -16,10 +16,10 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Group;
 
+import com.orendel.common.services.ImagesService;
 import com.orendel.delivery.domain.User;
 import com.orendel.transfer.controllers.UsersController;
 import com.orendel.transfer.services.IImageKeys;
-import com.orendel.transfer.services.ImagesService;
 import com.orendel.transfer.services.LoggedUserService;
 import com.orendel.transfer.util.AuthenticationUtil;
 import com.orendel.transfer.util.DialogUtil;

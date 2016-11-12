@@ -33,6 +33,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.widgets.Group;
 import org.hibernate.HibernateException;
 
+import com.orendel.common.services.ImagesService;
 import com.orendel.counterpoint.domain.Item;
 import com.orendel.counterpoint.domain.TransferIn;
 import com.orendel.delivery.domain.TransferControl;
@@ -44,7 +45,6 @@ import com.orendel.transfer.dialogs.ItemLocationDialog;
 import com.orendel.transfer.services.HibernateUtil;
 import com.orendel.transfer.services.HibernateUtilDelivery;
 import com.orendel.transfer.services.IImageKeys;
-import com.orendel.transfer.services.ImagesService;
 import com.orendel.transfer.services.LoggedUserService;
 import com.orendel.transfer.util.MessagesUtil;
 import com.orendel.transfer.util.TransferMapper;

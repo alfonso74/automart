@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.nio.charset.Charset;
 
+import com.orendel.common.config.AppConfig;
+import com.orendel.common.exceptions.ApplicationRuntimeException;
 import com.orendel.epl.model.Barcode;
 import com.orendel.epl.model.BarcodeNarrowBarWidth;
 import com.orendel.epl.model.BarcodeType;
@@ -13,8 +15,6 @@ import com.orendel.epl.model.Label;
 import com.orendel.epl.model.LabelElement;
 import com.orendel.epl.model.OverflowMode;
 import com.orendel.epl.model.TextLine;
-import com.orendel.transfer.config.AppConfig;
-import com.orendel.transfer.exceptions.ApplicationRuntimeException;
 
 
 public class EplPrintService {	

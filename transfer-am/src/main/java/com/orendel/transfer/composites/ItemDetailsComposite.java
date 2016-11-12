@@ -5,11 +5,11 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Composite;
 
+import com.orendel.common.services.ImagesService;
 import com.orendel.counterpoint.domain.Inventory;
 import com.orendel.counterpoint.domain.Item;
 import com.orendel.transfer.controllers.CounterpointController;
 import com.orendel.transfer.services.IImageKeys;
-import com.orendel.transfer.services.ImagesService;
 
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;

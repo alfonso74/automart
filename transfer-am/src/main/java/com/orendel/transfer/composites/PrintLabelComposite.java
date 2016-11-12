@@ -11,12 +11,12 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
+import com.orendel.common.services.ImagesService;
 import com.orendel.counterpoint.domain.BarCode;
 import com.orendel.counterpoint.domain.Item;
 import com.orendel.transfer.controllers.CounterpointController;
 import com.orendel.transfer.services.EplPrintService;
 import com.orendel.transfer.services.IImageKeys;
-import com.orendel.transfer.services.ImagesService;
 import com.orendel.transfer.util.MessagesUtil;
 
 import org.eclipse.swt.layout.GridLayout;
