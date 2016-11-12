@@ -27,6 +27,7 @@ import com.orendel.common.services.ImagesService;
 import com.orendel.delivery.domain.User;
 import com.orendel.transfer.dialogs.UpdatePasswordDialog;
 import com.orendel.transfer.dialogs.UserDialog;
+import com.orendel.transfer.editors.CreateTransferInCsvEditor;
 import com.orendel.transfer.editors.CreateTransferInEditor;
 import com.orendel.transfer.editors.ViewExtendedItemDetailsEditor;
 import com.orendel.transfer.editors.ViewTransfersEditor;
@@ -173,6 +174,9 @@ public class MainWindow {
 		MenuItem itemEntradaTx = new MenuItem(menuAcciones, SWT.NONE);
 		itemEntradaTx.setText("Entrada de transferencia");
 		
+		MenuItem itemEntradaTxCsv = new MenuItem(menuAcciones, SWT.NONE);
+		itemEntradaTxCsv.setText("Entrada de artículos (sin transferencia)");
+		
 		final MenuItem itemCancelarEntrega = new MenuItem(menuAcciones, SWT.NONE);
 		itemCancelarEntrega.setText("Cancelar entrada");
 		Image image = ImagesService.INSTANCE.getImage(Display.getDefault(), IImageKeys.CANCEL_16);
@@ -248,6 +252,15 @@ public class MainWindow {
 			public void widgetSelected(SelectionEvent e) {
 				disposeChildrenComposites(composite);
 				openCreateTransferInEditor(composite);
+				composite.layout();
+			}
+		});
+		
+		itemEntradaTxCsv.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				disposeChildrenComposites(composite);
+				openCreateTransferInCsvEditor(composite);
 				composite.layout();
 			}
 		});
@@ -353,6 +366,12 @@ public class MainWindow {
 		return editor;
 	}
 	
+	
+	private CreateTransferInCsvEditor openCreateTransferInCsvEditor(Composite composite) {
+		CreateTransferInCsvEditor editor = new CreateTransferInCsvEditor(composite, SWT.NONE);
+		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		return editor;
+	}
 	
 	private ViewTransfersEditor openViewTransfersEditor(Composite composite) {
 		ViewTransfersEditor editor = new ViewTransfersEditor(composite, SWT.NONE);
