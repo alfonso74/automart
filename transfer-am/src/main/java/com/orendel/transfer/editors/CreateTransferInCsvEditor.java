@@ -1,5 +1,7 @@
 package com.orendel.transfer.editors;
 
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +42,7 @@ import com.orendel.delivery.domain.TransferControlLine;
 import com.orendel.delivery.domain.TransferControlStatus;
 import com.orendel.transfer.controllers.TransferControlController;
 import com.orendel.transfer.controllers.CounterpointController;
+import com.orendel.transfer.export.csv.ExcelCSVPrinter;
 import com.orendel.transfer.services.HibernateUtil;
 import com.orendel.transfer.services.HibernateUtilDelivery;
 import com.orendel.transfer.services.LoggedUserService;
@@ -74,6 +77,7 @@ public class CreateTransferInCsvEditor extends Composite {
 //	private Button btnInitTransfer;
 	private Button btnSaveDraft;
 	private Button btnCounterPoint;
+	private Button btnCSV;
 	
 //	private Listener listenerF04;
 	private Listener listenerF09;
@@ -364,12 +368,25 @@ public class CreateTransferInCsvEditor extends Composite {
 		btnCounterPoint.setText("Guardar Entrada y Finalizar (F12)");
 		btnCounterPoint.setToolTipText("Guarda la entrada de artículos, la cierra y genera el archivo CSV que actualiza CounterPoint");
 		btnCounterPoint.setEnabled(false);
-		new Label(compositeActions, SWT.NONE);
 		btnCounterPoint.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				System.out.println("Save-Close-GenrateCSV button pressed!");
 				createTransfer();
+			}
+		});
+		
+		btnCSV = new Button(compositeActions, SWT.NONE);
+		btnCSV.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnCSV.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
+		btnCSV.setText("Prueba de CSV");
+		btnCSV.setToolTipText("Prueba de CSV");
+		btnCSV.setEnabled(false);
+		btnCSV.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				System.out.println("Test CSV button pressed!");
+				createCsvFile();
 			}
 		});
 		
@@ -386,6 +403,28 @@ public class CreateTransferInCsvEditor extends Composite {
 		
 		txtQty.setFocus();
 		txtQty.selectAll();
+	}
+	
+	
+	private void createCsvFile() {
+		try {
+			OutputStream out = new FileOutputStream(txtTransferNo.getText() + ".csv");
+			ExcelCSVPrinter csv = new ExcelCSVPrinter(out);
+
+			String[] linea = new String[2];
+			for (TransferControlLine line : tcControl.getLines()) {
+				linea[0] = line.getItemNumber();
+				linea[1] = line.getQtyReceived().setScale(0).toString();
+				csv.writeln(linea);
+			}
+			csv.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		logger.info("Archivo CSV generado exitosamente: " + txtTransferNo.getText() + ".csv");
+		MessagesUtil.showInformation("Prueba de CSV", "<size=+6>Se ha finalizado exitosamente la generación del archivo " + txtTransferNo.getText() + ".csv</size>");
 	}
 	
 	
@@ -411,6 +450,7 @@ public class CreateTransferInCsvEditor extends Composite {
 //		btnInitTransfer.setEnabled(!newStatus);
 		btnSaveDraft.setEnabled(newStatus);
 		btnCounterPoint.setEnabled(newStatus);
+		btnCSV.setEnabled(newStatus);
 	}
 	
 	
