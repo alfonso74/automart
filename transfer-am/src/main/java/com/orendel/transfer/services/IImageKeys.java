@@ -7,6 +7,7 @@ public interface IImageKeys {
 	final String SHELL_16 = "icons/shell/transfer_16.png";
 	final String SHELL_24 = "icons/shell/transfer_22.png";
 	final String SHELL_32 = "icons/shell/transfer_32.png";
+	final String SHELL_48 = "icons/shell/transfer_48.png";
 	
 	final String LOGIN = "icons/login/automartLogin.png";
 	

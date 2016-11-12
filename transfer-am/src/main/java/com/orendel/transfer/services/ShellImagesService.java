@@ -7,14 +7,15 @@ import com.orendel.common.services.ImagesService;
 
 public class ShellImagesService {
 	
-	private Image[] shellImages = new Image[3];
+	private Image[] shellImages = new Image[4];
 	
 
 	public ShellImagesService(Display display) {
-		shellImages = new Image[3];
+		shellImages = new Image[4];
 		shellImages[0] = ImagesService.INSTANCE.getImage(display, IImageKeys.SHELL_16);
 		shellImages[1] = ImagesService.INSTANCE.getImage(display, IImageKeys.SHELL_24);
 		shellImages[2] = ImagesService.INSTANCE.getImage(display, IImageKeys.SHELL_32);
+		shellImages[3] = ImagesService.INSTANCE.getImage(display, IImageKeys.SHELL_48);
 	}
 	
 	public Image[] getShellImages() {
