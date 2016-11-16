@@ -25,6 +25,19 @@ public class TransferControlController extends AbstractControllerDelivery<Transf
 	}
 	
 	/**
+	 * Obtiene el siguiente código que puede ser asignado a una transferencia, en base al prefijo 
+	 * indicado y con un orden ascendente.
+	 * @param prefix el prefijo usado para generar el siguiente código
+	 * @return el siguiente código que puede ser utilizado con el prefijo indicado.
+	 */
+	public String getNextTransferControlNumber(String prefix) {
+		String result = null;
+		TransferControlDAO dao = (TransferControlDAO) getDAO();
+		result = dao.getNextCode(prefix);
+		return result;
+	}
+	
+	/**
 	 * Busca una transferencia en base al número de transferencia indicado.
 	 * @param transferNo número de transferencia a buscar
 	 * @return {@link TransferControl} asociado al número indicado, o <code>null</code> si no se encuentra
