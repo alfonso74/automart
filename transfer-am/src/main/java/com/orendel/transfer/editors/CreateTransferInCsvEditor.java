@@ -2,10 +2,8 @@ package com.orendel.transfer.editors;
 
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Composite;
@@ -46,6 +44,7 @@ import com.orendel.transfer.export.csv.ExcelCSVPrinter;
 import com.orendel.transfer.services.HibernateUtil;
 import com.orendel.transfer.services.HibernateUtilDelivery;
 import com.orendel.transfer.services.LoggedUserService;
+import com.orendel.transfer.services.TransferControlHelper;
 import com.orendel.transfer.util.MessagesUtil;
 
 
@@ -55,6 +54,7 @@ public class CreateTransferInCsvEditor extends Composite {
 	private static Color lightCyan = null;
 	
 	private TransferControl tcControl;
+	private TransferControlHelper tcHelper;
 	
 	private CounterpointController cpController;
 	private TransferControlController tcController;
@@ -397,9 +397,12 @@ public class CreateTransferInCsvEditor extends Composite {
 		
 		toggleEditableFields(true);
 		
-//		txtTransferNo.setFocus();
-		txtTransferNo.setText("CSV" + generateRandomNumber(1, 1000));
 		tcControl = new TransferControl();
+		tcHelper = new TransferControlHelper(tcControl);
+		
+		tcControl.setTransferNo(txtTransferNo.getText());
+		tcControl.setCreated(new Date());
+		tcControl.setStatus(TransferControlStatus.ACTIVE.getCode());
 		
 		txtQty.setFocus();
 		txtQty.selectAll();
@@ -425,13 +428,6 @@ public class CreateTransferInCsvEditor extends Composite {
 		
 		logger.info("Archivo CSV generado exitosamente: " + txtTransferNo.getText() + ".csv");
 		MessagesUtil.showInformation("Prueba de CSV", "<size=+6>Se ha finalizado exitosamente la generación del archivo " + txtTransferNo.getText() + ".csv</size>");
-	}
-	
-	
-	private int generateRandomNumber(int low, int high) {
-		Random r = new Random();
-		int result = r.nextInt(high - low) + low;
-		return result;
 	}
 	
 	
@@ -568,31 +564,14 @@ public class CreateTransferInCsvEditor extends Composite {
 			logger.info("Artículo encontrado en DB: " + item.getDescription());
 
 			int qty = Integer.parseInt(txtQty.getText());
-//			TransferControlLine line = tcControl.adjustReceivedQuantityForItem(item.getItemNo(), qty);
-//			if (line == null) {
-//				logger.info("Artículo NO encontrado en la transferencia: " + item.getDescription());
-//				MessagesUtil.showWarning("Búsqueda por código", "No se encontró ninguna línea con el código suministrado: " + barcode + ".");
-//			}
-			addTransferInLine(item, qty);
+			TransferControlLine line = tcHelper.adjustReceivedQuantityForItem(item.getItemNo(), qty);
+			if (line == null) {
+				tcHelper.addTransferControlLine(item.getItemNo(), item.getDescription(), qty);
+			}
 		} else {
 			MessagesUtil.showError("Búsqueda por código", "No se encontró ningún artículo con el código de barra suministrado: " + barcode + ".");
 		}
 		return item;
-	}
-	
-	
-	private void addTransferInLine(Item item, int itemQty) {
-		TransferControlLine line = new TransferControlLine();
-		line.setQtyReceived(BigDecimal.valueOf(itemQty));
-		line.setItemDescription(item.getDescription());
-		line.setItemNumber(item.getItemNo());
-		
-		line.setLineId(1);
-		line.setPositionId(1);
-		line.setSelected("Y");
-		
-		line.setTransfer(tcControl);
-		tcControl.getLines().add(line);
 	}
 
 	
@@ -726,15 +705,30 @@ public class CreateTransferInCsvEditor extends Composite {
 	 * or is a partial transfer.
 	 */
 	private TransferControl save(boolean closeTransfer) {
+		assignTransferNumber("CSV");
 		tcControl.setUserName(LoggedUserService.INSTANCE.getUser().getUserName());
 		tcControl.setReference(txtReference.getText());
 		tcControl.setComments(txtComment1.getText(), txtComment2.getText(), txtComment3.getText());		
 		if (closeTransfer) {
 			tcControl.close(TransferControlStatus.CLOSED);
+		} else {
+			tcControl.setStatus(TransferControlStatus.PARTIAL.getCode());
 		}
 		logger.info("Líneas de la transferencia: " + tcControl.getLines().size());
 		tcController.doSave(tcControl);
 		return tcControl;
+	}
+	
+	/**
+	 * Gets the next transfer number to be assigned to the {@link TransferControl} register
+	 * and his {@link TransferControlLine} item lines.
+	 */
+	private void assignTransferNumber(String prefix) {
+		String nextCode = tcController.getNextTransferControlNumber(prefix);
+		tcControl.setTransferNo(prefix + nextCode);
+		for (TransferControlLine line : tcControl.getLines()) {
+			line.setTransferNo(nextCode);
+		}
 	}
 	
 	/**
@@ -851,8 +845,8 @@ public class CreateTransferInCsvEditor extends Composite {
 //		};
 		
 //		display.addFilter(SWT.KeyDown, listenerF04);
-		display.addFilter(SWT.KeyDown, listenerF12);		
-		display.addFilter(SWT.KeyDown, listenerF09);		
+		display.addFilter(SWT.KeyDown, listenerF09);
+		display.addFilter(SWT.KeyDown, listenerF12);
 	}
 
 
