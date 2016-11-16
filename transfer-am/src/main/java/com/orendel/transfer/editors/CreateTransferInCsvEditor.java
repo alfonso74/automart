@@ -724,8 +724,8 @@ public class CreateTransferInCsvEditor extends Composite {
 	 * and his {@link TransferControlLine} item lines.
 	 */
 	private void assignTransferNumber(String prefix) {
-		String nextCode = tcController.getNextTransferControlNumber(prefix);
-		tcControl.setTransferNo(prefix + nextCode);
+		String nextCode = prefix + tcController.getNextTransferControlNumber(prefix);
+		tcControl.setTransferNo(nextCode);
 		for (TransferControlLine line : tcControl.getLines()) {
 			line.setTransferNo(nextCode);
 		}
