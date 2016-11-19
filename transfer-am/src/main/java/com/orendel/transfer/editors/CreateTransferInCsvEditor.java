@@ -74,11 +74,9 @@ public class CreateTransferInCsvEditor extends Composite {
 	private Text txtLines;
 	private Text txtReceived;
 	
-//	private Button btnInitTransfer;
 	private Button btnSaveDraft;
 	private Button btnCounterPoint;
 	
-//	private Listener listenerF04;
 	private Listener listenerF09;
 	private Listener listenerF12;
 	
@@ -288,19 +286,6 @@ public class CreateTransferInCsvEditor extends Composite {
 		gl_compositeActions.marginWidth = 0;
 		compositeActions.setLayout(gl_compositeActions);
 		
-//		btnInitTransfer = new Button(compositeActions, SWT.NONE);
-//		btnInitTransfer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-//		btnInitTransfer.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
-//		btnInitTransfer.setText("Iniciar Entrada (F4)");
-//		btnInitTransfer.setToolTipText("Inicia el proceso de entrada para una transferencia");
-//		btnInitTransfer.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				System.out.println("Init transfer button pressed!");
-//				initTransfer();
-//			}
-//		});
-		
 		btnSaveDraft = new Button(compositeActions, SWT.NONE);
 		btnSaveDraft.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		btnSaveDraft.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
@@ -386,7 +371,6 @@ public class CreateTransferInCsvEditor extends Composite {
 		
 		tableTransferLines.setEnabled(newStatus);
 		
-//		btnInitTransfer.setEnabled(!newStatus);
 		btnSaveDraft.setEnabled(newStatus);
 		btnCounterPoint.setEnabled(newStatus);
 	}
@@ -754,6 +738,7 @@ public class CreateTransferInCsvEditor extends Composite {
 					System.out.println("Update CounterPoint transfer button pressed!");
 					if (btnCounterPoint.getEnabled()) {
 						tryToCreateTransfer();
+						event.keyCode = 0;
 					}
 				}
 			}
@@ -766,24 +751,12 @@ public class CreateTransferInCsvEditor extends Composite {
 					System.out.println("Save partial transfer button pressed!");
 					if (btnSaveDraft.getEnabled()) {
 						tryToCreatePartialTransfer();
+						event.keyCode = 0;
 					}
 				}
 			}
 		};
 		
-//		listenerF04 = new Listener() {
-//			@Override
-//			public void handleEvent(Event event) {
-//				if (event.keyCode == SWT.F4) {
-//					System.out.println("F4 (init transfer) pressed!");
-//					if (btnInitTransfer.getEnabled()) {
-//						initTransfer();
-//					}
-//				}
-//			}
-//		};
-		
-//		display.addFilter(SWT.KeyDown, listenerF04);
 		display.addFilter(SWT.KeyDown, listenerF09);
 		display.addFilter(SWT.KeyDown, listenerF12);
 	}
@@ -793,7 +766,6 @@ public class CreateTransferInCsvEditor extends Composite {
 		this.addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent e) {
-//				getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF04);
 				getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF09);
 				getShell().getDisplay().removeFilter(SWT.KeyDown, listenerF12);
 				cpController.finalizarSesion();
