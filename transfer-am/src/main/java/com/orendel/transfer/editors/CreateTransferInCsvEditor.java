@@ -1,5 +1,6 @@
 package com.orendel.transfer.editors;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -34,6 +35,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.widgets.Group;
 import org.hibernate.HibernateException;
 
+import com.orendel.common.config.AppConfig;
 import com.orendel.counterpoint.domain.Item;
 import com.orendel.delivery.domain.TransferControl;
 import com.orendel.delivery.domain.TransferControlLine;
@@ -344,7 +346,10 @@ public class CreateTransferInCsvEditor extends Composite {
 	
 	
 	private void createCsvFile(String fileName) throws IOException {
-		OutputStream out = new FileOutputStream(fileName + ".csv");
+		String csvPath = AppConfig.INSTANCE.getValue("csv.export.path");
+		System.out.println("CURRENT PATH last '/': " + csvPath.lastIndexOf(File.separator));
+		
+		OutputStream out = new FileOutputStream(csvPath + '/' + fileName + ".csv");
 		ExcelCSVPrinter csv = new ExcelCSVPrinter(out);
 
 		String[] linea = new String[2];
@@ -354,8 +359,6 @@ public class CreateTransferInCsvEditor extends Composite {
 			csv.writeln(linea);
 		}
 		csv.close();
-
-		logger.info("Archivo CSV generado exitosamente: " + txtTransferNo.getText() + ".csv");
 	}
 	
 	
@@ -388,16 +391,25 @@ public class CreateTransferInCsvEditor extends Composite {
 
 			txtTransferNo.setFocus();	// necesario para capturar el comentario de una línea (si no se ha perdido el foco)
 			saveTransfer();
-			createCsvFile(txtTransferNo.getText());
 			logger.info("Entrada de transferencia cerrada exitosamente: " + tcControl.getId());
+			createCsvFile(txtTransferNo.getText());
+			logger.info("Archivo CSV generado exitosamente: " + txtTransferNo.getText() + ".csv");
 			MessagesUtil.showInformation("Guardar entrada de artículos", "<size=+6>Se ha finalizado exitosamente la entrada número " + 
 					tcControl.getTransferNo() + "\ny se generó el archivo " + tcControl.getTransferNo() + ".csv.</size>");		
 			createNewEditor();
+		} catch (IOException ex) {
+			tcControl.setClosed(null);
+			tcControl.addLogEntry("Error generando archivo CSV.");
+			savePartialTransfer();
+			logger.error(ex);
+			MessagesUtil.showError("Error guardando la entrada de transferencia", "<size=+2>Se generó un error al intentar guardar el archivo " + tcControl.getTransferNo() + ".csv.\n" +
+							"Debe guardar como entrada parcial (tecla F09) y corregir la ruta de generación del archivo.\n" +
+							"Error: " + ex.getMessage() + "</size>");
 		} catch (HibernateException ex) {
 			resetHibernateConnection(ex);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			MessagesUtil.showError("Error de aplicación", 
+			MessagesUtil.showError("Error guardando la entrada de transferencia", 
 					(ex.getMessage() == null ? ex.toString() + '\n' + ex.getStackTrace()[0] : ex.getMessage()));
 		}
 	}
@@ -413,7 +425,7 @@ public class CreateTransferInCsvEditor extends Composite {
 			resetHibernateConnection(ex);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			MessagesUtil.showError("Error de aplicación", 
+			MessagesUtil.showError("Error guardando la entrada parcial", 
 					(ex.getMessage() == null ? ex.toString() + '\n' + ex.getStackTrace()[0] : ex.getMessage()));
 		}
 	}
