@@ -48,5 +48,9 @@ public class TransferControlHelper {
 		tc.getLines().add(line);
 		line.setTransfer(tc);
 	}
+	
+	public TransferControl getTransferControl() {
+		return tc;
+	}
 
 }
