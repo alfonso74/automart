@@ -229,10 +229,16 @@ public class ViewTransfersEditor extends Composite {
 				TransferControl control = (TransferControl) item.getData();
 				logger.info("TransferControl selected: " + item.getText(1) + ", " + control);
 				
-				disposeChildrenComposites(parent);
-				CreateTransferInCsvEditor editor = new CreateTransferInCsvEditor(parent, SWT.NONE, control.getTransferNo());
-				editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-				parent.layout();
+				if (control.getTransferNo().contains("CSV")) {
+					disposeChildrenComposites(parent);
+					CreateTransferInCsvEditor editor = new CreateTransferInCsvEditor(parent, SWT.NONE, control.getTransferNo());
+					editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+					parent.layout();
+				} else {
+					MessagesUtil.showError("Ver entrada de transferencia", 
+							"La edición de este tipo de entrada de transferencia no está soportada\n"
+							+ "desde esta pantalla.");
+				}
 			}
 		});
 	}

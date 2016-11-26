@@ -1,6 +1,7 @@
 package com.orendel.transfer.editors;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -42,11 +43,13 @@ import com.orendel.delivery.domain.TransferControlLine;
 import com.orendel.delivery.domain.TransferControlStatus;
 import com.orendel.transfer.controllers.TransferControlController;
 import com.orendel.transfer.controllers.CounterpointController;
+import com.orendel.transfer.exceptions.FTPException;
 import com.orendel.transfer.export.csv.ExcelCSVPrinter;
 import com.orendel.transfer.services.HibernateUtil;
 import com.orendel.transfer.services.HibernateUtilDelivery;
 import com.orendel.transfer.services.LoggedUserService;
 import com.orendel.transfer.services.TransferControlHelper;
+import com.orendel.transfer.util.FTPUtility;
 import com.orendel.transfer.util.MessagesUtil;
 
 
@@ -345,11 +348,18 @@ public class CreateTransferInCsvEditor extends Composite {
 	}
 	
 	
-	private void createCsvFile(String fileName) throws IOException {
-		String csvPath = AppConfig.INSTANCE.getValue("csv.export.path");
-		System.out.println("CURRENT PATH last '/': " + csvPath.lastIndexOf(File.separator));
+	private String createCsvFile(String fileName) throws IOException {
+		String csvExportDir = AppConfig.INSTANCE.getValue("csv.export.directory");
+		System.out.println("CURRENT PATH last '" + File.separator + "': " + csvExportDir.lastIndexOf(File.separator) + ", size: " + csvExportDir.length());
 		
-		OutputStream out = new FileOutputStream(csvPath + '/' + fileName + ".csv");
+		String csvExportPath = "error.csv";
+		if (csvExportDir == null || csvExportDir.isEmpty()) {
+			csvExportPath = fileName + ".csv";
+		} else {
+			csvExportPath = csvExportDir + File.separator + fileName + ".csv";
+		}
+		
+		OutputStream out = new FileOutputStream(csvExportPath);
 		ExcelCSVPrinter csv = new ExcelCSVPrinter(out);
 
 		String[] linea = new String[2];
@@ -359,6 +369,49 @@ public class CreateTransferInCsvEditor extends Composite {
 			csv.writeln(linea);
 		}
 		csv.close();
+		out.close();
+		
+		return csvExportPath;
+	}
+	
+	
+	private void uploadCsvFile(String csvPath) throws FTPException {
+		String host = AppConfig.INSTANCE.getValue("ftp.server.host");
+		if (host == null || host.isEmpty()) {
+			return;
+		}
+		
+		int port = Integer.parseInt((String) AppConfig.INSTANCE.getValue("ftp.server.port"));
+		String username = AppConfig.INSTANCE.getValue("ftp.server.username");
+		String password = AppConfig.INSTANCE.getValue("ftp.server.password");
+		
+		File uploadFile = new File(csvPath);
+		String destDir = AppConfig.INSTANCE.getValue("ftp.server.csv.upload.directory");
+		
+		FTPUtility util = new FTPUtility(host, port, username, password);
+		try {
+			util.connect();
+			util.uploadFile(uploadFile, destDir);
+
+			FileInputStream inputStream = new FileInputStream(uploadFile);
+			byte[] buffer = new byte[4096];
+			int bytesRead = -1;
+
+			while ((bytesRead = inputStream.read(buffer)) != -1) {
+				util.writeFileBytes(buffer, 0, bytesRead);
+			}
+
+			inputStream.close();
+
+			util.finish();
+		} catch (IOException e) {
+			logger.error(e);
+			throw new FTPException("Error leyendo el archivo csv: " + csvPath);
+		} finally {
+			util.disconnect();
+		}
+
+		//        return null;
 	}
 	
 	
@@ -392,7 +445,8 @@ public class CreateTransferInCsvEditor extends Composite {
 			txtTransferNo.setFocus();	// necesario para capturar el comentario de una línea (si no se ha perdido el foco)
 			saveTransfer();
 			logger.info("Entrada de transferencia cerrada exitosamente: " + tcControl.getId());
-			createCsvFile(txtTransferNo.getText());
+			String csvPath = createCsvFile(txtTransferNo.getText());
+			uploadCsvFile(csvPath);
 			logger.info("Archivo CSV generado exitosamente: " + txtTransferNo.getText() + ".csv");
 			MessagesUtil.showInformation("Guardar entrada de artículos", "<size=+6>Se ha finalizado exitosamente la entrada número " + 
 					tcControl.getTransferNo() + "\ny se generó el archivo " + tcControl.getTransferNo() + ".csv.</size>");		
@@ -401,14 +455,22 @@ public class CreateTransferInCsvEditor extends Composite {
 			tcControl.setClosed(null);
 			tcControl.addLogEntry("Error generando archivo CSV.");
 			savePartialTransfer();
-			logger.error(ex);
+			logger.error("Error guardando la entrada de transferencia", ex);
 			MessagesUtil.showError("Error guardando la entrada de transferencia", "<size=+2>Se generó un error al intentar guardar el archivo " + tcControl.getTransferNo() + ".csv.\n" +
-							"Debe guardar como entrada parcial (tecla F09) y corregir la ruta de generación del archivo.\n" +
+							"Verifique la ruta de generación de archivos CSV con el personal de sistemas y reintente nuevamente.\n" +
 							"Error: " + ex.getMessage() + "</size>");
+		} catch (FTPException ex) {
+			tcControl.setClosed(null);
+			tcControl.addLogEntry("Error copiando archivo CSV al servidor FTP.");
+			savePartialTransfer();
+			logger.error("Error guardando la entrada de transferencia", ex);
+			MessagesUtil.showError("Error guardando la entrada de transferencia", "<size=+2>Se generó un error al intentar copiar el archivo " + tcControl.getTransferNo() + ".csv al servidor FTP.\n" +
+					"Verifique la ruta del servidor FTP con el personal de sistemas y reintente nuevamente.\n" +
+					"Error: " + ex.getMessage() + "</size>");
 		} catch (HibernateException ex) {
 			resetHibernateConnection(ex);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error guardando la entrada de transferencia", ex);
 			MessagesUtil.showError("Error guardando la entrada de transferencia", 
 					(ex.getMessage() == null ? ex.toString() + '\n' + ex.getStackTrace()[0] : ex.getMessage()));
 		}
