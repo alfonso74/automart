@@ -1,10 +1,6 @@
 package com.orendel.transfer.editors;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
@@ -36,7 +32,6 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.widgets.Group;
 import org.hibernate.HibernateException;
 
-import com.orendel.common.config.AppConfig;
 import com.orendel.counterpoint.domain.Item;
 import com.orendel.delivery.domain.TransferControl;
 import com.orendel.delivery.domain.TransferControlLine;
@@ -44,12 +39,12 @@ import com.orendel.delivery.domain.TransferControlStatus;
 import com.orendel.transfer.controllers.TransferControlController;
 import com.orendel.transfer.controllers.CounterpointController;
 import com.orendel.transfer.exceptions.FTPException;
-import com.orendel.transfer.export.csv.ExcelCSVPrinter;
+import com.orendel.transfer.services.CsvExportService;
+import com.orendel.transfer.services.FtpUploadService;
 import com.orendel.transfer.services.HibernateUtil;
 import com.orendel.transfer.services.HibernateUtilDelivery;
 import com.orendel.transfer.services.LoggedUserService;
 import com.orendel.transfer.services.TransferControlHelper;
-import com.orendel.transfer.util.FTPUtility;
 import com.orendel.transfer.util.MessagesUtil;
 
 
@@ -348,73 +343,6 @@ public class CreateTransferInCsvEditor extends Composite {
 	}
 	
 	
-	private String createCsvFile(String fileName) throws IOException {
-		String csvExportDir = AppConfig.INSTANCE.getValue("csv.export.directory");
-		System.out.println("CURRENT PATH last '" + File.separator + "': " + csvExportDir.lastIndexOf(File.separator) + ", size: " + csvExportDir.length());
-		
-		String csvExportPath = "error.csv";
-		if (csvExportDir == null || csvExportDir.isEmpty()) {
-			csvExportPath = fileName + ".csv";
-		} else {
-			csvExportPath = csvExportDir + File.separator + fileName + ".csv";
-		}
-		
-		OutputStream out = new FileOutputStream(csvExportPath);
-		ExcelCSVPrinter csv = new ExcelCSVPrinter(out);
-
-		String[] linea = new String[2];
-		for (TransferControlLine line : tcControl.getLines()) {
-			linea[0] = line.getItemNumber();
-			linea[1] = line.getQtyReceived().setScale(0).toString();
-			csv.writeln(linea);
-		}
-		csv.close();
-		out.close();
-		
-		return csvExportPath;
-	}
-	
-	
-	private void uploadCsvFile(String csvPath) throws FTPException {
-		String host = AppConfig.INSTANCE.getValue("ftp.server.host");
-		if (host == null || host.isEmpty()) {
-			return;
-		}
-		
-		int port = Integer.parseInt((String) AppConfig.INSTANCE.getValue("ftp.server.port"));
-		String username = AppConfig.INSTANCE.getValue("ftp.server.username");
-		String password = AppConfig.INSTANCE.getValue("ftp.server.password");
-		
-		File uploadFile = new File(csvPath);
-		String destDir = AppConfig.INSTANCE.getValue("ftp.server.csv.upload.directory");
-		
-		FTPUtility util = new FTPUtility(host, port, username, password);
-		try {
-			util.connect();
-			util.uploadFile(uploadFile, destDir);
-
-			FileInputStream inputStream = new FileInputStream(uploadFile);
-			byte[] buffer = new byte[4096];
-			int bytesRead = -1;
-
-			while ((bytesRead = inputStream.read(buffer)) != -1) {
-				util.writeFileBytes(buffer, 0, bytesRead);
-			}
-
-			inputStream.close();
-
-			util.finish();
-		} catch (IOException e) {
-			logger.error(e);
-			throw new FTPException("Error leyendo el archivo csv: " + csvPath);
-		} finally {
-			util.disconnect();
-		}
-
-		//        return null;
-	}
-	
-	
 	private void toggleEditableFields(boolean newStatus) {
 		txtTransferNo.setEnabled(false);
 		
@@ -445,8 +373,13 @@ public class CreateTransferInCsvEditor extends Composite {
 			txtTransferNo.setFocus();	// necesario para capturar el comentario de una línea (si no se ha perdido el foco)
 			saveTransfer();
 			logger.info("Entrada de transferencia cerrada exitosamente: " + tcControl.getId());
-			String csvPath = createCsvFile(txtTransferNo.getText());
-			uploadCsvFile(csvPath);
+			
+			CsvExportService csvService = new CsvExportService();
+			String csvPath = csvService.createCsvFile(tcControl, txtTransferNo.getText() + ".csv");
+			
+			FtpUploadService ftpUploadService = new FtpUploadService();
+			ftpUploadService.uploadCsvFile(csvPath);
+			
 			logger.info("Archivo CSV generado exitosamente: " + txtTransferNo.getText() + ".csv");
 			MessagesUtil.showInformation("Guardar entrada de artículos", "<size=+6>Se ha finalizado exitosamente la entrada número " + 
 					tcControl.getTransferNo() + "\ny se generó el archivo " + tcControl.getTransferNo() + ".csv.</size>");		
