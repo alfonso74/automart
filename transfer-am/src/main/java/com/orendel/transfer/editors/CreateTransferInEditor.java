@@ -296,7 +296,7 @@ public class CreateTransferInEditor extends Composite {
 		tblclmnDif.setText("Difer");
 		
 		TableColumn tblclmnItemNo = new TableColumn(tableTransferLines, SWT.LEFT);
-		tblclmnItemNo.setWidth(100);
+		tblclmnItemNo.setWidth(120);
 		tblclmnItemNo.setText("Item No.");
 		
 		TableColumn tblclmnDescripcin = new TableColumn(tableTransferLines, SWT.LEFT);
