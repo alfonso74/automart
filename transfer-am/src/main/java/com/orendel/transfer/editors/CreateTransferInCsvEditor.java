@@ -76,6 +76,7 @@ public class CreateTransferInCsvEditor extends Composite {
 	
 	private Button btnSaveDraft;
 	private Button btnCounterPoint;
+	private Button btnCreateCsv;
 	
 	private Listener listenerF09;
 	private Listener listenerF12;
@@ -325,11 +326,16 @@ public class CreateTransferInCsvEditor extends Composite {
 			tcControl = findPartialTransferControl(transferNo);
 			tcHelper = new TransferControlHelper(tcControl);
 			refreshFormDetails(null);
+			toggleEditableFields(false);
 			if (tcControl.getStatus().equalsIgnoreCase(TransferControlStatus.ACTIVE.getCode()) ||
 					tcControl.getStatus().equalsIgnoreCase(TransferControlStatus.PARTIAL.getCode())) {
-				initTransfer();
-			} else {
-				toggleEditableFields(false);
+				if (validateUser()) {
+					toggleEditableFields(true);
+					txtQty.setFocus();
+					txtQty.selectAll();
+				}
+			} else if (tcControl.getStatus().equalsIgnoreCase(TransferControlStatus.CLOSED.getCode())) {
+				addCreateCsvButton(transferNo, compositeActions);
 			}
 		} else {
 			tcHelper = new TransferControlHelper(tcControl);
@@ -340,6 +346,44 @@ public class CreateTransferInCsvEditor extends Composite {
 			txtQty.selectAll();
 		}
 		
+	}
+
+
+	/**
+	 * Adds a "Create CSV" action button if the following conditions are met:
+	 * <li>1. The transfer has been loaded from the database (is not NEW)</li> 
+	 * <li>2. The logged user has the 'Admin' role</li>
+	 * 
+	 * @param transferNo current transfer number
+	 * @param compositeActions the composite control to which the button will be added
+	 */
+	private void addCreateCsvButton(String transferNo, Composite compositeActions) {
+		if (transferNo != null && LoggedUserService.INSTANCE.getUser().isAdmin()) {
+			btnCreateCsv = new Button(compositeActions, SWT.NONE);
+			btnCreateCsv.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+			btnCreateCsv.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.NORMAL));
+			btnCreateCsv.setText("Generar CSV");
+			btnCreateCsv.setToolTipText("Genera un archivo CSV para la entrada actual");
+			btnCreateCsv.setEnabled(true);
+			btnCreateCsv.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					System.out.println("GenerateCSV button pressed!");
+					CsvExportService csvService = new CsvExportService();
+					try {
+						csvService.createCsvFile(tcControl, txtTransferNo.getText() + ".csv");
+						logger.info("Archivo CSV generado exitosamente: " + txtTransferNo.getText() + ".csv");
+						MessagesUtil.showInformation("Generar CSV", "<size=+6>Se ha generado exitosamente el archivo " + 
+								tcControl.getTransferNo() + ".csv.</size>");	
+					} catch (IOException ex) {
+						logger.error("Error generando archivo CSV", ex);
+						MessagesUtil.showError("Error generando archivo CSV", "<size=+2>Se generó un error al intentar guardar el archivo " + tcControl.getTransferNo() + ".csv.\n" +
+										"Verifique la ruta de generación del archivo CSV y reintente nuevamente.\n" +
+										"Error: " + ex.getMessage() + "</size>");
+					}
+				}
+			});
+		}
 	}
 	
 	
@@ -425,27 +469,12 @@ public class CreateTransferInCsvEditor extends Composite {
 		}
 	}
 	
-	private void initTransfer() {
-		if (tcControl == null) {
-			logger.info("No se ha cargando ningún control de transferencia... cancelando acción.");
-			return;
-		}
-		if (!validateUser()) {
-			return;
-		}
-		
-		toggleEditableFields(true);
-		
-		txtQty.setFocus();
-		txtQty.selectAll();
-	}
-	
 	private boolean validateUser() {
 		String currentUser = LoggedUserService.INSTANCE.getUser().getUserName();
 		if (!tcControl.isEditableByUser(currentUser)) {
 			MessagesUtil.showWarning("Iniciar entrada de transferencia", "<size=+2>La transferencia número " + 
-					tcControl.getTransferNo() + " está asignada al usuario '" + tcControl.getUserName() + "', y debe ser finalizada o cancelada para\n" +
-					"poder ser atendida por otro usuario.</size>");
+					tcControl.getTransferNo() + " está asignada al usuario '" + tcControl.getUserName() + "', y no puede\n" +
+					"ser modificada por el usuario actual.</size>");
 			return false;
 		}
 		return true;
