@@ -39,6 +39,7 @@ public class ViewItemLocationEditor extends Composite {
 	private String lastSearchedCode;
 	
 	private Text txtBarcode;
+	private Text txtItemNo;
 	private Text txtItemDescription;
 
 	
@@ -92,8 +93,20 @@ public class ViewItemLocationEditor extends Composite {
 		txtBarcode = new Text(grpConsultarDetallesPor, SWT.BORDER);
 		txtBarcode.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
 		GridData gd_txtBarcode = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_txtBarcode.widthHint = 200;
+		gd_txtBarcode.widthHint = 250;
 		txtBarcode.setLayoutData(gd_txtBarcode);
+		new Label(grpConsultarDetallesPor, SWT.NONE);
+		
+		Label lblItemNo = new Label(grpConsultarDetallesPor, SWT.NONE);
+		lblItemNo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblItemNo.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
+		lblItemNo.setText("Código:");
+		
+		txtItemNo = new Text(grpConsultarDetallesPor, SWT.BORDER);
+		txtItemNo.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
+		GridData gd_txtItemNo = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_txtItemNo.widthHint = 250;
+		txtItemNo.setLayoutData(gd_txtItemNo);
 		new Label(grpConsultarDetallesPor, SWT.NONE);
 		
 		Label lblDescription = new Label(grpConsultarDetallesPor, SWT.NONE);
@@ -215,6 +228,7 @@ public class ViewItemLocationEditor extends Composite {
 	
 	
 	private void refreshItemLocationDetails(Item item) {
+		txtItemNo.setText(item.getItemNo());
 		txtItemDescription.setText(item.getDescription());
 		
 		for (Inventory v : item.getInventory()) {
