@@ -104,6 +104,7 @@ public class ViewItemLocationEditor extends Composite {
 		
 		txtItemNo = new Text(grpConsultarDetallesPor, SWT.BORDER);
 		txtItemNo.setFont(SWTResourceManager.getFont("Segoe UI", baseFontSize + labelFontSize, SWT.NORMAL));
+		txtItemNo.setEditable(false);
 		GridData gd_txtItemNo = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
 		gd_txtItemNo.widthHint = 250;
 		txtItemNo.setLayoutData(gd_txtItemNo);
@@ -243,6 +244,7 @@ public class ViewItemLocationEditor extends Composite {
 	
 	
 	private void resetFields() {
+		txtItemNo.setText(EMPTY_STRING);
 		txtItemDescription.setText(EMPTY_STRING);
 		
 		txtCantidad.setText(EMPTY_STRING);
