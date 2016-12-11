@@ -25,7 +25,20 @@ public class TransferControlController extends AbstractControllerDelivery<Transf
 	}
 	
 	/**
-	 * Busca una transferencia en base al número de transferencia indicado.
+	 * Obtiene el siguiente código que puede ser asignado a una transferencia, en base al prefijo 
+	 * indicado y con un orden ascendente.
+	 * @param prefix el prefijo usado para generar el siguiente código
+	 * @return el siguiente código que puede ser utilizado con el prefijo indicado.
+	 */
+	public String getNextTransferControlNumber(String prefix) {
+		String result = null;
+		TransferControlDAO dao = (TransferControlDAO) getDAO();
+		result = dao.getNextCode(prefix);
+		return result;
+	}
+	
+	/**
+	 * Busca una transferencia (PARCIAL) en base al número de transferencia indicado.
 	 * @param transferNo número de transferencia a buscar
 	 * @return {@link TransferControl} asociado al número indicado, o <code>null</code> si no se encuentra
 	 */
@@ -48,7 +61,8 @@ public class TransferControlController extends AbstractControllerDelivery<Transf
 	 * Busca una transferencia en base al número de transferencia indicado.
 	 * @param transferNo número de transferencia a buscar
 	 * @param tcStatus {@link TransferControlStatus estado} de la transferencia a buscar
-	 * @return {@link TransferControl} asociado al número indicado, o <code>null</code> si no se encuentra
+	 * @return {@link TransferControl} asociado al número indicado, o una lista vacía si no se
+	 * encuentra ninguna transferencia con los parámetros suministrados.
 	 */
 	public List<TransferControl> findTransferControlByNumberAndStatus(String transferNo, TransferControlStatus tcStatus) {
 		List<TransferControl> result = new ArrayList<TransferControl>();
@@ -67,9 +81,20 @@ public class TransferControlController extends AbstractControllerDelivery<Transf
 		return result;
 	}
 	
-	//TODO programar esto!!
-	public List<TransferControl> findTransferControlByNumber(String transferNo, TransferControlStatus... tcStatus) {
-		List<TransferControl> result = new ArrayList<TransferControl>();
+	/**
+	 * Busca una transferencia (con cualquier estado) en base al número de transferencia indicado.
+	 * @param transferNo número de transferencia a buscar
+	 * @return {@link TransferControl} asociado al número indicado, o <code>null</code> si no se encuentra
+	 */
+	public TransferControl findTransferControlByNumber(String transferNo) {
+		TransferControl result = null;
+		
+		TransferControlDAO dao = (TransferControlDAO) getDAO();
+		List<TransferControl> tcList = dao.findByField("transferNo", transferNo);
+		if (tcList != null && !tcList.isEmpty()) {
+			result = tcList.get(0);
+		}
+		
 		return result;
 	}
 	

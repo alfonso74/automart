@@ -4,8 +4,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.mihalis.opal.login.LoginDialog;
 
+import com.orendel.common.services.ImagesService;
 import com.orendel.transfer.services.IImageKeys;
-import com.orendel.transfer.services.ImagesService;
 
 
 public class LoginWindow extends LoginDialog {

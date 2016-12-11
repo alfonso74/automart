@@ -8,12 +8,12 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Composite;
 
+import com.orendel.common.services.ImagesService;
 import com.orendel.counterpoint.domain.BarCode;
 import com.orendel.counterpoint.domain.BarCodeType;
 import com.orendel.counterpoint.domain.Item;
 import com.orendel.transfer.controllers.CounterpointController;
 import com.orendel.transfer.services.IImageKeys;
-import com.orendel.transfer.services.ImagesService;
 import com.orendel.transfer.services.LoggedUserService;
 import com.orendel.transfer.util.ComboData;
 import com.orendel.transfer.util.MessagesUtil;

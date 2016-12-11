@@ -22,10 +22,12 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.hibernate.HibernateException;
 
+import com.orendel.common.config.AppConfig;
+import com.orendel.common.services.ImagesService;
 import com.orendel.delivery.domain.User;
-import com.orendel.transfer.config.AppConfig;
 import com.orendel.transfer.dialogs.UpdatePasswordDialog;
 import com.orendel.transfer.dialogs.UserDialog;
+import com.orendel.transfer.editors.CreateTransferInCsvEditor;
 import com.orendel.transfer.editors.CreateTransferInEditor;
 import com.orendel.transfer.editors.ViewExtendedItemDetailsEditor;
 import com.orendel.transfer.editors.ViewTransfersEditor;
@@ -33,7 +35,6 @@ import com.orendel.transfer.editors.ViewUsersEditor;
 import com.orendel.transfer.services.HibernateUtil;
 import com.orendel.transfer.services.HibernateUtilDelivery;
 import com.orendel.transfer.services.IImageKeys;
-import com.orendel.transfer.services.ImagesService;
 import com.orendel.transfer.services.LoggedUserService;
 import com.orendel.transfer.services.ShellImagesService;
 import com.orendel.transfer.ui.login.LoginWindow;
@@ -128,7 +129,7 @@ public class MainWindow {
 		shell = new Shell();
 //		shell.setSize(800, 600);
 		shell.setMaximized(true);
-		shell.setText("AutoMart - Control de Entrada (Transferencias) - v1.0.8");
+		shell.setText("AutoMart - Control de Entrada (Transferencias) - v1.0.9-SNAPSHOT");
 		shell.setLayout(new GridLayout(1, false));
 		
 		Menu menuMainBar = new Menu(shell, SWT.BAR);
@@ -172,6 +173,9 @@ public class MainWindow {
 		
 		MenuItem itemEntradaTx = new MenuItem(menuAcciones, SWT.NONE);
 		itemEntradaTx.setText("Entrada de transferencia");
+		
+		MenuItem itemEntradaTxCsv = new MenuItem(menuAcciones, SWT.NONE);
+		itemEntradaTxCsv.setText("Entrada de artículos (sin transferencia)");
 		
 		final MenuItem itemCancelarEntrega = new MenuItem(menuAcciones, SWT.NONE);
 		itemCancelarEntrega.setText("Cancelar entrada");
@@ -248,6 +252,15 @@ public class MainWindow {
 			public void widgetSelected(SelectionEvent e) {
 				disposeChildrenComposites(composite);
 				openCreateTransferInEditor(composite);
+				composite.layout();
+			}
+		});
+		
+		itemEntradaTxCsv.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				disposeChildrenComposites(composite);
+				openCreateTransferInCsvEditor(composite);
 				composite.layout();
 			}
 		});
@@ -353,6 +366,12 @@ public class MainWindow {
 		return editor;
 	}
 	
+	
+	private CreateTransferInCsvEditor openCreateTransferInCsvEditor(Composite composite) {
+		CreateTransferInCsvEditor editor = new CreateTransferInCsvEditor(composite, SWT.NONE);
+		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		return editor;
+	}
 	
 	private ViewTransfersEditor openViewTransfersEditor(Composite composite) {
 		ViewTransfersEditor editor = new ViewTransfersEditor(composite, SWT.NONE);

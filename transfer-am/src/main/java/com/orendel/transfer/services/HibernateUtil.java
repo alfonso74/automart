@@ -12,7 +12,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.boot.registry.internal.StandardServiceRegistryImpl;
 import org.hibernate.cfg.Configuration;
 
-import com.orendel.transfer.config.AppConfig;
+import com.orendel.common.config.AppConfig;
 
 
 public class HibernateUtil {

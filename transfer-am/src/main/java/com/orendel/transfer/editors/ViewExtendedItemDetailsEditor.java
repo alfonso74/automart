@@ -52,6 +52,8 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	
 	private CounterpointController controller;
 	
+	private String lastSearchedCode;
+	
 	private Item currentItem;
 	
 	private Text txtBarcode;
@@ -252,8 +254,10 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				logger.info("Keyx: " + e.keyCode);
-				if (!txtBarcode.getText().isEmpty() && (e.keyCode == 13 || e.keyCode == 16777296)) {
-					showItemDetails(txtBarcode.getText());
+				if (!txtBarcode.getText().isEmpty()	&& (e.keyCode == 13 || e.keyCode == 16777296)) {
+					if (!txtBarcode.getText().equalsIgnoreCase(lastSearchedCode)) {
+						showItemDetails(txtBarcode.getText());
+					}
 					txtBarcode.selectAll();
 				}
 			}
@@ -341,6 +345,7 @@ public class ViewExtendedItemDetailsEditor extends Composite {
 	
 	private void showItemDetails(String code) {
 		resetFields();
+		lastSearchedCode = code;
 		if (code == null || code.isEmpty()) {
 			return;
 		}

@@ -16,6 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.DateTime;
@@ -37,6 +38,8 @@ public class ViewTransfersEditor extends Composite {
 	private Table table;
 	
 	private Composite compositeParams;
+	
+	private Composite parent;
 
 	
 	/**
@@ -47,6 +50,7 @@ public class ViewTransfersEditor extends Composite {
 	public ViewTransfersEditor(Composite parent, int style) {
 		super(parent, style);
 
+		this.parent = parent;
 		controller = new TransferControlController();
 		
 		GridLayout gridLayout = new GridLayout(1, false);
@@ -224,13 +228,26 @@ public class ViewTransfersEditor extends Composite {
 				TableItem item = t.getItem(t.getSelectionIndex());
 				TransferControl control = (TransferControl) item.getData();
 				logger.info("TransferControl selected: " + item.getText(1) + ", " + control);
-//				DeliveryDetailDialog dialog = new DeliveryDetailDialog(shell, SWT.APPLICATION_MODAL, control.getId());
-//				dialog.open();
-				logger.info("Pending to open dialog!!!");
+				
+				if (control.getTransferNo().contains("CSV")) {
+					disposeChildrenComposites(parent);
+					CreateTransferInCsvEditor editor = new CreateTransferInCsvEditor(parent, SWT.NONE, control.getTransferNo());
+					editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+					parent.layout();
+				} else {
+					MessagesUtil.showError("Ver entrada de transferencia", 
+							"La edición de este tipo de entrada de transferencia no está soportada\n"
+							+ "desde esta pantalla.");
+				}
 			}
 		});
 	}
 	
+	private void disposeChildrenComposites(Composite composite) {
+		for (Control c : composite.getChildren()) {
+			c.dispose();
+		}		
+	}
 
 	@Override
 	protected void checkSubclass() {

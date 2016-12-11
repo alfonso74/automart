@@ -12,9 +12,9 @@ import javax.crypto.spec.PBEKeySpec;
 
 import org.apache.log4j.Logger;
 
+import com.orendel.common.exceptions.ApplicationRuntimeException;
 import com.orendel.delivery.domain.User;
 import com.orendel.transfer.controllers.UsersController;
-import com.orendel.transfer.exceptions.ApplicationRuntimeException;
 import com.orendel.transfer.services.LoggedUserService;
 
 
