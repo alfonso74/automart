@@ -25,6 +25,7 @@ import org.hibernate.HibernateException;
 import com.orendel.common.config.AppConfig;
 import com.orendel.common.services.ImagesService;
 import com.orendel.delivery.domain.User;
+import com.orendel.transfer.dialogs.CommonAddBarcodeDialog;
 import com.orendel.transfer.dialogs.UpdatePasswordDialog;
 import com.orendel.transfer.dialogs.UserDialog;
 import com.orendel.transfer.editors.CreateTransferInCsvEditor;
@@ -132,6 +133,7 @@ public class MainWindow {
 		shell.setText("AutoMart - Control de Entrada (Transferencias) - v1.0.9-SNAPSHOT");
 		shell.setLayout(new GridLayout(1, false));
 		
+		// Creates the main menu bar section (and menu items)
 		Menu menuMainBar = new Menu(shell, SWT.BAR);
 		shell.setMenuBar(menuMainBar);
 		
@@ -191,7 +193,17 @@ public class MainWindow {
 		
 		MenuItem itemConsultarArticulosExtended = new MenuItem(menuAcciones, SWT.NONE);
 		itemConsultarArticulosExtended.setText("Consultar artículos");
-
+		
+		new MenuItem(menuAcciones, SWT.SEPARATOR);
+		
+		MenuItem itemAddBarCode = new MenuItem(menuAcciones, SWT.NONE);
+		itemAddBarCode.setText("Agregar código de barra");
+		
+		MenuItem itemPrintBarcode = new MenuItem(menuAcciones, SWT.NONE);
+		itemPrintBarcode.setText("Imprimir código de barra");
+		
+		
+		// Creates the middle and footer section
 		final Composite composite = new Composite(shell, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		composite.setLayout(new GridLayout(1, false));		
@@ -213,6 +225,9 @@ public class MainWindow {
 		txtDatetime = new Text(compositeFooter, SWT.READ_ONLY);
 		txtDatetime.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 
+		
+		// Listeners creation (for the menu items)
+		
 		itemExit.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -318,6 +333,20 @@ public class MainWindow {
 			}
 		});
 		
+		itemAddBarCode.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				openAddBarcodeDialog(composite);
+			}
+		});
+		
+		itemPrintBarcode.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				openPrintBarcodeDialog(composite);
+			}
+		});
+		
 		fillFooterInfo();
 		
 		openCreateTransferInEditor(composite);
@@ -379,11 +408,20 @@ public class MainWindow {
 		return editor;
 	}
 	
-	
 	private ViewExtendedItemDetailsEditor openViewExtendedItemDetailsEditor(Composite composite) {
 		ViewExtendedItemDetailsEditor editor = new ViewExtendedItemDetailsEditor(composite, SWT.NONE);
 		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		return editor;
+	}
+	
+	private void openAddBarcodeDialog(Composite composite) {
+		CommonAddBarcodeDialog dialog = new CommonAddBarcodeDialog(composite.getShell(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+		dialog.open();
+	}
+	
+	private void openPrintBarcodeDialog(Composite composite) {
+		CommonAddBarcodeDialog dialog = new CommonAddBarcodeDialog(composite.getShell(), SWT.APPLICATION_MODAL);
+		dialog.open();
 	}
 
 	
