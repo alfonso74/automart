@@ -1,17 +1,22 @@
 package com.orendel.transfer.dialogs;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.SWT;
+import org.hibernate.HibernateException;
 
 import com.orendel.transfer.composites.CommonAddBarcodeComposite;
 import com.orendel.transfer.controllers.CounterpointController;
+import com.orendel.transfer.services.HibernateUtil;
 import com.orendel.transfer.util.DialogUtil;
 
 
 public class CommonAddBarcodeDialog extends Dialog {
+	
+	private static final Logger logger = Logger.getLogger(CommonAddBarcodeDialog.class);
 
 	protected Object result;
 	protected Shell shell;
@@ -38,8 +43,12 @@ public class CommonAddBarcodeDialog extends Dialog {
 		shell.layout();
 		Display display = getParent().getDisplay();
 		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
+			try {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
+			} catch (HibernateException ex) {
+				resetHibernateConnection(ex);
 			}
 		}
 		return result;
@@ -57,6 +66,14 @@ public class CommonAddBarcodeDialog extends Dialog {
 		
 		CommonAddBarcodeComposite composite = new CommonAddBarcodeComposite(shell, SWT.None, controller);
 		composite.layout();
+	}
+	
+	private void resetHibernateConnection(HibernateException ex) {
+		logger.error(ex.getMessage(), ex);
+		logger.info("Resetting sessions after HibernateException...");
+		controller.finalizarSesion();
+		HibernateUtil.verSesiones();
+		controller = new CounterpointController();
 	}
 
 }

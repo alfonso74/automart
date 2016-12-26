@@ -196,6 +196,8 @@ public class CommonAddBarcodeComposite extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				showItemDetails(txtItemCode.getText());
+				txtItemCode.setFocus();
+				txtItemCode.selectAll();
 			}
 		});
 		
