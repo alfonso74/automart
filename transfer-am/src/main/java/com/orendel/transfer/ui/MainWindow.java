@@ -26,6 +26,7 @@ import com.orendel.common.config.AppConfig;
 import com.orendel.common.services.ImagesService;
 import com.orendel.delivery.domain.User;
 import com.orendel.transfer.dialogs.CommonAddBarcodeDialog;
+import com.orendel.transfer.dialogs.CommonPrintLabelDialog;
 import com.orendel.transfer.dialogs.UpdatePasswordDialog;
 import com.orendel.transfer.dialogs.UserDialog;
 import com.orendel.transfer.editors.CreateTransferInCsvEditor;
@@ -200,7 +201,7 @@ public class MainWindow {
 		itemAddBarCode.setText("Agregar código de barra");
 		
 		MenuItem itemPrintBarcode = new MenuItem(menuAcciones, SWT.NONE);
-		itemPrintBarcode.setText("Imprimir código de barra");
+		itemPrintBarcode.setText("Imprimir etiqueta");
 		
 		
 		// Creates the middle and footer section
@@ -420,7 +421,7 @@ public class MainWindow {
 	}
 	
 	private void openPrintBarcodeDialog(Composite composite) {
-		CommonAddBarcodeDialog dialog = new CommonAddBarcodeDialog(composite.getShell(), SWT.APPLICATION_MODAL);
+		CommonPrintLabelDialog dialog = new CommonPrintLabelDialog(composite.getShell(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		dialog.open();
 	}
 
