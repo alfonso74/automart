@@ -255,6 +255,14 @@ public class CommonAddBarcodeComposite extends Composite {
 			comboBarcodeType.setFocus();
 			return false;
 		}
+		BarCodeType selectedBarcodeType = cdBarcodeTypes.getEntry(comboBarcodeType.getText());
+		if (controller.barcodeTypeExistsForItem(selectedBarcodeType, currentItem.getItemNo())) {
+			MessagesUtil.showInformation("Validación de campos", 
+					"El artículo ya tiene un código de barra registrado con este tipo (" + comboBarcodeType.getText() + ").  Por favor,\n"
+							+ "seleccione otro tipo de código de barra.");
+			comboBarcodeType.setFocus();
+			return false;
+		}
 		return true;
 	}
 	

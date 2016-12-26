@@ -1,5 +1,7 @@
 package com.orendel.transfer.dialogs;
 
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
@@ -30,7 +32,7 @@ public class CommonAddBarcodeDialog extends Dialog {
 	public CommonAddBarcodeDialog(Shell parent, int style) {
 		super(parent, style);
 		setText("Agregar código de barra");
-		this.controller = new CounterpointController();
+		this.controller = new CounterpointController("S-" + getClass().getSimpleName() + new Date().getTime());
 	}
 
 	/**
@@ -51,6 +53,7 @@ public class CommonAddBarcodeDialog extends Dialog {
 				resetHibernateConnection(ex);
 			}
 		}
+		controller.finalizarSesion();
 		return result;
 	}
 
@@ -73,7 +76,9 @@ public class CommonAddBarcodeDialog extends Dialog {
 		logger.info("Resetting sessions after HibernateException...");
 		controller.finalizarSesion();
 		HibernateUtil.verSesiones();
-		controller = new CounterpointController();
+		controller = new CounterpointController("S-" + getClass().getSimpleName() + new Date().getTime());
 	}
+	
+	
 
 }
