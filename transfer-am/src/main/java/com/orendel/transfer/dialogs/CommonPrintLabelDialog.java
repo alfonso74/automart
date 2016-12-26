@@ -53,6 +53,7 @@ public class CommonPrintLabelDialog extends Dialog {
 				resetHibernateConnection(ex);
 			}
 		}
+		controller.finalizarSesion();
 		return result;
 	}
 
@@ -61,7 +62,7 @@ public class CommonPrintLabelDialog extends Dialog {
 	 */
 	private void createContents() {
 		shell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		shell.setSize(400, 350);
+		shell.setSize(400, 370);
 		shell.setText(getText());
 		shell.setLocation(DialogUtil.calculateDialogLocation(shell, false));
 		shell.setLayout(new FillLayout(SWT.HORIZONTAL));
@@ -75,7 +76,7 @@ public class CommonPrintLabelDialog extends Dialog {
 		logger.info("Resetting sessions after HibernateException...");
 		controller.finalizarSesion();
 		HibernateUtil.verSesiones();
-		controller = new CounterpointController();
+		controller = new CounterpointController("S-" + getClass().getSimpleName() + new Date().getTime());
 	}
 
 }
