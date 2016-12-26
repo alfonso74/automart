@@ -213,8 +213,8 @@ public class CommonPrintLabelComposite extends Composite {
 				if (comboBarcodeType.getText() != null && !comboBarcodeType.getText().isEmpty() &&
 						currentItem != null) {
 					BarCodeType barcodeType = cdBarcodeTypes.getEntry(comboBarcodeType.getText());
-					if (barcodeType == null) {
-						txtPrintcode.setText(txtItemCode.getText());
+					if (barcodeType == null) {  // implica que se seleccionó la opción 0 (usar código del item)
+						txtPrintcode.setText(currentItem.getItemNo());
 					} else {
 						for (BarCode v : currentItem.getBarcodeList()) {
 							if (v.getType().equals(barcodeType)) {
