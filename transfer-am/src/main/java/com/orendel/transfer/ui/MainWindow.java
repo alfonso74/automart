@@ -131,7 +131,7 @@ public class MainWindow {
 		shell = new Shell();
 //		shell.setSize(800, 600);
 		shell.setMaximized(true);
-		shell.setText("AutoMart - Control de Entrada (Transferencias) - v1.0.9-SNAPSHOT");
+		shell.setText("AutoMart - Control de Entrada (Transferencias) - v1.0.9");
 		shell.setLayout(new GridLayout(1, false));
 		
 		// Creates the main menu bar section (and menu items)
