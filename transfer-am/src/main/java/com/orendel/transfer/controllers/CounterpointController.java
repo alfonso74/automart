@@ -115,6 +115,26 @@ public class CounterpointController extends AbstractController<TransferIn> {
 		dao.doSave(barcode);
 	}
 	
+	/**
+	 * Method to verify if the indicated {@link BarCodeType} has been already associated
+	 * to an {@link Item}.
+	 * @param code the {@link BarCodeType} to verify
+	 * @param itemCode the item code (item number) for the {@link Item} we want to verify
+	 * @return <code>true</code> if the indicated {@link BarCodeType} is already associated
+	 * to the item.
+	 */
+	public boolean barcodeTypeExistsForItem(BarCodeType code, String itemCode) {
+		boolean result = false;
+		Item item = findItemByItemCode(itemCode);
+		for (BarCode barcode : item.getBarcodeList()) {
+			if (barcode.getType().getBarCodeId().equals(code.getBarCodeId())) {
+				result = true;
+				break;
+			}
+		}
+		return result;
+	}
+	
 	public List<BarCodeType> getBarcodeTypes() {
 		BarcodeTypeDAO dao = new BarcodeTypeDAO();
 		List<BarCodeType> barcodeTypes = dao.findAll();
