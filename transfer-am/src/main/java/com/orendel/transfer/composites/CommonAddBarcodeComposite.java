@@ -230,6 +230,7 @@ public class CommonAddBarcodeComposite extends Composite {
 		});
 		
 //		getShell().setDefaultButton(btnSave);
+		resetFields();
 	}
 	
 	
@@ -302,8 +303,7 @@ public class CommonAddBarcodeComposite extends Composite {
 		currentItem = null;
 		txtDescription.setText(EMPTY_STRING);
 		txtBarcode.setText(EMPTY_STRING);
-		comboBarcodeType.deselectAll();
-		txtBarcodeDescription.setText(EMPTY_STRING);
+		comboBarcodeType.setText("ITEM");
 	}
 	
 	/**

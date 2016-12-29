@@ -193,6 +193,8 @@ public class AddBarcodeComposite extends Composite {
 		
 		findItemDetails();
 		
+		comboBarcodeType.setText("ITEM");
+		
 		getShell().setDefaultButton(btnSave);
 	}
 	
@@ -216,6 +218,16 @@ public class AddBarcodeComposite extends Composite {
 					"Debe indicar el tipo de código de barra que se está creando.");
 			comboBarcodeType.setFocus();
 			return false;
+		}
+		BarCodeType selectedBarcodeType = cdBarcodeTypes.getEntry(comboBarcodeType.getText());
+		if (controller.barcodeTypeExistsForItem(selectedBarcodeType, item.getItemNo())) {
+			int response = MessagesUtil.showConfirmation("Validación de campos", 
+					"El artículo ya tiene un código de barra registrado con este tipo (" + comboBarcodeType.getText() + ").  Está seguro\n"
+							+ "de agregar otro código con el mismo tipo de código de barra?");
+			if (response != 0) { // Si la respuesta no es OK (valor 0)
+				comboBarcodeType.setFocus();
+				return false;
+			}
 		}
 		return true;
 	}
